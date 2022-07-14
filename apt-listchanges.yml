@@ -1,0 +1,58 @@
+---
+- hosts: localhost
+  gather_facts: no
+  become: yes
+  tasks:
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/frontend
+      value: "pager" # default: "pager"
+      vtype: select
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/which
+      value: "both" # default: "news"
+      vtype: select
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/no-network
+      value: "false" # default: "false"
+      vtype: boolean
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/email-address
+      value: "root" # default: "root"
+      vtype: string
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/email-format
+      value: "text" # default: "text"
+      vtype: select
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/confirm
+      value: "true" # default: "false"
+      vtype: boolean
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/headers
+      value: "true" # default: "false"
+      vtype: boolean
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/reverse
+      value: "true" # default: "false"
+      vtype: boolean
+
+  - ansible.builtin.debconf:
+      name: apt-listchanges
+      question: apt-listchanges/save-seen
+      value: "true" # default: "true"
+      vtype: boolean
