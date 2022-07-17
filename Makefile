@@ -4,6 +4,9 @@ setup-at-local:
 apt-listchanges:
 	ansible-playbook apt-listchanges.yml
 
+ping:
+	ansible all -i hosts -m ping
+
 update:
 	ansible all -i hosts -m apt -a "update_cache=yes cache_valid_time=3600"
 
