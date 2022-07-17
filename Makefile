@@ -13,4 +13,4 @@ update:
 upgrade:
 	ansible all -i hosts -m apt -a "upgrade=full purge=yes autoremove=yes"
 	ansible all -i hosts -m command -a '[ ! -f /run/reboot-required ]'
-# apt -o APT::Get::Always-Include-Phased-Updates=true full-upgrade -V
+# TODO: apt -o APT::Get::Always-Include-Phased-Updates=true full-upgrade -V
