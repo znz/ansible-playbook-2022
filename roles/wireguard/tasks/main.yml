@@ -7,3 +7,5 @@
   tags: wireguard_apt
 - include_tasks: "genkey.yml"
   tags: wireguard_genkey
+- include_tasks: "ufw.yml"
+  tags: wireguard_ufw

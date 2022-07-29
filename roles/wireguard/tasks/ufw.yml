@@ -1,0 +1,13 @@
+---
+- name: "Allow to wireguard"
+  ufw:
+    rule: allow
+    direction: in
+    to_port: "{{ wireguard_listen_port }}"
+    proto: udp
+- name: "Allow out to wireguard"
+  ufw:
+    rule: allow
+    direction: out
+    to_port: "{{ wireguard_listen_port }}"
+    proto: udp
