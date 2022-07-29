@@ -1,10 +1,10 @@
 [Interface]
-Address = {{ wireguard_ipv4_prefix }}.{{ wireguard_ipv4_suffix }}/{{ wireguard_ipv4_netmask }}
-Address = {{ wireguard_ipv6_prefix }}::{{ wireguard_ipv6_suffix }}/{{ wireguard_ipv6_netmask }}
+Address = {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv4_netmask }}
+Address = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv6_netmask }}
 ListenPort = {{ wireguard_listen_port }}
 {% if wireguard_nat_outside_interface %}
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
-PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv4_netmask }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv6_netmask }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp   = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv4_netmask }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv6_netmask }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 {% endif %}
 PostUp = wg set %i private-key <(cat /etc/wireguard/{{ wireguard_interface_name }}.privatekey)
 {% if wireguard_nat_to_lan %}

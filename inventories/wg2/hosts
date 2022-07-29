@@ -7,9 +7,9 @@ all:
         ansible_python_interpreter: '/usr/bin/python3'
         wireguard_group_name: wg2
         wireguard_interface_name: wg2
-        wireguard_ipv4_prefix: '10.2.0'
+        wireguard_ipv4: '10.2.0.0/24'
         wireguard_ipv4_netmask: '32'
-        wireguard_ipv6_prefix: 'fdcb:a987:6543:2'
+        wireguard_ipv6: 'fdcb:a987:6543:2::/64'
         wireguard_ipv6_netmask: '128'
         wireguard_listen_port: '51822' # '51820'
         wireguard_nat_outside_interface: ~ # 'e+'
@@ -19,18 +19,14 @@ all:
         wireguard_etc_hosts_remove: []
       hosts:
         cac2021k1:
-          wireguard_ipv4_suffix: 1
-          wireguard_ipv6_suffix: 1
+          wireguard_host_index: 1
           wireguard_endpoint_host: 'default_ipv4'
         cac2021k2:
-          wireguard_ipv4_suffix: 2
-          wireguard_ipv6_suffix: 2
+          wireguard_host_index: 2
           wireguard_endpoint_host: 'default_ipv4'
         cac2021k3:
-          wireguard_ipv4_suffix: 3
-          wireguard_ipv6_suffix: 3
+          wireguard_host_index: 3
           wireguard_endpoint_host: 'default_ipv4'
         cac2021k4:
-          wireguard_ipv4_suffix: 4
-          wireguard_ipv6_suffix: 4
+          wireguard_host_index: 4
           wireguard_endpoint_host: 'default_ipv4'
