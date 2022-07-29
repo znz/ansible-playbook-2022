@@ -11,3 +11,5 @@
   tags: wireguard_ufw
 - import_tasks: "conf.yml"
   tags: wireguard_conf
+- import_tasks: "etc_hosts.yml"
+  tags: wireguard_etc_hosts

@@ -1,0 +1,34 @@
+---
+#- ansible.builtin.debug:
+#    msg: '^{{ wireguard_ipv4 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) | regex_escape() }}[ \t]'
+#    msg: '^{{ wireguard_ipv6 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) | regex_escape() }}[ \t]'
+#  loop: '{{ groups[wireguard_group_name] }}'
+#  tags: foo
+
+- name: 'Add v4 hosts'
+  ansible.builtin.lineinfile:
+    dest: '/etc/hosts'
+    regexp: '^{{ wireguard_ipv4 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) | regex_escape() }}[ \t]'
+    line: '{{ wireguard_ipv4 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) }}	{{ item }}-v4.{{ wireguard_etc_hosts_domain }}{{ hostvars[item].wireguard_etc_hosts_extra_v4 | default("") }}'
+  loop: '{{ groups[wireguard_group_name] }}'
+
+- name: 'Add v6 hosts'
+  ansible.builtin.lineinfile:
+    dest: '/etc/hosts'
+    regexp: '^{{ wireguard_ipv6 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) | regex_escape() }}[ \t]'
+    line: '{{ wireguard_ipv6 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) }}	{{ item }}-v6.{{ wireguard_etc_hosts_domain }} {{ item }}.{{ wireguard_etc_hosts_domain }}{{ hostvars[item].wireguard_etc_hosts_extra_v6 | default("") }}'
+  loop: '{{ groups[wireguard_group_name] }}'
+
+- name: 'Add hosts'
+  ansible.builtin.lineinfile:
+    dest: '/etc/hosts'
+    regexp: '^{{ item.ip | regex_escape() }}[ \t]'
+    line: '{{ item.ip }}	{{ item.hostnames | join(" ") }}'
+  loop: '{{ wireguard_etc_hosts_add }}'
+
+- name: 'Remove hosts'
+  ansible.builtin.lineinfile:
+    dest: '/etc/hosts'
+    regexp: '^{{ item.ip | regex_escape() }}[ \t]'
+    state: absent
+  loop: '{{ wireguard_etc_hosts_remove }}'
