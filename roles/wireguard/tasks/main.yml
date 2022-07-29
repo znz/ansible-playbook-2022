@@ -5,3 +5,5 @@
     state: latest
   become: yes
   tags: wireguard_apt
+- include_tasks: "genkey.yml"
+  tags: wireguard_genkey

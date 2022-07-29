@@ -1,0 +1,15 @@
+---
+- name: "Creates private key"
+  ansible.builtin.shell: |
+    umask 077
+    wg genkey > {{ wireguard_interface_name }}.privatekey
+  args:
+    chdir: "/etc/wireguard/"
+    creates: "{{ wireguard_interface_name }}.privatekey"
+- name: "Extract public key"
+  ansible.builtin.shell: |
+    umask 077
+    wg pubkey < {{ wireguard_interface_name }}.privatekey > {{ wireguard_interface_name }}.publickey
+  args:
+    chdir: "/etc/wireguard/"
+    creates: "{{ wireguard_interface_name }}.publickey"
