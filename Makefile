@@ -17,6 +17,8 @@ upgrade:
 
 play-wg2:
 	ansible-playbook -i inventories/wg2/hosts wg2.yml
+play-wg2-conf:
+	ansible-playbook -i inventories/wg2/hosts wg2.yml --tags wireguard_conf
 
 LIMA_SSH_CONFIG = ~/.cache/lima.ssh_config
 LIMA_HOSTS = ~/.cache/lima.hosts

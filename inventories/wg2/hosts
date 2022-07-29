@@ -20,13 +20,13 @@ all:
       hosts:
         cac2021k1:
           wireguard_host_index: 1
-          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_endpoint_host: 'default_ipv6'
         cac2021k2:
           wireguard_host_index: 2
-          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_endpoint_host: 'default_ipv6'
         cac2021k3:
           wireguard_host_index: 3
-          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_endpoint_host: 'default_ipv6'
         cac2021k4:
           wireguard_host_index: 4
-          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_endpoint_host: 'default_ipv6'
