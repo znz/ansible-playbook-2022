@@ -5,7 +5,9 @@
     state: latest
   become: yes
   tags: wireguard_apt
-- include_tasks: "genkey.yml"
+- import_tasks: "genkey.yml"
   tags: wireguard_genkey
-- include_tasks: "ufw.yml"
+- import_tasks: "ufw.yml"
   tags: wireguard_ufw
+- import_tasks: "conf.yml"
+  tags: wireguard_conf

@@ -1,0 +1,54 @@
+[Interface]
+Address = {{ wireguard_ipv4_prefix }}.{{ wireguard_ipv4_suffix }}/{{ wireguard_ipv4_netmask }}
+Address = {{ wireguard_ipv6_prefix }}::{{ wireguard_ipv6_suffix }}/{{ wireguard_ipv6_netmask }}
+ListenPort = {{ wireguard_listen_port }}
+{% if wireguard_nat_outside_interface %}
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE; ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE; ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+{% endif %}
+PostUp = wg set %i private-key <(cat /etc/wireguard/{{ wireguard_interface_name }}.privatekey)
+{% if wireguard_nat_to_lan %}
+{%   for iface in wireguard_nat_to_lan.ifaces %}
+{%     if 'ipv4' in wireguard_nat_to_lan %}
+PostUp = iptables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv4 }} -j ACCEPT
+PostUp = iptables -t nat -A POSTROUTING -s {{ wireguard_nat_to_lan.ipv4 }} -o {{ iface }} -j MASQUERADE
+PostUp = sysctl net.ipv4.ip_forward=1
+PostDown = iptables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv4 }} -j ACCEPT
+PostDown = iptables -t nat -D POSTROUTING -s {{ wireguard_nat_to_lan.ipv4 }} -o {{ iface }} -j MASQUERADE
+#PostDown = sysctl net.ipv4.ip_forward=0
+{%     endif %}
+{%     if 'ipv6' in wireguard_nat_to_lan %}
+PostUp = ip6tables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv6 }} -j ACCEPT
+PostUp = ip6tables -t nat -A POSTROUTING -s {{ wireguard_nat_to_lan.ipv6 }} -o {{ iface }} -j MASQUERADE
+PostDown = ip6tables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv6 }} -j ACCEPT
+PostDown = ip6tables -t nat -D POSTROUTING -s {{ wireguard_nat_to_lan.ipv6 }} -o {{ iface }} -j MASQUERADE
+#PostDown = sysctl net.ipv6.conf.default.forwarding=0 net.ipv6.conf.all.forwarding=0
+{%     endif %}
+{%   endfor %}
+{% endif %}
+{{ wireguard_extra_conf }}
+{% for hostname in groups[wireguard_group_name] %}
+{%   set peer_conf = lookup('file', 'tmp/wireguard/{{ wireguard_group_name }}/'+hostname+'.peer-conf') %}
+{%   if hostname in wireguard_peer_extra_conf %}
+{%     set peer_extra_conf = "\n" + wireguard_peer_extra_conf[hostname] %}
+{%   else %}
+{%     set peer_extra_conf = '' %}
+{%   endif %}
+{%   if inventory_hostname != hostname %}
+{%     if wireguard_peer_only is defined %}
+{%       if hostname in wireguard_peer_only %}
+{{         peer_conf }}{{ peer_extra_conf }}
+{%         if wireguard_persistent_keep_alive and 'Endpoint = ' in peer_conf %}
+PersistentKeepAlive = {{ wireguard_persistent_keep_alive }}
+{%         endif %}
+{%       endif %}
+{%     elif 'Endpoint = ' in peer_conf %}
+{{       peer_conf }}{{ peer_extra_conf }}
+{%       if wireguard_persistent_keep_alive %}
+PersistentKeepAlive = {{ wireguard_persistent_keep_alive }}
+{%       endif %}
+{%     elif hostname in wireguard_peer_without_endpoint %}
+{{       peer_conf }}{{ peer_extra_conf }}
+{%     endif %}
+{%   endif %}
+{% endfor %}

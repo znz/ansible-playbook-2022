@@ -1,0 +1,14 @@
+[Peer]
+# {{ inventory_hostname }}
+PublicKey = {{ wireguard_public_key.stdout }}
+AllowedIPs = {{ wireguard_ipv4_prefix }}.{{ wireguard_ipv4_suffix }}/{{ wireguard_ipv4_netmask }}
+AllowedIPs = {{ wireguard_ipv6_prefix }}::{{ wireguard_ipv6_suffix }}/{{ wireguard_ipv6_netmask }}
+{% if wireguard_endpoint_host is defined %}
+{%   if wireguard_endpoint_host == 'default_ipv4' %}
+Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
+{%   else %}
+Endpoint = {{ wireguard_endpoint_host }}:{{ wireguard_listen_port }}
+{%   endif %}
+{% elif ansible_default_ipv4.address | ipaddr('public') %}
+Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
+{% endif %}

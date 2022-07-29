@@ -1,0 +1,30 @@
+---
+- name: "Fetch public key"
+  ansible.builtin.command: "cat /etc/wireguard/{{ wireguard_interface_name }}.publickey"
+  register: wireguard_public_key
+  changed_when: no
+- name: "Create Peer conf"
+  ansible.builtin.template:
+    src: "peer-conf.j2"
+    dest: "/etc/wireguard/{{ wireguard_interface_name }}.peer-conf"
+    owner: root
+    group: root
+    mode: '0400'
+- name: "Fetch peer conf"
+  ansible.builtin.fetch:
+    src: "/etc/wireguard/{{ wireguard_interface_name }}.peer-conf"
+    dest: "tmp/wireguard/{{ wireguard_group_name }}/{{ inventory_hostname }}.peer-conf"
+    flat: yes
+- name: "/etc/wireguard/{{ wireguard_interface_name }}.conf"
+  ansible.builtin.template:
+    src: "wg.conf.j2"
+    dest: "/etc/wireguard/{{ wireguard_interface_name }}.conf"
+    owner: root
+    group: root
+    mode: '0400'
+  notify: "Restart wg-quick"
+- name: "Enable wg-quick@{{ wireguard_interface_name }}"
+  ansible.builtin.systemd:
+    name: "wg-quick@{{ wireguard_interface_name }}"
+    state: started
+    enabled: yes

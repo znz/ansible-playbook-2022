@@ -1,0 +1,11 @@
+---
+wireguard_nat_outside_interface: ~ # 'e+'
+wireguard_nat_to_lan: ~
+wireguard_peer_without_endpoint: []
+wireguard_peer_extra_conf: {}
+wireguard_persistent_keep_alive: ~
+wireguard_extra_conf: ''
+
+# for hostvars
+#wireguard_etc_hosts_extra_v4: '' # should be a space and hostnames (' nfs.wg0.example.jp')
+#wireguard_etc_hosts_extra_v6: '' # ditto
