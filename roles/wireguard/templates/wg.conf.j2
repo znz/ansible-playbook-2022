@@ -28,13 +28,13 @@ PostDown = ip6tables -t nat -D POSTROUTING -s {{ wireguard_nat_to_lan.ipv6 }} -o
 {% endif %}
 {{ wireguard_extra_conf }}
 {% for hostname in groups[wireguard_group_name] %}
-{%   set peer_conf = lookup('file', 'tmp/wireguard/{{ wireguard_group_name }}/'+hostname+'.peer-conf') %}
-{%   if hostname in wireguard_peer_extra_conf %}
-{%     set peer_extra_conf = "\n" + wireguard_peer_extra_conf[hostname] %}
-{%   else %}
-{%     set peer_extra_conf = '' %}
-{%   endif %}
 {%   if inventory_hostname != hostname %}
+{%     set peer_conf = lookup('file', 'tmp/wireguard/{{ wireguard_group_name }}/'+hostname+'.peer-conf') %}
+{%     if hostname in wireguard_peer_extra_conf %}
+{%       set peer_extra_conf = "\n" + wireguard_peer_extra_conf[hostname] %}
+{%     else %}
+{%       set peer_extra_conf = '' %}
+{%     endif %}
 {%     if wireguard_peer_only is defined %}
 {%       if hostname in wireguard_peer_only %}
 {{         peer_conf }}{{ peer_extra_conf }}
