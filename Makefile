@@ -15,6 +15,9 @@ upgrade:
 	ansible all -i hosts -m command -a '[ ! -f /run/reboot-required ]'
 # TODO: apt -o APT::Get::Always-Include-Phased-Updates=true full-upgrade -V
 
+play-wg2:
+	ansible-playbook -i inventories/wg2/hosts wg2.yml
+
 LIMA_SSH_CONFIG = ~/.cache/lima.ssh_config
 LIMA_HOSTS = ~/.cache/lima.hosts
 

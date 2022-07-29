@@ -1,0 +1,4 @@
+---
+- hosts: wg2
+  roles:
+  - wireguard
