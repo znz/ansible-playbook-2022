@@ -1,13 +1,32 @@
 ---
 - name: "Allow to wireguard"
-  ufw:
+  community.general.ufw:
     rule: allow
     direction: in
     to_port: "{{ wireguard_listen_port }}"
     proto: udp
+    comment: "wireguard {{ wireguard_group_name }}"
 - name: "Allow out to wireguard"
-  ufw:
+  community.general.ufw:
     rule: allow
     direction: out
     to_port: "{{ wireguard_listen_port }}"
     proto: udp
+    comment: "wireguard {{ wireguard_group_name }}"
+
+- name: "Allow routed"
+  community.general.ufw:
+    rule: allow
+    route: yes
+    interface_in: "{{ wireguard_group_name }}"
+    interface_out: "{{ wireguard_nat_outside_interface }}"
+    from_ip: "{{ wireguard_ipv6 }}"
+    to_port: "{{ item.to_port }}"
+    proto: "{{ item.proto }}"
+    comment: "wireguard {{ wireguard_group_name }} routed"
+  loop:
+  - to_port: "443"
+    proto: "any"
+  - to_port: "80"
+    proto: "tcp"
+  when: "wireguard_nat_outside_interface"
