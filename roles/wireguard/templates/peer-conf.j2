@@ -8,7 +8,7 @@ AllowedIPs = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index) }}/
 Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
 {%   elif wireguard_endpoint_host == 'default_ipv6' %}
 Endpoint = [{{ ansible_default_ipv6.address }}]:{{ wireguard_listen_port }}
-{%   else %}
+{%   elif wireguard_endpoint_host %}
 Endpoint = {{ wireguard_endpoint_host }}:{{ wireguard_listen_port }}
 {%   endif %}
 {% elif ansible_default_ipv4.address | ansible.utils.ipaddr('public') %}

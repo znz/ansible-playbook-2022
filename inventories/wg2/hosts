@@ -4,7 +4,6 @@ all:
   children:
     wg2:
       vars:
-        ansible_python_interpreter: '/usr/bin/python3'
         wireguard_group_name: wg2
         wireguard_interface_name: wg2
         wireguard_ipv4: '10.2.0.0/24'
@@ -17,16 +16,33 @@ all:
         wireguard_etc_hosts_domain: 'wg2.test'
         wireguard_etc_hosts_add: []
         wireguard_etc_hosts_remove: []
+
+        _wireguard_peer_without_endpoint_: &wireguard_peer_without_endpoint
+        - raspi3bp
       hosts:
         cac2021k1:
           wireguard_host_index: 1
-          wireguard_endpoint_host: 'default_ipv6'
+          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_nat_outside_interface: 'e+'
+          wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
         cac2021k2:
           wireguard_host_index: 2
-          wireguard_endpoint_host: 'default_ipv6'
+          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
         cac2021k3:
           wireguard_host_index: 3
-          wireguard_endpoint_host: 'default_ipv6'
+          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
         cac2021k4:
           wireguard_host_index: 4
-          wireguard_endpoint_host: 'default_ipv6'
+          wireguard_endpoint_host: 'default_ipv4'
+          wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
+        raspi3bp:
+          wireguard_host_index: 254
+          wireguard_endpoint_host: ~
+          wireguard_extra_conf: |
+            PostUp = ping -c 1 10.2.0.1 || :
+            PostUp = ping -c 1 10.2.0.2 || :
+            PostUp = ping -c 1 10.2.0.3 || :
+            PostUp = ping -c 1 10.2.0.4 || :
+          wireguard_persistent_keep_alive: 25
