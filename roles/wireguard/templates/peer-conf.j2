@@ -9,6 +9,6 @@ Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
 {%   else %}
 Endpoint = {{ wireguard_endpoint_host }}:{{ wireguard_listen_port }}
 {%   endif %}
-{% elif ansible_default_ipv4.address | ipaddr('public') %}
+{% elif ansible_default_ipv4.address | ansible.utils.ipaddr('public') %}
 Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
 {% endif %}
