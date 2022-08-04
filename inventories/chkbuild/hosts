@@ -1,0 +1,16 @@
+# -*- yaml -*-
+---
+all:
+  children:
+    chkbuild:
+      hosts:
+        raspi3b:
+          chkbuild_rubyci_nickname: 'raspbian10-armv7l'
+          chkbuild_runner: 'start-rubyci'
+        raspi3bp:
+          chkbuild_rubyci_nickname: 'debian11-aarch64'
+          chkbuild_runner: 'start-rubyci'
+#        cac2020d2:
+#          chkbuild_rubyci_nickname: 'debian64-bullseye'
+#          chkbuild_runner: 'start-build'
+#          chkbuild_cpuquota: '30%'

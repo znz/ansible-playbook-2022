@@ -1,0 +1,159 @@
+---
+- hosts: chkbuild
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+    chkbuild_owner: 'chkbuild-owner'
+  tasks:
+  - name: 'Create chkbuild group'
+    group:
+      name: 'chkbuild'
+      gid: '10024'
+  - name: 'Create chkbuild user'
+    user:
+      name: 'chkbuild'
+      uid: '10024'
+      group: 'chkbuild'
+      comment: 'Chkbuild Account'
+      home: '/home/chkbuild'
+      create_home: no
+      shell: '/bin/bash'
+  - name: 'Create chkbuild-owner group'
+    group:
+      name: 'chkbuild-owner'
+      gid: '10037'
+  - name: 'Create chkbuild-owner user'
+    user:
+      name: 'chkbuild-owner'
+      uid: '10037'
+      comment: 'Chkbuild Owner Account'
+      home: '/home/chkbuild'
+      create_home: no
+      shell: '/bin/bash'
+  - name: 'Create /home/chkbuild'
+    file:
+      path: '/home/chkbuild'
+      state: directory
+      mode: '2755'
+      owner: '{{ chkbuild_owner }}'
+      group: 'chkbuild'
+  - name: 'Create /home/chkbuild/build'
+    file:
+      path: '/home/chkbuild/build'
+      state: directory
+      mode: '2775'
+      owner: '{{ chkbuild_owner }}'
+      group: 'chkbuild'
+  - name: 'Create /home/chkbuild/public_html'
+    file:
+      path: '/home/chkbuild/public_html'
+      state: directory
+      mode: '2775'
+      owner: '{{ chkbuild_owner }}'
+      group: 'chkbuild'
+
+  - name: "Clone chkbuild repository"
+    git:
+      dest: '/home/chkbuild/chkbuild'
+      repo: 'https://github.com/ruby/chkbuild'
+    become: yes
+    become_user: '{{ chkbuild_owner }}'
+
+  - name: 'Create /home/chkbuild/chkbuild/tmp'
+    file:
+      src: '/home/chkbuild'
+      dest: '/home/chkbuild/chkbuild/tmp'
+      state: link
+      owner: '{{ chkbuild_owner }}'
+      group: 'chkbuild'
+
+  - name: 'Install packages'
+    apt:
+      name:
+      - autoconf
+      - bison
+      - build-essential
+      - libssl-dev
+      - libyaml-dev
+      - libreadline-dev
+      - zlib1g-dev
+      - libncurses5-dev
+      - libffi-dev
+      - libgdbm6
+      - libgdbm-dev
+      - libdb-dev
+      - ruby
+
+  - name: 'Install aws-sdk-s3 gem'
+    gem:
+      name: aws-sdk-s3
+      user_install: yes
+      state: present
+    become: yes
+    become_user: '{{ chkbuild_owner }}'
+
+  - name: 'Install chkbuild.service'
+    copy:
+      content: |
+        [Unit]
+        Description=Run chkbuild/{{ chkbuild_runner }}
+
+        [Service]
+        Type=oneshot
+        PermissionsStartOnly=true
+        ExecStartPre=/sbin/runuser -u {{ chkbuild_owner }} -- git pull
+        ExecStart=/home/chkbuild/chkbuild/{{ chkbuild_runner }}
+        User=chkbuild
+        Group=chkbuild
+        WorkingDirectory=/home/chkbuild/chkbuild
+        PrivateTmp=true
+
+        Environment=RUBYCI_NICKNAME={{ chkbuild_rubyci_nickname }}
+        # AWS_ACCESS_KEY_ID
+        # AWS_SECRET_ACCESS_KEY
+        EnvironmentFile=-/etc/systemd/system/chkbuild.env
+      dest: '/etc/systemd/system/chkbuild.service'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+
+  - name: 'Install chkbuild.timer'
+    copy:
+      content: |
+        [Unit]
+        Description=Run chkbuild
+
+        [Timer]
+        OnBootSec=10min
+        OnUnitInactiveSec=1h
+        Persistent=true
+
+        [Install]
+        WantedBy=timers.target
+      dest: '/etc/systemd/system/chkbuild.timer'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Enable chkbuild.timer'
+
+  - name: 'Copy chkbuild quota.conf'
+    copy:
+      content: |
+        [Service]
+        CPUQuota={{ chkbuild_cpuquota }}
+      dest: '/etc/systemd/system/chkbuild.service.d/quota.conf'
+    when: 'chkbuild_cpuquota is defined'
+    notify: 'Enable chkbuild.timer'
+
+  - name: 'just force systemd to reread configs'
+    systemd:
+      daemon_reload: yes
+
+  handlers:
+    - name: 'Enable chkbuild.timer'
+      systemd:
+        name: 'chkbuild.timer'
+        state: started
+        daemon_reload: yes
+        enabled: yes

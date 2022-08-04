@@ -20,6 +20,9 @@ play-wg2:
 play-wg2-conf:
 	ansible-playbook -i inventories/wg2/hosts wg2.yml --tags wireguard_conf
 
+play-chkbuild:
+	ansible-playbook -i inventories/chkbuild/hosts chkbuild.yml
+
 LIMA_SSH_CONFIG = ~/.cache/lima.ssh_config
 LIMA_HOSTS = ~/.cache/lima.hosts
 
