@@ -90,7 +90,7 @@
       name: aws-sdk-s3
       user_install: yes
       norc: yes
-      state: present
+      state: latest
     become: yes
     become_user: '{{ chkbuild_owner }}'
 
