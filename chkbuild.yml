@@ -89,6 +89,7 @@
     gem:
       name: aws-sdk-s3
       user_install: yes
+      norc: yes
       state: present
     become: yes
     become_user: '{{ chkbuild_owner }}'
