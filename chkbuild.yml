@@ -103,7 +103,7 @@
         [Service]
         Type=oneshot
         PermissionsStartOnly=true
-        ExecStartPre=/sbin/runuser -u {{ chkbuild_owner }} -- git pull
+        ExecStartPre=/sbin/runuser -u {{ chkbuild_owner }} -- git pull --rebase --prune
         ExecStart=/home/chkbuild/chkbuild/{{ chkbuild_runner }}
         User=chkbuild
         Group=chkbuild
