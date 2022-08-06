@@ -1,0 +1,13 @@
+---
+- hosts: all
+  gather_facts: yes
+  tasks:
+  - name: 'Create /etc/needrestart/conf.d/50local.conf'
+    copy:
+      content: |
+        $nrconf{restart} = 'a';
+      dest: '/etc/needrestart/conf.d/50local.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    when: "ansible_lsb.codename in ['jammy']"

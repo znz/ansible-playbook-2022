@@ -23,6 +23,9 @@ play-wg2-conf:
 play-chkbuild:
 	ansible-playbook -i inventories/chkbuild/hosts chkbuild.yml
 
+play-needrestart:
+	ansible-playbook -i inventories/wg2/hosts needrestart.yml
+
 LIMA_SSH_CONFIG = ~/.cache/lima.ssh_config
 LIMA_HOSTS = ~/.cache/lima.hosts
 
@@ -34,3 +37,6 @@ update-lima.ssh_config:
 	grep 'Include $(LIMA_SSH_CONFIG)' ~/.ssh/config || echo 'Include $(LIMA_SSH_CONFIG)' >> ~/.ssh/config
 	limactl list -f '{{if eq .Status "Running"}}{{.Name}}{{end}}' | xargs -n1 limactl show-ssh --format=config > $(LIMA_SSH_CONFIG)
 	limactl list -f '{{if eq .Status "Running"}}lima-{{.Name}}{{end}}' > $(LIMA_HOSTS)
+
+play-needrestart-lima: update-lima.ssh_config
+	ansible-playbook -i $(LIMA_HOSTS) needrestart.yml -b
