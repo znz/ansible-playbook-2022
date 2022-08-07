@@ -16,15 +16,15 @@ upgrade:
 # TODO: apt -o APT::Get::Always-Include-Phased-Updates=true full-upgrade -V
 
 play-wg2:
-	ansible-playbook -i inventories/wg2/hosts wg2.yml
+	ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml
 play-wg2-conf:
-	ansible-playbook -i inventories/wg2/hosts wg2.yml --tags wireguard_conf
+	ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml --tags wireguard_conf
 
 play-chkbuild:
-	ansible-playbook -i inventories/chkbuild/hosts chkbuild.yml
+	ansible-playbook -i inventories/chkbuild/hosts playbook/chkbuild.yml
 
 play-needrestart:
-	ansible-playbook -i inventories/wg2/hosts needrestart.yml
+	ansible-playbook -i inventories/wg2/hosts playbook/needrestart.yml
 
 LIMA_SSH_CONFIG = ~/.cache/lima.ssh_config
 LIMA_HOSTS = ~/.cache/lima.hosts
@@ -39,4 +39,4 @@ update-lima.ssh_config:
 	limactl list -f '{{if eq .Status "Running"}}lima-{{.Name}}{{end}}' > $(LIMA_HOSTS)
 
 play-needrestart-lima: update-lima.ssh_config
-	ansible-playbook -i $(LIMA_HOSTS) needrestart.yml -b
+	ansible-playbook -i $(LIMA_HOSTS) playbook/needrestart.yml -b
