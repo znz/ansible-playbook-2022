@@ -4,9 +4,9 @@ all:
   children:
     chkbuild:
       hosts:
-        raspi3b:
-          chkbuild_rubyci_nickname: 'raspbian10-armv7l'
-          chkbuild_runner: 'start-rubyci'
+#        raspi3b:
+#          chkbuild_rubyci_nickname: 'raspbian10-armv7l'
+#          chkbuild_runner: 'start-rubyci'
         raspi3bp:
           chkbuild_rubyci_nickname: 'debian11-aarch64'
           chkbuild_runner: 'start-rubyci'
