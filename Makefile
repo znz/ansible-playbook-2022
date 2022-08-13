@@ -33,6 +33,7 @@ LIMA_HOSTS = ~/.cache/lima.hosts
 
 update-lima: update-lima.ssh_config phony
 	ansible all -i $(LIMA_HOSTS) -m apt -a "update_cache=yes cache_valid_time=3600" -b
+	ansible all -i hosts -m command -a 'apt list --upgradable'
 
 upgrade-lima: update-lima.ssh_config phony
 	ansible all -i $(LIMA_HOSTS) -m apt -a "upgrade=full purge=yes autoremove=yes" -b
