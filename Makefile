@@ -34,6 +34,9 @@ LIMA_HOSTS = ~/.cache/lima.hosts
 update-lima: update-lima.ssh_config phony
 	ansible all -i $(LIMA_HOSTS) -m apt -a "update_cache=yes cache_valid_time=3600" -b
 
+upgrade-lima: update-lima.ssh_config phony
+	ansible all -i $(LIMA_HOSTS) -m apt -a "upgrade=full purge=yes autoremove=yes" -b
+
 # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
 update-lima.ssh_config: phony
 	grep 'Include $(LIMA_SSH_CONFIG)' ~/.ssh/config || echo 'Include $(LIMA_SSH_CONFIG)' >> ~/.ssh/config
