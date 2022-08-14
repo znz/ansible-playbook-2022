@@ -10,12 +10,10 @@ ping: phony
 	ansible all -i hosts -m ping
 
 update: phony
-	ansible all -i hosts -m apt -a "update_cache=yes cache_valid_time=3600"
+	ansible-playbook -i hosts playbook/update.yml
 
 upgrade: phony
-	ansible all -i hosts -m apt -a "upgrade=full purge=yes autoremove=yes"
-	ansible all -i hosts -m command -a '[ ! -f /run/reboot-required ]'
-# TODO: apt -o APT::Get::Always-Include-Phased-Updates=true full-upgrade -V
+	ansible-playbook -i hosts playbook/upgrade.yml
 
 play-wg2: phony
 	ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml
@@ -32,11 +30,10 @@ LIMA_SSH_CONFIG = ~/.cache/lima.ssh_config
 LIMA_HOSTS = ~/.cache/lima.hosts
 
 update-lima: update-lima.ssh_config phony
-	ansible all -i $(LIMA_HOSTS) -m apt -a "update_cache=yes cache_valid_time=3600" -b
-	ansible all -i hosts -m command -a 'apt list --upgradable'
+	ansible-playbook -i $(LIMA_HOSTS) playbook/update.yml -b
 
 upgrade-lima: update-lima.ssh_config phony
-	ansible all -i $(LIMA_HOSTS) -m apt -a "upgrade=full purge=yes autoremove=yes" -b
+	ansible-playbook -i $(LIMA_HOSTS) playbook/upgrade.yml -b
 
 # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
 update-lima.ssh_config: phony

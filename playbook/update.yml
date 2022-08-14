@@ -1,0 +1,22 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: 'Apt update'
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 3600
+  - name: 'Check upgradable'
+    ansible.builtin.command: 'apt list --upgradable'
+    register: result
+    changed_when: 'result.stdout_lines | length > 1'
+  - name: 'Use result'
+    when: 'result.stdout_lines | length > 1'
+    block:
+    - ansible.builtin.debug:
+        var: 'result.stdout_lines[1:]'
+    - name: 'Check upgradable policy'
+      ansible.builtin.shell: 'apt list --upgradable 2>&1 | grep / | cut -d/ -f1 | head -n1 | xargs -r apt-cache policy'
+      register: result_of_policy
+    - ansible.builtin.debug:
+        var: 'result_of_policy.stdout_lines'

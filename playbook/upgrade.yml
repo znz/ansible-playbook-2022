@@ -1,0 +1,27 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: 'Apt upgrade'
+    ansible.builtin.apt:
+      upgrade: 'full'
+      purge: yes
+      autoremove: yes
+      # TODO: apt -o APT::Get::Always-Include-Phased-Updates=true full-upgrade -V
+  - name: 'Check reboot-required'
+    ansible.builtin.find:
+      paths: /run
+      patterns: 'reboot-required*'
+      file_type: file
+    register: f
+    changed_when: 'f.matched > 0'
+  - name: 'When reboot-required'
+    when: 'f.matched > 0'
+    block:
+    - name: 'Read reboot-required.pkgs'
+      ansible.builtin.slurp:
+        src: '/run/reboot-required.pkgs'
+      register: result
+    - name: 'Show reboot-required.pkgs'
+      debug:
+        msg: '{{ result.content | b64decode }}'
