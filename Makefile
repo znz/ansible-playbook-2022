@@ -43,3 +43,9 @@ update-lima.ssh_config: phony
 
 play-needrestart-lima: update-lima.ssh_config phony
 	ansible-playbook -i $(LIMA_HOSTS) playbook/needrestart.yml -b
+
+update-with-pass: phony
+	ansible-playbook -i ../hosts playbook/update.yml -b -K
+
+upgrade-with-pass: phony
+	ansible-playbook -i ../hosts playbook/upgrade.yml -b -K
