@@ -138,6 +138,14 @@
       group: 'root'
     notify: 'Enable chkbuild.timer'
 
+  - name: 'Create /etc/systemd/system/chkbuild.service.d'
+    file:
+      path: '/etc/systemd/system/chkbuild.service.d'
+      state: directory
+      mode: '755'
+      owner: 'root'
+      group: 'root'
+
   - name: 'Copy chkbuild quota.conf'
     copy:
       content: |

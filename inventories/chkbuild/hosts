@@ -10,6 +10,7 @@ all:
         raspi3bp:
           chkbuild_rubyci_nickname: 'debian11-aarch64'
           chkbuild_runner: 'start-rubyci'
+          chkbuild_cpuquota: '30%'
 #        cac2020d2:
 #          chkbuild_rubyci_nickname: 'debian64-bullseye'
 #          chkbuild_runner: 'start-build'
