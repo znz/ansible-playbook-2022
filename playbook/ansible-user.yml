@@ -1,0 +1,47 @@
+---
+- hosts: all
+  gather_facts: no
+  become: yes
+  vars:
+    user_name: "ansible-runner"
+  tasks:
+  - name: "ansible-runner group"
+    ansible.builtin.group:
+      name: "{{ user_name }}"
+      state: present
+      gid: "30020"
+  - name: "ansible-runner user"
+    ansible.builtin.user:
+      name: "{{ user_name }}"
+      comment: "Ansible Runner"
+      uid: "30020"
+      group: "{{ user_name }}"
+      shell: "/bin/sh"
+
+  - name: "Allow sudo"
+    copy:
+      content: |
+        {{ user_name }} ALL=(ALL) NOPASSWD:ALL
+      dest: "/etc/sudoers.d/local-ansible"
+      validate: "/usr/sbin/visudo -csf %s"
+      mode: "0440"
+
+  - name: "Update authorized_keys from gh"
+    ansible.posix.authorized_key:
+      user: "{{ user_name }}"
+      state: present
+      key: "https://github.com/znz.keys"
+      comment: "github.com/znz"
+      key_options: "restrict"
+
+  - name: "Add AllowUsers to sshd_config"
+    lineinfile:
+      dest: "/etc/ssh/sshd_config"
+      line: "AllowUsers {{ user_name }}"
+    notify: "Restart sshd"
+
+  handlers:
+  - name: "Restart sshd"
+    ansible.builtin.service:
+      name: "ssh"
+      state: reloaded
