@@ -1,19 +1,18 @@
 [cac]
-cac2020d2
-cac2021k[1:4]
-cac2022d1
+cac2020d2 ansible_ssh_user=ansible-runner
+cac2021k[1:4] ansible_ssh_user=ansible-runner
+cac2022d1 ansible_ssh_user=ansible-runner
 [conoha]
-conoha-d01
-conoha-u01
+conoha-d01 ansible_ssh_user=ansible-runner
+conoha-u01 ansible_ssh_user=ansible-runner
 [raspi]
-raspi3b
-raspi3bp
-raspi4b1
-raspi4b2
-iot
+raspi3b ansible_ssh_user=ansible-runner
+raspi3bp ansible_ssh_user=ansible-runner
+raspi4b1 ansible_ssh_user=ansible-runner
+raspi4b2 ansible_ssh_user=ansible-runner
 [sakura]
-ns6
-ns8
-ns9
+ns6 ansible_ssh_user=ansible-runner
+ns8 ansible_ssh_user=ansible-runner
+ns9 ansible_ssh_user=ansible-runner
 [misc]
-iot
+iot ansible_ssh_user=ansible-runner
