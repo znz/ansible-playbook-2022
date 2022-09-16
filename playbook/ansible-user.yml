@@ -1,9 +1,10 @@
 ---
 - hosts: all
-  gather_facts: no
+  gather_facts: yes
   become: yes
   vars:
     user_name: "ansible-runner"
+
   tasks:
   - name: "ansible-runner group"
     ansible.builtin.group:
@@ -38,6 +39,20 @@
     lineinfile:
       dest: "/etc/ssh/sshd_config"
       line: "AllowUsers {{ user_name }}"
+    notify: "Restart sshd"
+
+  - name: "Add AllowUsers USER to sshd_config"
+    lineinfile:
+      dest: "/etc/ssh/sshd_config"
+      line: "AllowUsers {{ ansible_env.USER }}"
+    when: "'USER' in ansible_env"
+    notify: "Restart sshd"
+
+  - name: "Add AllowUsers SUDO_USER to sshd_config"
+    lineinfile:
+      dest: "/etc/ssh/sshd_config"
+      line: "AllowUsers {{ ansible_env.SUDO_USER }}"
+    when: "'SUDO_USER' in ansible_env"
     notify: "Restart sshd"
 
   handlers:
