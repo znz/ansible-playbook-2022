@@ -4,18 +4,21 @@
   become: yes
   vars:
     user_name: "ansible-runner"
+    uid: "30020"
+    gid: "30020"
+    gh_account: "znz"
 
   tasks:
   - name: "ansible-runner group"
     ansible.builtin.group:
       name: "{{ user_name }}"
       state: present
-      gid: "30020"
+      gid: "{{ gid }}"
   - name: "ansible-runner user"
     ansible.builtin.user:
       name: "{{ user_name }}"
       comment: "Ansible Runner"
-      uid: "30020"
+      uid: "{{ uid }}"
       group: "{{ user_name }}"
       shell: "/bin/sh"
 
@@ -31,8 +34,8 @@
     ansible.posix.authorized_key:
       user: "{{ user_name }}"
       state: present
-      key: "https://github.com/znz.keys"
-      comment: "github.com/znz"
+      key: "https://github.com/{{ gh_account }}.keys"
+      comment: "github.com/{{ gh_account }}"
       key_options: "restrict"
 
   - name: "Add AllowUsers to sshd_config"
