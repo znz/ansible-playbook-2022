@@ -44,13 +44,6 @@
       line: "AllowUsers {{ user_name }}"
     notify: "Restart sshd"
 
-  - name: "Add AllowUsers USER to sshd_config"
-    lineinfile:
-      dest: "/etc/ssh/sshd_config"
-      line: "AllowUsers {{ ansible_env.USER }}"
-    when: "'USER' in ansible_env"
-    notify: "Restart sshd"
-
   - name: "Add AllowUsers SUDO_USER to sshd_config"
     lineinfile:
       dest: "/etc/ssh/sshd_config"
