@@ -12,7 +12,7 @@ namespace :misc do
   end
 end
 
-task all: %w[ansible:user]
+task all: %i[ansible:user misc:needrestart]
 
 namespace :ansible do
   env = { 'UPDATE_SSH_KEYS' => '1' }
@@ -46,5 +46,39 @@ namespace :apt do
   desc 'Apt upgrade'
   task :upgrade do
     sh 'ansible-playbook -i hosts playbook/upgrade.yml -b'
+  end
+end
+
+namespace :misc do
+  desc 'Create /etc/needrestart/conf.d/50local.conf'
+  task :needrestart do
+    sh "ansible-playbook -i hosts playbook/needrestart.yml -b"
+  end
+end
+
+namespace :lima do
+  lima_ssh_config = File.expand_path('~/.cache/lima.ssh_config')
+  lima_hosts = File.expand_path('~/.cache/lima.hosts')
+
+  desc 'Apt update on lima hosts'
+  task update: :ssh_config do
+    sh "ansible-playbook -i #{lima_hosts} playbook/update.yml -b"
+  end
+
+  desc 'Apt upgrade on lima hosts'
+  task upgrade: :ssh_config do
+    sh "ansible-playbook -i #{lima_hosts} playbook/upgrade.yml -b"
+  end
+
+  task :ssh_config do
+    # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
+    sh %(grep 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
+    sh %(limactl list -f '{{if eq .Status "Running"}}{{.Name}}{{end}}' | xargs -n1 limactl show-ssh --format=config > #{lima_ssh_config})
+    sh %(limactl list -f '{{if eq .Status "Running"}}lima-{{.Name}}{{end}}' > #{lima_hosts})
+  end
+
+  desc 'Create /etc/needrestart/conf.d/50local.conf'
+  task needrestart: :ssh_config do
+    sh "ansible-playbook -i #{lima_hosts} playbook/needrestart.yml -b"
   end
 end
