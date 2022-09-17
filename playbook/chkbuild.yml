@@ -118,6 +118,7 @@
       mode: '0444'
       owner: 'root'
       group: 'root'
+    notify: 'systemctl daemon-reload'
 
   - name: 'Install chkbuild.timer'
     copy:
@@ -153,16 +154,58 @@
         CPUQuota={{ chkbuild_cpuquota }}
       dest: '/etc/systemd/system/chkbuild.service.d/quota.conf'
     when: 'chkbuild_cpuquota is defined'
-    notify: 'Enable chkbuild.timer'
+    notify: 'systemctl daemon-reload'
 
-  - name: 'just force systemd to reread configs'
-    systemd:
-      daemon_reload: yes
+  - name: 'Copy chkbuild touch.conf'
+    copy:
+      content: |
+        [Service]
+        ExecStartPost=!/usr/bin/touch /run/chkbuild.done
+      dest: '/etc/systemd/system/chkbuild.service.d/touch.conf'
+    notify: 'systemctl daemon-reload'
+
+  - name: 'Add reboot-if-required'
+    copy:
+      content: |
+        [Unit]
+        Description=Reboot if required
+        RefuseManualStart=true
+        RefuseManualStop=true
+        ConditionPathExists=/run/reboot-required
+
+        [Service]
+        Type=oneshot
+        ExecStart=/sbin/reboot
+      dest: '/etc/systemd/system/reboot-if-required.service'
+    notify: 'systemctl daemon-reload'
+  - name: 'Add trigger reboot-if-required'
+    copy:
+      content: |
+        [Unit]
+        Description=Trigger reboot-if-required
+
+        [Path]
+        PathModified=/run/chkbuild.done
+        Unit=reboot-if-required.service
+
+        [Install]
+        WantedBy=multi-user.target
+      dest: '/etc/systemd/system/reboot-after-chkbuild.path'
+    notify: 'Enable reboot-after-chkbuild.path'
 
   handlers:
+    - name: 'systemctl daemon-reload'
+      systemd:
+        daemon_reload: yes
     - name: 'Enable chkbuild.timer'
       systemd:
         name: 'chkbuild.timer'
+        state: started
+        daemon_reload: yes
+        enabled: yes
+    - name: 'Enable reboot-after-chkbuild.path'
+      systemd:
+        name: 'reboot-after-chkbuild.path'
         state: started
         daemon_reload: yes
         enabled: yes
