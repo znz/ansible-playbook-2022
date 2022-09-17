@@ -3,7 +3,7 @@
 namespace :misc do
   desc 'Ping all hosts'
   task :ping do
-    sh 'ansible all -i hosts -m ping'
+    sh 'ansible all -i hosts -m ping --one-line'
   end
 
   desc 'Show uptime'
