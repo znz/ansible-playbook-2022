@@ -112,5 +112,13 @@ namespace :wg2 do
   end
 end
 
+namespace :chkbuild do
+  desc 'Play chkbuild'
+  task :all do
+    sh 'ansible-playbook -i inventories/chkbuild/hosts playbook/chkbuild.yml'
+  end
+  all_tasks.push 'chkbuild:all'
+end
+
 desc "Run #{all_tasks.join(' ')}"
 task all: all_tasks
