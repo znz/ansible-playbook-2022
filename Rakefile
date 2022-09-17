@@ -1,5 +1,7 @@
 # frozen-string-literal: true
 
+all_tasks = []
+
 namespace :misc do
   desc 'Ping all hosts'
   task :ping do
@@ -11,8 +13,6 @@ namespace :misc do
     sh 'ansible all -i hosts -a uptime --one-line'
   end
 end
-
-task all: %i[ansible:user misc:needrestart]
 
 namespace :ansible do
   env = { 'UPDATE_SSH_KEYS' => '1' }
@@ -35,6 +35,7 @@ namespace :ansible do
   task :user do
     sh 'ansible-playbook -i hosts playbook/ansible-user.yml'
   end
+  all_tasks.push 'ansible:user'
 end
 
 namespace :apt do
@@ -47,20 +48,20 @@ namespace :apt do
   task :upgrade do
     sh 'ansible-playbook -i hosts playbook/upgrade.yml -b'
   end
-
-  namespace :config do
-    desc 'Debconf of apt-listchanges'
-    task 'apt_listchanges' do
-      sh 'ansible-playbook -i hosts playbook/apt-listchanges.yml -b'
-    end
-  end
 end
 
-namespace :misc do
+namespace :config do
+  desc 'Debconf of apt-listchanges'
+  task 'apt_listchanges' do
+    sh 'ansible-playbook -i hosts playbook/apt-listchanges.yml -b'
+  end
+  all_tasks.push 'config:apt_listchanges'
+
   desc 'Create /etc/needrestart/conf.d/50local.conf'
   task :needrestart do
     sh "ansible-playbook -i hosts playbook/needrestart.yml -b"
   end
+  all_tasks.push 'config:needrestart'
 end
 
 namespace :lima do
@@ -88,6 +89,7 @@ namespace :lima do
   task needrestart: :ssh_config do
     sh "ansible-playbook -i #{lima_hosts} playbook/needrestart.yml -b"
   end
+  all_tasks.push 'lima:needrestart'
 end
 
 namespace :local do
@@ -96,3 +98,19 @@ namespace :local do
     sh 'ansible localhost -i , -m ansible.builtin.setup'
   end
 end
+
+namespace :wg2 do
+  desc 'Play wg2'
+  task :all do
+    sh 'ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml'
+  end
+  all_tasks.push 'wg2:all'
+
+  desc 'Play wg2 with conf tags only'
+  task :conf do
+    sh 'ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml --tags wireguard_conf'
+  end
+end
+
+desc "Run #{all_tasks.join(' ')}"
+task all: all_tasks
