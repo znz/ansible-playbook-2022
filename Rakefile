@@ -82,3 +82,10 @@ namespace :lima do
     sh "ansible-playbook -i #{lima_hosts} playbook/needrestart.yml -b"
   end
 end
+
+namespace :local do
+  desc 'ansible.builtin.setup'
+  task :setup do
+    sh 'ansible localhost -i , -m ansible.builtin.setup'
+  end
+end
