@@ -1,7 +1,10 @@
 ---
 - hosts: all
-  gather_facts: yes
+  gather_facts: no
   tasks:
+  - name: 'Gather the package facts'
+    ansible.builtin.package_facts:
+      manager: auto
   - name: 'Create /etc/needrestart/conf.d/50local.conf'
     copy:
       content: |
@@ -10,4 +13,4 @@
       mode: '0444'
       owner: 'root'
       group: 'root'
-    when: "ansible_lsb.codename in ['jammy']"
+    when: '"needrestart" in ansible_facts.packages'
