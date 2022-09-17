@@ -47,6 +47,13 @@ namespace :apt do
   task :upgrade do
     sh 'ansible-playbook -i hosts playbook/upgrade.yml -b'
   end
+
+  namespace :config do
+    desc 'Debconf of apt-listchanges'
+    task 'apt_listchanges' do
+      sh 'ansible-playbook -i hosts playbook/apt-listchanges.yml -b'
+    end
+  end
 end
 
 namespace :misc do
