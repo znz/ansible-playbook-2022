@@ -1,18 +1,22 @@
 [Peer]
 # {{ inventory_hostname }}
 PublicKey = {{ wireguard_public_key.stdout }}
+{% if wireguard_ipv4 %}{# IPv4 #}
 AllowedIPs = {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv4_netmask }}
+{% endif %}{# IPv4 #}
+{% if wireguard_ipv6 %}{# IPv6 #}
 AllowedIPs = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv6_netmask }}
+{% endif %}{# IPv6 #}
 {% if wireguard_endpoint_host is defined %}
-{%   if wireguard_endpoint_host == 'default_ipv4' %}
+{%   if wireguard_endpoint_host == 'default_ipv4' %}{# force set Endpoint as default IPv4 address #}
 Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
-{%   elif wireguard_endpoint_host == 'default_ipv6' %}
+{%   elif wireguard_endpoint_host == 'default_ipv6' %}{# force set Endpoint as default IPv6 address #}
 Endpoint = [{{ ansible_default_ipv6.address }}]:{{ wireguard_listen_port }}
-{%   elif wireguard_endpoint_host %}
+{%   elif wireguard_endpoint_host %}{# force set Endpoint as specific host (IP address or hostname) #}
 Endpoint = {{ wireguard_endpoint_host }}:{{ wireguard_listen_port }}
 {%   endif %}
-{% elif ansible_default_ipv4.address | ansible.utils.ipaddr('public') %}
+{% elif ansible_default_ipv4.address | ansible.utils.ipaddr('public') %}{# Set Endpoint as default IPv4 address if it is public IP #}
 Endpoint = {{ ansible_default_ipv4.address }}:{{ wireguard_listen_port }}
-{% elif ansible_default_ipv6.address | ansible.utils.ipaddr('public') %}
+{% elif ansible_default_ipv6.address | ansible.utils.ipaddr('public') %}{# Set Endpoint as default IPv6 address if it is public IP #}
 Endpoint = [{{ ansible_default_ipv6.address }}]:{{ wireguard_listen_port }}
 {% endif %}
