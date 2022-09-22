@@ -48,6 +48,11 @@ namespace :apt do
   task :upgrade do
     sh 'ansible-playbook -i hosts playbook/upgrade.yml -b'
   end
+
+  desc 'Apt autoremove --purge'
+  task :autoremove do
+    sh 'ansible all -i hosts -a "apt-get autoremove --purge -y" -b'
+  end
 end
 
 namespace :config do
