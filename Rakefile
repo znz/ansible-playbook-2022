@@ -57,14 +57,16 @@ end
 
 namespace :config do
   desc 'Debconf of apt-listchanges'
-  task 'apt_listchanges' do
-    sh 'ansible-playbook -i hosts playbook/apt-listchanges.yml -b'
+  task :apt_listchanges, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible-playbook -i #{inventory} playbook/apt-listchanges.yml -b"
   end
   all_tasks.push 'config:apt_listchanges'
 
   desc 'Create /etc/needrestart/conf.d/50local.conf'
-  task :needrestart do
-    sh "ansible-playbook -i hosts playbook/needrestart.yml -b"
+  task :needrestart, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible-playbook -i #{inventory} playbook/needrestart.yml -b"
   end
   all_tasks.push 'config:needrestart'
 end
@@ -91,8 +93,8 @@ namespace :lima do
   end
 
   desc 'Create /etc/needrestart/conf.d/50local.conf'
-  task needrestart: :ssh_config do
-    sh "ansible-playbook -i #{lima_hosts} playbook/needrestart.yml -b"
+  task needrestart: :ssh_config do |t|
+    Rake::Task['config:needrestart'].invoke lima_hosts
   end
   all_tasks.push 'lima:needrestart'
 end
