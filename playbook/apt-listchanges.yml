@@ -55,3 +55,11 @@
       question: apt-listchanges/save-seen
       value: "true" # default: "true"
       vtype: boolean
+
+  - name: 'Gather the package facts'
+    ansible.builtin.package_facts:
+      manager: auto
+
+  - name: 'dpkg-reconfigure apt-listchanges'
+    command: 'dpkg-reconfigure -f noninteractive apt-listchanges'
+    when: '"apt-listchanges" in ansible_facts.packages'
