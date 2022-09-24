@@ -92,11 +92,17 @@ namespace :lima do
     sh %(limactl list -f '{{if eq .Status "Running"}}lima-{{.Name}}{{end}}' > #{lima_hosts})
   end
 
-  desc 'Create /etc/needrestart/conf.d/50local.conf'
-  task needrestart: :ssh_config do |t|
-    Rake::Task['config:needrestart'].invoke lima_hosts
+  [
+    :apt_listchanges,
+    :needrestart,
+  ].each do |task_name|
+    p "config:#{task_name} for lima"
+    desc "config:#{task_name} for lima"
+    task task_name => :ssh_config do |t|
+      Rake::Task["config:#{task_name}"].invoke lima_hosts
+    end
+    all_tasks.push "lima:#{task_name}"
   end
-  all_tasks.push 'lima:needrestart'
 end
 
 namespace :local do
