@@ -69,7 +69,7 @@ Other hosts: Add peers including Endpoint only
 {%   if inventory_hostname != hostname %}
 {%     set peer_conf = lookup('file', 'tmp/wireguard/{{ wireguard_group_name }}/'+hostname+'.peer-conf') %}
 {%     if hostname in wireguard_peer_extra_conf %}
-{%       set peer_extra_conf = "\n" + wireguard_peer_extra_conf[hostname] %}
+{%       set peer_extra_conf = "\n# extra conf\n" + wireguard_peer_extra_conf[hostname] %}
 {%     else %}
 {%       set peer_extra_conf = '' %}
 {%     endif %}
