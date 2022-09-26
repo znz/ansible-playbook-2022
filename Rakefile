@@ -116,9 +116,21 @@ namespace :nspawn do
     require 'json'
     list = JSON.load_file(nspawn_json)
     machines = list.map { |h| h['machine'] }
-    File.write(nspawn_hosts, machines.map { |n| "#{n}.#{machine_manager}\n" }.join(''))
+
+    hosts = list.map do |h|
+      name = h['machine']
+      case name
+      when /\bsid\b/
+        "#{name}.#{machine_manager} ansible_python_interpreter=auto_silent\n"
+      else
+        "#{name}.#{machine_manager}\n"
+      end
+    end
+    File.write(nspawn_hosts, hosts.join(''))
     File.open(nspawn_ssh_config, 'w') do |f|
-      machines.each do |name|
+      list.map do |h|
+        name = h['machine']
+
         f.puts <<~SSH_CONFIG
           Host #{name}.#{machine_manager}
           Hostname #{name}
