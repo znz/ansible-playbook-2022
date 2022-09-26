@@ -17,11 +17,19 @@ all:
         wireguard_extra_conf: ~
         wireguard_etc_hosts_domain: 'wg2022.test'
         wireguard_etc_hosts_add: []
-        wireguard_etc_hosts_remove: []
+        wireguard_etc_hosts_remove:
+        - ip: 'False'
+          hostnames: ['hosts-without-IPv4.wg2022.test']
 
         _wireguard_peer_without_endpoint_: &wireguard_peer_without_endpoint
         - raspi3b
         - raspi3bp
+        _wireguard_extra_conf_: &wireguard_extra_conf_in_nat |
+            PostUp = ping -c 1 fdcb:a987:6543:2022::1 || :
+            PostUp = ping -c 1 fdcb:a987:6543:2022::2 || :
+            PostUp = ping -c 1 fdcb:a987:6543:2022::3 || :
+            PostUp = ping -c 1 fdcb:a987:6543:2022::4 || :
+
       hosts:
         cac2021k1:
           wireguard_host_index: 1
@@ -43,11 +51,7 @@ all:
         raspi3b:
           wireguard_host_index: 253
           wireguard_endpoint_host: ~
-          wireguard_extra_conf: |
-            PostUp = ping -c 1 10.2.0.1 || :
-            PostUp = ping -c 1 10.2.0.2 || :
-            PostUp = ping -c 1 10.2.0.3 || :
-            PostUp = ping -c 1 10.2.0.4 || :
+          wireguard_extra_conf: *wireguard_extra_conf_in_nat
           wireguard_persistent_keep_alive: 25
           wireguard_peer_extra_conf:
             cac2021k1: |
@@ -55,11 +59,7 @@ all:
         raspi3bp:
           wireguard_host_index: 254
           wireguard_endpoint_host: ~
-          wireguard_extra_conf: |
-            PostUp = ping -c 1 10.2.0.1 || :
-            PostUp = ping -c 1 10.2.0.2 || :
-            PostUp = ping -c 1 10.2.0.3 || :
-            PostUp = ping -c 1 10.2.0.4 || :
+          wireguard_extra_conf: *wireguard_extra_conf_in_nat
           wireguard_persistent_keep_alive: 25
           wireguard_peer_extra_conf:
             cac2021k1: |
