@@ -40,18 +40,21 @@ end
 
 namespace :apt do
   desc 'Apt update'
-  task :update do
-    sh 'ansible-playbook -i hosts playbook/update.yml -b'
+  task :update, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible-playbook -i #{inventory} playbook/update.yml -b"
   end
 
   desc 'Apt upgrade'
-  task :upgrade do
-    sh 'ansible-playbook -i hosts playbook/upgrade.yml -b'
+  task :upgrade, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible-playbook -i #{inventory} playbook/upgrade.yml -b"
   end
 
   desc 'Apt autoremove --purge'
-  task :autoremove do
-    sh 'ansible all -i hosts -a "apt-get autoremove --purge -y" -b'
+  task :autoremove, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible all -i #{inventory} -a 'apt-get autoremove --purge -y' -b"
   end
 end
 
@@ -75,16 +78,6 @@ namespace :lima do
   lima_ssh_config = File.expand_path('~/.cache/lima.ssh_config')
   lima_hosts = File.expand_path('~/.cache/lima.hosts')
 
-  desc 'Apt update on lima hosts'
-  task update: :ssh_config do
-    sh "ansible-playbook -i #{lima_hosts} playbook/update.yml -b"
-  end
-
-  desc 'Apt upgrade on lima hosts'
-  task upgrade: :ssh_config do
-    sh "ansible-playbook -i #{lima_hosts} playbook/upgrade.yml -b"
-  end
-
   task :ssh_config do
     # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
     sh %(grep 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
@@ -93,12 +86,15 @@ namespace :lima do
   end
 
   [
-    :apt_listchanges,
-    :needrestart,
-  ].each do |task_name|
-    desc "config:#{task_name} for lima"
+    %i[apt update],
+    %i[apt upgrade],
+    %i[apt autoremove],
+    %i[config apt_listchanges],
+    %i[config needrestart],
+  ].each do |namespace, task_name|
+    desc "#{namespace}:#{task_name} for lima"
     task task_name => :ssh_config do |t|
-      Rake::Task["config:#{task_name}"].invoke lima_hosts
+      Rake::Task["#{namespace}:#{task_name}"].invoke lima_hosts
     end
     all_tasks.push "lima:#{task_name}"
   end
@@ -108,16 +104,6 @@ namespace :nspawn do
   nspawn_json = File.expand_path('~/.cache/machinectl_list.json')
   nspawn_ssh_config = File.expand_path('~/.cache/nspawn.ssh_config')
   nspawn_hosts = File.expand_path('~/.cache/nspawn.hosts')
-
-  desc 'Apt update on nspawn hosts'
-  task update: :ssh_config do
-    sh "ansible-playbook -i #{nspawn_hosts} playbook/update.yml -b"
-  end
-
-  desc 'Apt upgrade on nspawn hosts'
-  task upgrade: :ssh_config do
-    sh "ansible-playbook -i #{nspawn_hosts} playbook/upgrade.yml -b"
-  end
 
   task :ssh_config, [:host_machine] do |_t, args|
     host_machine = args.fetch(:host_machine, 'cac2022d1')
@@ -146,12 +132,15 @@ namespace :nspawn do
   end
 
   [
-    :apt_listchanges,
-    :needrestart,
-  ].each do |task_name|
-    desc "config:#{task_name} for nspawn"
+    %i[apt update],
+    %i[apt upgrade],
+    %i[apt autoremove],
+    %i[config apt_listchanges],
+    %i[config needrestart],
+  ].each do |namespace, task_name|
+    desc "#{namespace}:#{task_name} for nspawn"
     task task_name => :ssh_config do |t|
-      Rake::Task["config:#{task_name}"].invoke nspawn_hosts
+      Rake::Task["#{namespace}:#{task_name}"].invoke nspawn_hosts
     end
     all_tasks.push "nspawn:#{task_name}"
   end
