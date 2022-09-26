@@ -17,4 +17,4 @@ ns9 ansible_ssh_user=ansible-runner
 [misc]
 iot ansible_ssh_user=ansible-runner
 [nspawn]
-sid
+sid interpreter_python=auto_silent
