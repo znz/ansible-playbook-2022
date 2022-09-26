@@ -1,0 +1,5 @@
+---
+- hosts: wg2022
+  become: yes
+  roles:
+  - wireguard

@@ -170,16 +170,21 @@ namespace :local do
   end
 end
 
-namespace :wg2 do
-  desc 'Play wg2'
-  task :all do
-    sh 'ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml'
-  end
-  all_tasks.push 'wg2:all'
+[
+  :wg2,
+  :wg2022,
+].each do |wg|
+  namespace wg do
+    desc "Play wireguard for #{wg}"
+    task :all do
+      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml"
+    end
+    all_tasks.push "#{wg}:all"
 
-  desc 'Play wg2 with conf tags only'
-  task :conf do
-    sh 'ansible-playbook -i inventories/wg2/hosts playbook/wg2.yml --tags wireguard_conf'
+    desc "Play #{wg} with conf tags only"
+    task :conf do
+      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_conf"
+    end
   end
 end
 
