@@ -96,7 +96,6 @@ namespace :lima do
     :apt_listchanges,
     :needrestart,
   ].each do |task_name|
-    p "config:#{task_name} for lima"
     desc "config:#{task_name} for lima"
     task task_name => :ssh_config do |t|
       Rake::Task["config:#{task_name}"].invoke lima_hosts
