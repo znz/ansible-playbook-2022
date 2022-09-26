@@ -100,32 +100,37 @@ namespace :lima do
   end
 end
 
+# Prepare:
+#  machinectl shell $NAME /usr/bin/apt install openssh-server python3 sudo -y
+#  machinectl shell $NAME /usr/bin/install -m 700 -d /root/.ssh
+#  machinectl copy-to $NAME ~/.ssh/authorized_keys /root/.ssh/authorized_keys
 namespace :nspawn do
   nspawn_json = File.expand_path('~/.cache/machinectl_list.json')
   nspawn_ssh_config = File.expand_path('~/.cache/nspawn.ssh_config')
   nspawn_hosts = File.expand_path('~/.cache/nspawn.hosts')
 
-  task :ssh_config, [:host_machine] do |_t, args|
-    host_machine = args.fetch(:host_machine, 'cac2022d1')
+  task :ssh_config, [:machine_manager] do |_t, args|
+    machine_manager = args.fetch(:machine_manager) { ENV.fetch('MACHINE_MANAGER') }
     sh %(grep 'Include #{nspawn_ssh_config}' ~/.ssh/config || echo 'Include #{nspawn_ssh_config}' >> ~/.ssh/config)
-    sh %(ssh #{host_machine} machinectl list -o json > #{nspawn_json})
+    sh %(ssh #{machine_manager} machinectl list -o json > #{nspawn_json})
     require 'json'
     list = JSON.load_file(nspawn_json)
     machines = list.map { |h| h['machine'] }
-    File.write(nspawn_hosts, machines.map { |n| "#{n}-on-#{host_machine}\n" }.join(''))
+    File.write(nspawn_hosts, machines.map { |n| "#{n}.#{machine_manager}\n" }.join(''))
     File.open(nspawn_ssh_config, 'w') do |f|
       machines.each do |name|
         f.puts <<~SSH_CONFIG
-          Host #{name}-on-#{host_machine}
-          ProxyCommand ssh #{host_machine} nc #{name} 22
+          Host #{name}.#{machine_manager}
+          Hostname #{name}
 
         SSH_CONFIG
       end
 
       f.puts <<~SSH_CONFIG
-        Host *-on-#{host_machine}
-        User root
+        Host *.#{machine_manager}
+        ProxyCommand ssh -W %h:%p -q #{machine_manager}
         StrictHostKeyChecking no
+        User root
         UserKnownHostsFile /dev/null
       SSH_CONFIG
     end
