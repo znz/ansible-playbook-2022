@@ -170,9 +170,9 @@ namespace :local do
   end
 end
 
-[
-  :wg2,
-  :wg2022,
+%i[
+  wg2
+  wg2022
 ].each do |wg|
   namespace wg do
     desc "Play wireguard for #{wg}"
@@ -181,9 +181,14 @@ end
     end
     all_tasks.push "#{wg}:all"
 
-    desc "Play #{wg} with conf tags only"
+    desc "Update conf of #{wg}"
     task :conf do
       sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_conf"
+    end
+
+    desc "Update /etc/hosts for #{wg}"
+    task :hosts do
+      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_etc_hosts"
     end
   end
 end
