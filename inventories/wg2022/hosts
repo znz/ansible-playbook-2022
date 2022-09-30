@@ -5,6 +5,7 @@ all:
     wg2022:
       vars:
         ansible_ssh_pipelining: yes
+        ansible_ssh_user: 'ansible-runner'
 
 # IP アドレス範囲の計画
 # fdcb:a987:6543:2022::c0:XXXX : conoha (Co から)
@@ -27,40 +28,50 @@ all:
         wireguard_extra_conf: ~
         wireguard_etc_hosts_domain: 'wg2022.n-z.jp'
         wireguard_etc_hosts_add: []
-        wireguard_etc_hosts_remove:
-        - ip: 'False'
-          hostnames: ['hosts-without-IPv4']
 
+        # 削除するホスト
+        wireguard_etc_hosts_remove:
+        - ip: 'False' # 試している途中に出来た IP アドレスになっていない行を消す
+          hostnames: ['hosts-without-IPv4'] # hostnames は playbook 実行中の表示用で未使用
+
+        # これらの Peer からは接続を待ち受けるだけ (未指定のホストへはハブになるホスト経由で接続)
         _wireguard_peer_without_endpoint: &wireguard_peer_without_endpoint
         - raspi3b
-        #- raspi3bp
-        #- raspi4b1
-        #- raspi4b2
+        - raspi3bp
+        - raspi4b1
+        - raspi4b2
+
+        # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
           wireguard_endpoint_host: ~
           wireguard_extra_conf: |
             PostUp = ping -c 1 fdcb:a987:6543:2022::c0:1 || :
             PostUp = ping -c 1 fdcb:a987:6543:2022::5a:9 || :
           wireguard_persistent_keep_alive: 25
-          wireguard_peer_only: # wireguard_peer_without_endpoint とセットで設定
+          wireguard_peer_only: # これらだけを Peer に設定 (接続先の wireguard_peer_without_endpoint とセットで設定)
           - conoha-u01
           - ns9
           wireguard_peer_extra_conf:
+            # IPv6 はこのホスト経由で外に出る
             conoha-u01: |
               AllowedIPs = ::/0
+
+        # 他 OS などの設定 (wireguard_extra_conf に設定)
+        #
+        # 端末には
+        # cat playbook/tmp/wireguard/wg2022/{conoha-u01,ns?}.peer-conf
+        # に
+        # PersistentKeepAlive = 25
+        # を 追加して設定
         _wireguard_peer_mbp: &wireguard_peer_mbp |
-            #[Peer]
-            ## knmbp8
-            #PublicKey = ...
-            #AllowedIPs = fdcb:a987:6543:2022::128/128
-            #[Peer]
-            ## knmbp21
-            #PublicKey = ...
-            #AllowedIPs = fdcb:a987:6543:2022::129/128
-            #[Peer]
-            ## MacBook Pro (15-inch, 2016)
-            #PublicKey = ...
-            #AllowedIPs = fdcb:a987:6543:2022::130/128
+            [Peer]
+            # knmbp21
+            PublicKey = zTNNG4SP94q9QOKlwmStYSNoSOcVGtWibJOg/ojQ0Vo=
+            AllowedIPs = fdcb:a987:6543:2022::30:21/128
+            [Peer]
+            # MacBook Pro (15-inch, 2016)
+            PublicKey = YDvWZJl0P8MVIbXdpf1gQCLOhsRclkT6ASXc+XolkCE=
+            AllowedIPs = fdcb:a987:6543:2022::30:16/128
 
       children:
         conoha:
@@ -74,18 +85,20 @@ all:
               wireguard_ipv6_netmask: '64'
               wireguard_nat_outside_interface: 'e+'
               wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
+              wireguard_extra_conf: *wireguard_peer_mbp
 
         sakura:
           vars:
             wireguard_host_v6_offset: 0x5a_0000
+            wireguard_extra_conf: *wireguard_peer_mbp
           hosts:
-#            ns6:
-#              wireguard_host_index: 6
-#            ns8:
-#              wireguard_host_index: 8
-#            ns9:
-#              wireguard_host_index: 9
-#              wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
+            ns6:
+              wireguard_host_index: 6
+            ns8:
+              wireguard_host_index: 8
+            ns9:
+              wireguard_host_index: 9
+              wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
 
         cloudatcost:
           vars:
@@ -111,15 +124,15 @@ all:
             raspi3b:
               wireguard_host_index: 0x31
               <<: *wireguard_conf_in_nat
-#            raspi3bp:
-#              wireguard_host_index: 0x32
-#              <<: *wireguard_conf_in_nat
-#            raspi4b1:
-#              wireguard_host_index: 0x41
-#              <<: *wireguard_conf_in_nat
-#            raspi4b2:
-#              wireguard_host_index: 0x42
-#              <<: *wireguard_conf_in_nat
+            raspi3bp:
+              wireguard_host_index: 0x32
+              <<: *wireguard_conf_in_nat
+            raspi4b1:
+              wireguard_host_index: 0x41
+              <<: *wireguard_conf_in_nat
+            raspi4b2:
+              wireguard_host_index: 0x42
+              <<: *wireguard_conf_in_nat
 
         home:
           vars:
