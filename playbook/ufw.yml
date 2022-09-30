@@ -1,0 +1,5 @@
+---
+- hosts: ufw
+  become: yes
+  roles:
+  - znz.ufw
