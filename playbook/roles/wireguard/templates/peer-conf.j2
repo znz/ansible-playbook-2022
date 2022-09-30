@@ -5,7 +5,7 @@ PublicKey = {{ wireguard_public_key.stdout }}
 AllowedIPs = {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv4_netmask }}
 {% endif %}{# IPv4 #}
 {% if wireguard_ipv6 %}{# IPv6 #}
-AllowedIPs = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv6_netmask }}
+AllowedIPs = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index + wireguard_host_v6_offset) }}/{{ wireguard_ipv6_netmask }}
 {% endif %}{# IPv6 #}
 {% if wireguard_endpoint_host is defined %}
 {%   if wireguard_endpoint_host == 'default_ipv4' %}{# force set Endpoint as default IPv4 address #}

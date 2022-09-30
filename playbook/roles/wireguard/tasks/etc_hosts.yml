@@ -17,7 +17,7 @@
   ansible.builtin.lineinfile:
     dest: '/etc/hosts'
     regexp: '^{{ wireguard_ipv6 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) | regex_escape() }}[ \t]'
-    line: '{{ wireguard_ipv6 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"]) }}	{{ item }}-v6.{{ wireguard_etc_hosts_domain }} {{ item }}.{{ wireguard_etc_hosts_domain }}{{ hostvars[item].wireguard_etc_hosts_extra_v6 | default("") }}'
+    line: '{{ wireguard_ipv6 | ansible.utils.nthhost(hostvars[item]["wireguard_host_index"] + hostvars[item]["wireguard_host_v6_offset"]) }}	{{ item }}-v6.{{ wireguard_etc_hosts_domain }} {{ item }}.{{ wireguard_etc_hosts_domain }}{{ hostvars[item].wireguard_etc_hosts_extra_v6 | default("") }}'
   loop: '{{ groups[wireguard_group_name] }}'
   when: 'wireguard_ipv6'
 
