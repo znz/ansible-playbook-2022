@@ -1,3 +1,6 @@
 [submodule "playbook/roles/znz.ufw"]
 	path = playbook/roles/znz.ufw
 	url = https://github.com/znz/ansible-role-ufw
+[submodule "playbook/roles/znz.nadoka"]
+	path = playbook/roles/znz.nadoka
+	url = https://github.com/znz/ansible-role-nadoka
