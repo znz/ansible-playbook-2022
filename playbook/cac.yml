@@ -1,0 +1,6 @@
+---
+- hosts: cac
+  become: yes
+  roles:
+  - hostname
+  - znz.nadoka

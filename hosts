@@ -25,3 +25,5 @@ sid.cac2022d1 interpreter_python=auto_silent
 conoha-u01
 [nadoka]
 conoha-u01
+[nadoka:children]
+cac
