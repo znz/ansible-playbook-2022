@@ -25,5 +25,8 @@ sid.cac2022d1 ansible_python_interpreter=auto_silent
 conoha-u01
 [nadoka]
 conoha-u01
+ns9
+iot
 [nadoka:children]
 cac
+raspi
