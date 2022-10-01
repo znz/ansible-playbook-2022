@@ -1,0 +1,5 @@
+---
+- hosts: nadoka
+  become: yes
+  roles:
+  - znz.nadoka

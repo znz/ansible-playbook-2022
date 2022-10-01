@@ -203,3 +203,64 @@ end
 
 desc "Run #{all_tasks.join(' ')}"
 task all: all_tasks
+
+namespace :play do
+  %i[
+    ufw
+    nadoka
+  ].each do |name|
+    desc "Play #{name}"
+    task name do
+      sh "ansible-playbook -i hosts playbook/#{name}.yml"
+    end
+    all_tasks.push "play:#{name}"
+  end
+end
+
+directory 'group_vars'
+directory 'playbook/tmp'
+
+file 'group_vars/nadoka.yml' => %w[group_vars playbook/tmp] do |t|
+  sh "bw get item 'nadoka (fprog)' > playbook/tmp/nadoka.json"
+  require 'json'
+  json = JSON.load_file('playbook/tmp/nadoka.json')
+  fields = json['login'].dup
+  json['fields'].each do |h|
+    fields[h['name']] = h['value']
+  end
+  File.write(t.name, <<-YAML + <<-'YAML')
+---
+nadoka:
+- service_name: "fprog"
+  irc_host: "#{fields['host']}"
+  irc_port: "#{fields['port']}"
+  irc_pass: "'#{fields['pass']}'"
+  irc_ssl_params: '{}'
+  irc_nick: "User"
+  channel_info: |
+    #{fields['channel_info']}
+YAML
+  more_config: |
+    if system('docker', 'ps', %i[out err]=>File::NULL)
+      require 'open3'
+      BotConfig << {
+        :name => :WatchBot,
+        :channels => %w"#servers",
+        :command => proc {
+          out, status = Open3.capture2e('docker', 'ps', '--format', "{\{.ID\}}\\t{\{.CreatedAt\}}\\t{\{.Image\}}\\t{\{.Names\}}\\t{\{.Command\}}")
+          out = out.split(/\n/)
+          unless status.success?
+            out << status.inspect
+          end
+          out
+        },
+        :min_interval => 60,
+      }
+    end
+  YAML
+end
+
+task 'play:nadoka' => 'group_vars/nadoka.yml'
+
+desc "Run #{all_tasks.join(' ')}"
+task all: all_tasks
