@@ -23,10 +23,12 @@ sid.cac2022d1 ansible_python_interpreter=auto_silent
 
 [ufw]
 conoha-u01
+
 [nadoka]
 conoha-u01
 ns9
 iot
+# cac2022d1$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 sid.cac2022d1
 [nadoka:children]
 cac
