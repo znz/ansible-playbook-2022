@@ -1,0 +1,86 @@
+---
+- name: "Create coredns group"
+  ansible.builtin.group:
+    name: "{{ coredns_group }}"
+    state: present
+    gid: "{{ coredns_gid }}"
+- name: "Create coredns user"
+  ansible.builtin.user:
+    name: "{{ coredns_user }}"
+    uid: "{{ coredns_uid }}"
+    group: "{{ coredns_group }}"
+    shell: "/usr/sbin/nologin"
+    createhome: false
+    home: /
+
+- name: create coredns configuration directories
+  file:
+    path: "/etc/coredns/{{ item.key }}"
+    state: directory
+    owner: root
+    group: "{{ coredns_group }}"
+    mode: 0750
+  loop: "{{ coredns_corefile|dict2items }}"
+- name: create coredns configuration
+  copy:
+    content: "{{ item.value }}"
+    dest: "/etc/coredns/{{ item.key }}/Corefile"
+    owner: root
+    group: "{{ coredns_group }}"
+    mode: 0440
+  loop: "{{ coredns_corefile|dict2items }}"
+  notify: restart coredns
+
+- name: "Get checksum for {{ go_arch }} architecture"
+  set_fact:
+    coredns_checksum: "{{ lookup('url', 'https://github.com/coredns/coredns/releases/download/v' + coredns_version + '/coredns_' + coredns_version + '_linux_' + go_arch + '.tgz.sha256').split(' ')[0] }}"
+  run_once: true
+
+- name: Download coredns binary to local folder
+  become: false
+  get_url:
+    url: "https://github.com/coredns/coredns/releases/download/v{{ coredns_version }}/coredns_{{ coredns_version }}_linux_{{ go_arch }}.tgz"
+    dest: "/tmp/coredns_{{ coredns_version }}_linux_{{ go_arch }}.tgz"
+    checksum: "sha256:{{ coredns_checksum }}"
+  register: _download_binary
+  until: _download_binary is succeeded
+  retries: 5
+  delay: 2
+  delegate_to: localhost
+  check_mode: false
+
+- name: Create unpack directory
+  become: false
+  file:
+    path: "/tmp/coredns_{{ coredns_version }}_linux_{{ go_arch }}"
+    state: directory
+    mode: 0755
+  delegate_to: localhost
+  check_mode: false
+
+- name: Unpack coredns binary
+  become: false
+  unarchive:
+    src: "/tmp/coredns_{{ coredns_version }}_linux_{{ go_arch }}.tgz"
+    dest: "/tmp/coredns_{{ coredns_version }}_linux_{{ go_arch }}"
+    creates: "/tmp/coredns_{{ coredns_version }}_linux_{{ go_arch }}/coredns"
+  delegate_to: localhost
+  check_mode: false
+
+- name: Propagate coredns binaries
+  copy:
+    src: "/tmp/coredns_{{ coredns_version }}_linux_{{ go_arch }}/coredns"
+    dest: "/usr/local/sbin/coredns"
+    mode: 0555
+    owner: "root"
+    group: "root"
+  notify: restart coredns
+
+- name: Copy the coredns systemd service file
+  template:
+    src: coredns@.service.j2
+    dest: /etc/systemd/system/coredns@.service
+    owner: root
+    group: root
+    mode: 0444
+  notify: restart coredns

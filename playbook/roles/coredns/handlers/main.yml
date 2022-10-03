@@ -1,0 +1,8 @@
+---
+- name: restart coredns
+  systemd:
+    daemon_reload: yes
+    name: "coredns@{{ item.key }}"
+    state: restarted
+    enabled: yes
+  loop: "{{ coredns_corefile|dict2items }}"

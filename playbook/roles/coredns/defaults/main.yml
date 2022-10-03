@@ -1,0 +1,8 @@
+---
+coredns_version: 1.10.0
+coredns_dns_port: 53
+
+coredns_group: "coredns"
+coredns_user: "coredns"
+coredns_gid: "30021"
+coredns_uid: "30021"

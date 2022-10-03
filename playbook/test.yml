@@ -1,0 +1,12 @@
+---
+- hosts: lima-ubuntu-btrfs
+  gather_facts: yes
+  become: yes
+  vars:
+    coredns_corefile:
+      eth0: |
+        . {
+          bind eth0
+        }
+  roles:
+  - coredns
