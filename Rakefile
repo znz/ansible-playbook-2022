@@ -171,7 +171,6 @@ namespace :local do
 end
 
 Dir.glob('inventories/wg*') do |inventory|
-  p inventory
   wg = File.basename(inventory)
 
   namespace wg do
@@ -194,7 +193,7 @@ Dir.glob('inventories/wg*') do |inventory|
     end
 
     if File.exist?("playbook/#{wg}-coredns.yml")
-      desc "Play coredns"
+      desc "Play coredns for #{wg}"
       task :coredns do
         env = { 'OBJC_DISABLE_INITIALIZE_FORK_SAFETY' => 'YES' }
         sh env, "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}-coredns.yml"

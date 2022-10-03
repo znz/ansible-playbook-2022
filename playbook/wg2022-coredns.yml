@@ -5,7 +5,15 @@
       wg2022: |
         . {
           bind wg2022
-          hosts /etc/hosts wg2022.n-z.jp
+          hosts hosts wg2022.n-z.jp
         }
+  tasks:
+  - name: 'Copy hosts'
+    copy:
+      src: 'tmp/wireguard/wg2022/hosts'
+      dest: '/etc/coredns/wg2022/hosts'
+      owner: 'root'
+      group: 'root'
+      mode: '0444'
   roles:
   - coredns
