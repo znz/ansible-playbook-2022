@@ -4,6 +4,7 @@ wireguard_nat_to_lan: ~
 wireguard_peer_without_endpoint: []
 wireguard_peer_extra_conf: {}
 wireguard_persistent_keep_alive: ~
+wireguard_dns: ~
 wireguard_extra_conf: ''
 wireguard_host_v6_offset: 0
 

@@ -26,6 +26,7 @@ all:
         wireguard_endpoint_host: 'default_ipv4' # デフォルト設定 (NAT 内などは個別に上書き)
         wireguard_listen_port: '53842' # 51820+2022
         wireguard_nat_outside_interface: ~ # 'e+'
+        wireguard_dns: 'fdcb:a987:6543:2022::c0:1' # conoha-u01
         wireguard_extra_conf: ~
         wireguard_etc_hosts_domain: 'wg2022.n-z.jp'
         wireguard_etc_hosts_add: []

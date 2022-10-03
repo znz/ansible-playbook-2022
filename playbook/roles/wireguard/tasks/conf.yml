@@ -15,6 +15,10 @@
     src: "/etc/wireguard/{{ wireguard_interface_name }}.peer-conf"
     dest: "tmp/wireguard/{{ wireguard_group_name }}/{{ inventory_hostname }}.peer-conf"
     flat: yes
+- name: 'Gather the package facts'
+  ansible.builtin.package_facts:
+    manager: auto
+  when: 'wireguard_dns'
 - name: "/etc/wireguard/{{ wireguard_interface_name }}.conf"
   ansible.builtin.template:
     src: "wg.conf.j2"
