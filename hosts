@@ -17,12 +17,13 @@ ns9 ansible_ssh_user=ansible-runner
 [misc]
 iot ansible_ssh_user=ansible-runner
 [lima]
-lima-default
+lima-default ansible_ssh_user=ansible-runner
 [nspawn]
 sid.cac2022d1 ansible_python_interpreter=auto_silent
 
 [ufw]
 conoha-u01
+lima-default
 
 [nadoka]
 conoha-u01

@@ -15,6 +15,7 @@ all:
 # fdcb:a987:6543:2022::1a:XXXX : # 家 (イエ から)
 # fdcb:a987:6543:2022::30:XXXX : サーバー以外 (mobile の m を横にして 3)
 # fdcb:a987:6543:2022::e1:XXXX : サーバー以外 (misc の m を横にして E)
+# fdcb:a987:6543:2022::11:XXXX : lima
 
         wireguard_group_name: wg2022
         wireguard_interface_name: wg2022
@@ -40,6 +41,7 @@ all:
         - raspi3bp
         - raspi4b1
         - raspi4b2
+        - lima-default
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
@@ -148,3 +150,11 @@ all:
           vars:
             wireguard_host_v6_offset: 0xe1_0000
           hosts:
+
+        lima:
+          vars:
+            wireguard_host_v6_offset: 0x11_0000
+          hosts:
+            lima-default:
+              wireguard_host_index: 0x01
+              <<: *wireguard_conf_in_nat
