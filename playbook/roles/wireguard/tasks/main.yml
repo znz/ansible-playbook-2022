@@ -7,8 +7,6 @@
   tags: wireguard_apt
 - import_tasks: "genkey.yml"
   tags: wireguard_genkey
-- import_tasks: "ufw.yml"
-  tags: wireguard_ufw
 - import_tasks: "conf.yml"
   tags: wireguard_conf
 - import_tasks: "etc_hosts.yml"

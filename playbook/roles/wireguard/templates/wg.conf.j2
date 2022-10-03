@@ -3,6 +3,10 @@
 {% set forward = namespace(ipv4 = 0, ipv6 = 0) %}
 ListenPort = {{ wireguard_listen_port }}
 PostUp = wg set %i private-key <(cat /etc/wireguard/{{ wireguard_interface_name }}.privatekey)
+PostDown = ufw delete allow out {{ wireguard_listen_port }}/udp
+PostDown = ufw delete allow     {{ wireguard_listen_port }}/udp
+PostUp   = ufw        allow     {{ wireguard_listen_port }}/udp comment "WireGuard {{ wireguard_group_name }}"
+PostUp   = ufw        allow out {{ wireguard_listen_port }}/udp comment "WireGuard {{ wireguard_group_name }}"
 {% if wireguard_ipv4 %}{# IPv4 #}
 Address = {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ wireguard_ipv4_netmask }}
 {%   if wireguard_ipv4_netmask != 32 %}
@@ -21,6 +25,12 @@ Address = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index + wireg
 {%   if wireguard_nat_outside_interface %}
 PostDown = ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 PostUp   = ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp   = ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+{# Allow routed #}
+PostDown = ufw route delete allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80
+PostUp   = ufw route        allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTP"
+PostDown = ufw route delete allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv6 }} to any port 443
+PostUp   = ufw route        allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv6 }} to any port 443 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTPS"
 {%   endif %}
 {% endif %}{# IPv6 #}
 {#
