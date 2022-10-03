@@ -170,25 +170,35 @@ namespace :local do
   end
 end
 
-%i[
-  wg2
-  wg2022
-].each do |wg|
+Dir.glob('inventories/wg*') do |inventory|
+  p inventory
+  wg = File.basename(inventory)
+
   namespace wg do
-    desc "Play wireguard for #{wg}"
-    task :all do
-      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml"
-    end
-    all_tasks.push "#{wg}:all"
+    if File.exist?("playbook/#{wg}.yml")
+      desc "Play wireguard for #{wg}"
+      task :all do
+        sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml"
+      end
+      all_tasks.push "#{wg}:all"
 
-    desc "Update conf of #{wg}"
-    task :conf do
-      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_conf"
+      desc "Update conf of #{wg}"
+      task :conf do
+        sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_conf"
+      end
+
+      desc "Update /etc/hosts for #{wg}"
+      task :hosts do
+        sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_etc_hosts"
+      end
     end
 
-    desc "Update /etc/hosts for #{wg}"
-    task :hosts do
-      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}.yml --tags wireguard_etc_hosts"
+    if File.exist?("playbook/#{wg}-coredns.yml")
+      desc "Play coredns"
+      task :coredns do
+        env = { 'OBJC_DISABLE_INITIALIZE_FORK_SAFETY' => 'YES' }
+        sh env, "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}-coredns.yml"
+      end
     end
   end
 end

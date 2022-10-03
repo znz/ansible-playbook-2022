@@ -1,0 +1,11 @@
+- hosts: conoha-u01
+  become: yes
+  vars:
+    coredns_corefile:
+      wg2022: |
+        . {
+          bind wg2022
+          hosts /etc/hosts wg2022.n-z.jp
+        }
+  roles:
+  - coredns
