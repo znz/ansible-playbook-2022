@@ -35,6 +35,25 @@ all:
         wireguard_etc_hosts_remove:
         - ip: 'False' # 試している途中に出来た IP アドレスになっていない行を消す
           hostnames: ['hosts-without-IPv4'] # hostnames は playbook 実行中の表示用で未使用
+        - ip: 'fdcb:a987:6543:2022::5a:6'
+        - ip: 'fdcb:a987:6543:2022::5a:8'
+        - ip: 'fdcb:a987:6543:2022::5a:9'
+        - ip: 'fdcb:a987:6543:2022::aa:31'
+        - ip: 'fdcb:a987:6543:2022::aa:32'
+        - ip: 'fdcb:a987:6543:2022::aa:41'
+        - ip: 'fdcb:a987:6543:2022::aa:42'
+        - ip: 'fdcb:a987:6543:2022::c0:1'
+        - ip: 'fdcb:a987:6543:2022::c0:d1'
+        - ip: 'fdcb:a987:6543:2022::c1:1'
+        - ip: 'fdcb:a987:6543:2022::c1:2'
+        - ip: 'fdcb:a987:6543:2022::c1:20d2'
+        - ip: 'fdcb:a987:6543:2022::c1:22d1'
+        - ip: 'fdcb:a987:6543:2022::c1:3'
+        - ip: 'fdcb:a987:6543:2022::c1:4'
+        - ip: 'fdcb:a987:6543:2022::11:1'
+
+        - ip: 'fdcb:a987:6543:2022::fd'
+        - ip: 'fdcb:a987:6543:2022::fe'
 
         # これらの Peer からは接続を待ち受けるだけ (未指定のホストへはハブになるホスト経由で接続)
         _wireguard_peer_without_endpoint: &wireguard_peer_without_endpoint
