@@ -92,22 +92,7 @@ all:
               wireguard_coredns: yes
               coredns_corefile:
                 wg2022: |
-                  . {
-                    log
-                    errors
-                    # health
-                    # ready
-                    reload
-                    loop
-                    bind wg2022
-                    hosts hosts wg2022.n-z.jp
-                    template IN A nip.io {
-                        match (^|[.])(?P<a>[0-9]*)[.](?P<b>[0-9]*)[.](?P<c>[0-9]*)[.](?P<d>[0-9]*)[.]nip[.]io[.]$
-                        answer "{{ .Name }} 60 IN A {{ .Group.a }}.{{ .Group.b }}.{{ .Group.c }}.{{ .Group.d }}"
-                        fallthrough
-                    }
-                    forward . 1.1.1.3 1.0.0.3
-                  }
+                  {{ lookup('file', '../inventories/wg2022/Corefile') }}
 
         sakura:
           vars:

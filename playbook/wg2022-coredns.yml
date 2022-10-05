@@ -1,12 +1,6 @@
 - hosts: conoha-u01
   become: yes
   vars:
-    coredns_corefile:
-      wg2022: |
-        . {
-          bind wg2022
-          hosts hosts wg2022.n-z.jp
-        }
   tasks:
   - name: 'Copy hosts'
     copy:
