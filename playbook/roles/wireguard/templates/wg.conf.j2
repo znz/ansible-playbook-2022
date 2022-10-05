@@ -72,7 +72,7 @@ PostUp = sysctl net.ipv6.conf.all.forwarding=1
 {% endif %}
 {# Add any other conf #}
 {% if wireguard_dns %}
-PostUp = resolvectl domain wg2022 wg2022.n-z.jp && resolvectl dns wg2022 fdcb:a987:6543:2022::c0:1 || :
+PostUp = resolvectl domain '{{ wireguard_interface_name }}'  '~{{ wireguard_etc_hosts_domain }}' && resolvectl dns '{{ wireguard_interface_name }}' '{{ wireguard_dns }}' || :
 {% endif %}
 {% if wireguard_coredns %}
 {%   if wireguard_ipv4 %}
