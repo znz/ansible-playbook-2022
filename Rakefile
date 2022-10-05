@@ -195,6 +195,7 @@ Dir.glob('inventories/wg*') do |inventory|
     if File.exist?("playbook/#{wg}-coredns.yml")
       desc "Play coredns for #{wg}"
       task :coredns do
+        # https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#running-on-macos
         env = { 'OBJC_DISABLE_INITIALIZE_FORK_SAFETY' => 'YES' }
         sh env, "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}-coredns.yml"
       end

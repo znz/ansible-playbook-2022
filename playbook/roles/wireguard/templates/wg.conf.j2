@@ -70,10 +70,20 @@ PostUp = sysctl net.ipv6.conf.all.forwarding=1
 {# Do not unset because other ifaces may depend forwarding=1 #}
 {# PostDown = sysctl net.ipv6.conf.default.forwarding=0 net.ipv6.conf.all.forwarding=0 #}
 {% endif %}
-{% if wireguard_dns and "resolvconf" in ansible_facts.packages %}
-DNS = {{ wireguard_dns }}
-{% endif %}
 {# Add any other conf #}
+{% if wireguard_dns %}
+PostUp = resolvectl domain wg2022 wg2022.n-z.jp && resolvectl dns wg2022 fdcb:a987:6543:2022::c0:1 || :
+{% endif %}
+{% if wireguard_coredns %}
+{%   if wireguard_ipv4 %}
+PostDown = ufw delete allow in on {{ wireguard_group_name }} from {{ wireguard_ipv4 }} to any port 53
+PostUp   = ufw        allow in on {{ wireguard_group_name }} from {{ wireguard_ipv4 }} to any port 53 comment "WireGuard {{ wireguard_group_name }} coredns"
+{%   endif %}
+{%   if wireguard_ipv6 %}
+PostDown = ufw delete allow in on {{ wireguard_group_name }} from {{ wireguard_ipv6 }} to any port 53
+PostUp   = ufw        allow in on {{ wireguard_group_name }} from {{ wireguard_ipv6 }} to any port 53 comment "WireGuard {{ wireguard_group_name }} coredns"
+{%   endif %}
+{% endif %}
 {{ wireguard_extra_conf }}
 {# Peer sections #}
 {#
