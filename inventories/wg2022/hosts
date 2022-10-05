@@ -28,6 +28,10 @@ all:
         wireguard_nat_outside_interface: ~ # 'e+'
         wireguard_dns: 'fdcb:a987:6543:2022::c0:1' # conoha-u01
         wireguard_extra_conf: ~
+
+        wireguard_hosts_allow:
+        - "sshd: [fdcb:a987:6543:2022::]/64"
+
         wireguard_etc_hosts_domain: 'wg2022.n-z.jp'
         wireguard_etc_hosts_add: []
 

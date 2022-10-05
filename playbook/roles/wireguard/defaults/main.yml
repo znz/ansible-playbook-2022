@@ -7,6 +7,7 @@ wireguard_persistent_keep_alive: ~
 wireguard_dns: ~
 wireguard_coredns: no
 wireguard_extra_conf: ''
+wireguard_hosts_allow: []
 wireguard_host_v6_offset: 0
 
 # for hostvars

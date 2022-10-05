@@ -11,3 +11,9 @@
   tags: wireguard_conf
 - import_tasks: "etc_hosts.yml"
   tags: wireguard_etc_hosts
+- name: "TCP wrappers: Add lines to /etc/hosts.allow"
+  lineinfile:
+    dest: "/etc/hosts.allow"
+    line: "{{ item }}"
+  loop: "{{ wireguard_hosts_allow }}"
+  tags: wireguard_hosts_allow
