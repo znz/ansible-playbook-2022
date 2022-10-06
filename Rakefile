@@ -105,17 +105,18 @@ end
 #  machinectl shell $NAME /usr/bin/install -m 700 -d /root/.ssh
 #  machinectl copy-to $NAME ~/.ssh/authorized_keys /root/.ssh/authorized_keys
 namespace :nspawn do
-  nspawn_json = File.expand_path('~/.cache/machinectl_list.json')
-  nspawn_ssh_config = File.expand_path('~/.cache/nspawn.ssh_config')
-  nspawn_hosts = File.expand_path('~/.cache/nspawn.hosts')
-
   task :ssh_config, [:machine_manager] do |_t, args|
     machine_manager = args.fetch(:machine_manager) { ENV.fetch('MACHINE_MANAGER') }
-    sh %(grep 'Include #{nspawn_ssh_config}' ~/.ssh/config || echo 'Include #{nspawn_ssh_config}' >> ~/.ssh/config)
+    nspawn_json = File.expand_path("~/.cache/machinectl_list.#{machine_manager}.json")
+    nspawn_ssh_config_basename = "nspawn.#{machine_manager}.ssh_config"
+    nspawn_ssh_config = File.expand_path("~/.cache/#{nspawn_ssh_config_basename}")
+    nspawn_hosts = File.expand_path("~/.cache/nspawn.#{machine_manager}.hosts")
+
+    sh %(grep 'Include .*#{nspawn_ssh_config_basename}' ~/.ssh/config || echo 'Include #{nspawn_ssh_config}' >> ~/.ssh/config)
+
     sh %(ssh #{machine_manager} machinectl list -o json > #{nspawn_json})
     require 'json'
     list = JSON.load_file(nspawn_json)
-    machines = list.map { |h| h['machine'] }
 
     hosts = list.map do |h|
       name = h['machine']
@@ -156,7 +157,9 @@ namespace :nspawn do
     %i[config needrestart],
   ].each do |namespace, task_name|
     desc "#{namespace}:#{task_name} for nspawn"
-    task task_name => :ssh_config do |t|
+    task task_name => :ssh_config do |_t, args|
+      machine_manager = args.fetch(:machine_manager) { ENV.fetch('MACHINE_MANAGER') }
+      nspawn_hosts = File.expand_path("~/.cache/nspawn.#{machine_manager}.hosts")
       Rake::Task["#{namespace}:#{task_name}"].invoke nspawn_hosts
     end
     all_tasks.push "nspawn:#{task_name}"
