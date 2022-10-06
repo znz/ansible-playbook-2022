@@ -47,6 +47,10 @@ all:
         - raspi4b1
         - raspi4b2
         - lima-default
+        - iot
+        - zabbix-202210.iot
+        - zabbix-202210xx.iot
+        - sid.cac2022d1
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
@@ -159,6 +163,18 @@ all:
           vars:
             wireguard_host_v6_offset: 0xe1_0000
           hosts:
+            sid.cac2022d1:
+              wireguard_host_index: 0x2051
+              <<: *wireguard_conf_in_nat
+            iot:
+              wireguard_host_index: 0x1000
+              <<: *wireguard_conf_in_nat
+            zabbix-202210.iot:
+              wireguard_host_index: 0x1021
+              <<: *wireguard_conf_in_nat
+            zabbix-202210xx.iot:
+              wireguard_host_index: 0x1022
+              <<: *wireguard_conf_in_nat
 
         lima:
           vars:

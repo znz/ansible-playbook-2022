@@ -20,10 +20,15 @@ iot ansible_ssh_user=ansible-runner
 lima-default ansible_ssh_user=ansible-runner
 [nspawn]
 sid.cac2022d1 ansible_python_interpreter=auto_silent
+[zabbix]
+zabbix-202210.iot ansible_ssh_user=ansible-runner
+zabbix-202210xx.iot ansible_ssh_user=ansible-runner
 
 [ufw]
 conoha-u01
 lima-default
+[ufw:children]
+zabbix
 
 [nadoka]
 conoha-u01
@@ -34,3 +39,4 @@ sid.cac2022d1
 [nadoka:children]
 cac
 raspi
+zabbix
