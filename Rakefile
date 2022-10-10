@@ -4,13 +4,15 @@ all_tasks = []
 
 namespace :misc do
   desc 'Ping all hosts'
-  task :ping do
-    sh 'ansible all -i hosts -m ping --one-line'
+  task :ping, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible all -i #{inventory} -m ping --one-line"
   end
 
   desc 'Show uptime'
-  task :uptime do
-    sh 'ansible all -i hosts -a uptime --one-line'
+  task :uptime, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible all -i #{inventory} -a uptime --one-line"
   end
 end
 
@@ -86,6 +88,8 @@ namespace :lima do
   end
 
   [
+    %i[misc ping],
+    %i[misc uptime],
     %i[apt update],
     %i[apt upgrade],
     %i[apt autoremove],
@@ -150,6 +154,8 @@ namespace :nspawn do
   end
 
   [
+    %i[misc ping],
+    %i[misc uptime],
     %i[apt update],
     %i[apt upgrade],
     %i[apt autoremove],
