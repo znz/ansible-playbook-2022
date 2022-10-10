@@ -20,10 +20,6 @@ iot ansible_ssh_user=ansible-runner
 lima-default ansible_ssh_user=ansible-runner
 [nspawn]
 sid.cac2022d1 ansible_python_interpreter=auto_silent
-amd64-bullseye.iot ansible_ssh_user=ansible-runner
-[zabbix]
-zabbix-202210.iot ansible_ssh_user=ansible-runner
-zabbix-202210xx.iot ansible_ssh_user=ansible-runner
 
 [ufw]
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
@@ -31,21 +27,16 @@ conoha-u01
 lima-default
 cac2022d1
 iot
-amd64-bullseye.iot
-[ufw:children]
-zabbix
 
 [nadoka]
 conoha-u01
 ns9
 iot
-amd64-bullseye.iot
 # cac2022d1$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 sid.cac2022d1
 [nadoka:children]
 cac
 raspi
-zabbix
 
 [all:vars]
 ansible_ssh_pipelining=yes
