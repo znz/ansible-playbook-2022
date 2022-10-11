@@ -4,10 +4,10 @@ all:
   children:
     chkbuild:
       hosts:
-        raspi3b:
-          chkbuild_rubyci_nickname: 'ubuntu2204-raspi-armv7l'
-          chkbuild_runner: 'start-rubyci'
-          chkbuild_cpuquota: '75%'
+#        raspi3b:
+#          chkbuild_rubyci_nickname: 'ubuntu2204-raspi-armv7l'
+#          chkbuild_runner: 'start-rubyci'
+#          chkbuild_cpuquota: '75%'
         raspi3bp:
           chkbuild_rubyci_nickname: 'debian11-aarch64'
           chkbuild_runner: 'start-rubyci'
