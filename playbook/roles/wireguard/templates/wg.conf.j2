@@ -13,8 +13,16 @@ Address = {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ 
 {%     set forward.ipv4 = forward.ipv4 + 1 %}
 {%   endif %}
 {%   if wireguard_nat_outside_interface %}
-PostDown = iptables -D FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
-PostUp   = iptables -A FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; iptables -t nat -A POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+{#
+PostDown = ufw route delete allow in on {{ wireguard_interface_name }} from {{ wireguard_ipv4 }}
+PostUp   = ufw route        allow in on {{ wireguard_interface_name }} from {{ wireguard_ipv4 }}
+#}
+PostDown = iptables -t nat -D POSTROUTING -s {{ wireguard_ipv4 }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp   = iptables -t nat -A POSTROUTING -s {{ wireguard_ipv4 }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv4 }} to any port 80
+PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv4 }} to any port 80 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTP"
+PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv4 }} to any port 443
+PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv4 }} to any port 443 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTPS"
 {%   endif %}
 {% endif %}{# IPv4 #}
 {% if wireguard_ipv6 %}{# IPv6 #}
@@ -23,13 +31,17 @@ Address = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index + wireg
 {%     set forward.ipv6 = forward.ipv6 + 1 %}
 {%   endif %}
 {%   if wireguard_nat_outside_interface %}
-PostDown = ip6tables -D FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
-PostUp   = ip6tables -A FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+{#
+PostDown = ufw route delete allow in on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }}
+PostUp   = ufw route        allow in on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }}
+#}
+PostDown = ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp   = ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 {# Allow routed #}
-PostDown = ufw route delete allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80
-PostUp   = ufw route        allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTP"
-PostDown = ufw route delete allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv6 }} to any port 443
-PostUp   = ufw route        allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv6 }} to any port 443 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTPS"
+PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80
+PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTP"
+PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv6 }} to any port 443
+PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_nat_outside_interface }} from {{ wireguard_ipv6 }} to any port 443 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTPS"
 {%   endif %}
 {% endif %}{# IPv6 #}
 {#
