@@ -13,8 +13,8 @@ Address = {{ wireguard_ipv4 | ansible.utils.nthhost(wireguard_host_index) }}/{{ 
 {%     set forward.ipv4 = forward.ipv4 + 1 %}
 {%   endif %}
 {%   if wireguard_nat_outside_interface %}
-PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
-PostUp   = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp   = iptables -A FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; iptables -t nat -A POSTROUTING -s {{ wireguard_ipv4 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 {%   endif %}
 {% endif %}{# IPv4 #}
 {% if wireguard_ipv6 %}{# IPv6 #}
@@ -23,8 +23,8 @@ Address = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index + wireg
 {%     set forward.ipv6 = forward.ipv6 + 1 %}
 {%   endif %}
 {%   if wireguard_nat_outside_interface %}
-PostDown = ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
-PostUp   = ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostDown = ip6tables -D FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
+PostUp   = ip6tables -A FORWARD -i {{ wireguard_interface_name }} -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 {# Allow routed #}
 PostDown = ufw route delete allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80
 PostUp   = ufw route        allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTP"
@@ -45,16 +45,16 @@ Example:
 {%   for iface in wireguard_nat_to_lan.ifaces %}
 {%     if 'ipv4' in wireguard_nat_to_lan %}{# Use NAT if source address is in wireguard_nat_to_lan.ipv4 #}
 {%       set forward.ipv4 = forward.ipv4 + 1 %}
-PostUp = iptables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv4 }} -j ACCEPT
+PostUp = iptables -A FORWARD -i {{ wireguard_interface_name }} -s {{ wireguard_nat_to_lan.ipv4 }} -j ACCEPT
 PostUp = iptables -t nat -A POSTROUTING -s {{ wireguard_nat_to_lan.ipv4 }} -o {{ iface }} -j MASQUERADE
-PostDown = iptables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv4 }} -j ACCEPT
+PostDown = iptables -A FORWARD -i {{ wireguard_interface_name }} -s {{ wireguard_nat_to_lan.ipv4 }} -j ACCEPT
 PostDown = iptables -t nat -D POSTROUTING -s {{ wireguard_nat_to_lan.ipv4 }} -o {{ iface }} -j MASQUERADE
 {%     endif %}
 {%     if 'ipv6' in wireguard_nat_to_lan %}{# Use NAT if source address is in wireguard_nat_to_lan.ipv6 #}
 {%       set forward.ipv6 = forward.ipv6 + 1 %}
-PostUp = ip6tables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv6 }} -j ACCEPT
+PostUp = ip6tables -A FORWARD -i {{ wireguard_interface_name }} -s {{ wireguard_nat_to_lan.ipv6 }} -j ACCEPT
 PostUp = ip6tables -t nat -A POSTROUTING -s {{ wireguard_nat_to_lan.ipv6 }} -o {{ iface }} -j MASQUERADE
-PostDown = ip6tables -A FORWARD -i %i -s {{ wireguard_nat_to_lan.ipv6 }} -j ACCEPT
+PostDown = ip6tables -A FORWARD -i {{ wireguard_interface_name }} -s {{ wireguard_nat_to_lan.ipv6 }} -j ACCEPT
 PostDown = ip6tables -t nat -D POSTROUTING -s {{ wireguard_nat_to_lan.ipv6 }} -o {{ iface }} -j MASQUERADE
 {%     endif %}
 {%   endfor %}
@@ -71,7 +71,7 @@ PostUp = sysctl net.ipv6.conf.all.forwarding=1
 {% endif %}
 {# Add any other conf #}
 {% if wireguard_dns %}
-PostUp = resolvectl domain '{{ wireguard_interface_name }}'  '~{{ wireguard_etc_hosts_domain }}' && resolvectl dns '{{ wireguard_interface_name }}' '{{ wireguard_dns }}' || :
+PostUp = resolvectl domain '{{ wireguard_interface_name }}' '~{{ wireguard_etc_hosts_domain }}' && resolvectl dns '{{ wireguard_interface_name }}' '{{ wireguard_dns }}' || :
 {% endif %}
 {% if wireguard_coredns %}
 {%   if wireguard_ipv4 %}
