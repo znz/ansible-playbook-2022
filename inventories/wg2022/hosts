@@ -63,10 +63,10 @@ all:
           wireguard_peer_only: # これらだけを Peer に設定 (接続先の wireguard_peer_without_endpoint とセットで設定)
           - conoha-u01
           - ns9
-          #wireguard_peer_extra_conf:
-          #  # IPv6 はこのホスト経由で外に出る
-          #  conoha-u01: |
-          #    AllowedIPs = ::/0
+          wireguard_peer_extra_conf:
+            # IPv6 はこのホスト経由で外に出る
+            conoha-u01: |
+              AllowedIPs = 2000::/3
 
         # 他 OS などの設定 (wireguard_extra_conf に設定)
         #
