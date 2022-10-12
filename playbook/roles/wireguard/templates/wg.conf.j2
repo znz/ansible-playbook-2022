@@ -25,7 +25,6 @@ Address = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index + wireg
 {%   if wireguard_nat_outside_interface %}
 PostDown = ip6tables -D FORWARD -i %i -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 PostUp   = ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
-PostUp   = ip6tables -A FORWARD -i %i -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_ipv6 | ansible.utils.ipaddr('subnet') }} -o {{ wireguard_nat_outside_interface }} -j MASQUERADE
 {# Allow routed #}
 PostDown = ufw route delete allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80
 PostUp   = ufw route        allow in on {{ wireguard_group_name }} out on {{ wireguard_nat_outside_interface }} proto tcp from {{ wireguard_ipv6 }} to any port 80 comment "WireGuard {{ wireguard_group_name }} NAT routed HTTP"
