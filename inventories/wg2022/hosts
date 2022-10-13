@@ -168,6 +168,7 @@ all:
             wireguard_host_v6_offset: 0xe1_0000
           hosts:
             sid.cac2022d1:
+              ansible_python_interpreter: auto_silent
               wireguard_host_index: 0x2051
               <<: *wireguard_conf_in_nat
             iot:
