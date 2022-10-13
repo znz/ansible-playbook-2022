@@ -228,6 +228,7 @@ namespace :play do
     cac
     ufw
     nadoka
+    remote-dev-env
   ].each do |name|
     desc "Play #{name}"
     task name do
@@ -236,6 +237,8 @@ namespace :play do
     all_tasks.push "play:#{name}"
   end
 end
+
+
 
 directory 'group_vars'
 directory 'playbook/tmp'
