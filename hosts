@@ -34,6 +34,7 @@ iot
 conoha-u01
 ns9
 iot
+outgoing-cat
 # cac2022d1$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 sid.cac2022d1
 [nadoka:children]
