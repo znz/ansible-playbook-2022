@@ -16,3 +16,11 @@ all:
 #          chkbuild_rubyci_nickname: 'debian64-bullseye'
 #          chkbuild_runner: 'start-build'
 #          chkbuild_cpuquota: '30%'
+        amd64-bullseye.cac2022d1:
+          chkbuild_rubyci_nickname: 'amd64-bullseye'
+          chkbuild_runner: 'start-build'
+          chkbuild_cpuquota: '10%'
+        bullseye.cac2022d1:
+          chkbuild_rubyci_nickname: 'bullseye'
+          chkbuild_runner: 'start-build'
+          chkbuild_cpuquota: '10%'
