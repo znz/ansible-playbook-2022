@@ -28,7 +28,7 @@
       - docker
       - systemd-journal
 
-  - name: 'Install build-essential'
+  - name: 'Install build-essential' # before linuxbrew (stop to install gcc by brew)
     ansible.builtin.apt:
       name: 'build-essential'
 
@@ -46,6 +46,7 @@
     loop:
     - 'docker-compose'
     - 'aws-vault'
+    - 'awscli' # aws-vault exec $profile -- aws s3 ls
 
   - name: 'Install pass'
     ansible.builtin.apt:
@@ -58,8 +59,8 @@
     loop:
     - 'test -x /home/linuxbrew/.linuxbrew/bin/brew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
     - 'export EDITOR=vi'
-    - ': ${XDG_CONFIG_HOME:=~/.config}; export XDG_CONFIG_HOME'
     - ': ${XDG_CACHE_HOME:=~/.cache}; export XDG_CACHE_HOME'
+    - ': ${XDG_CONFIG_HOME:=~/.config}; export XDG_CONFIG_HOME'
     - ': ${XDG_DATA_HOME:=~/.local/share}; export XDG_DATA_HOME'
     - ': ${XDG_STATE_HOME:=~/.local/state}; export XDG_STATE_HOME'
     - 'export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config'
@@ -68,6 +69,7 @@
     - 'export AWS_VAULT_PASS_PREFIX=aws-vault'
     - 'export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker'
     - 'export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass'
+    - 'export PASSWORD_STORE_GPG_OPTS=--no-autostart'
 
   - name: 'Create directories'
     ansible.builtin.file:
@@ -92,7 +94,7 @@
       modification_time: preserve
       access_time: preserve
 
-  - name: 'Create symlink to docker-compose in docker/cli-plugins'
+  - name: 'Enable `docker compose`'
     ansible.builtin.file:
       src: '/home/linuxbrew/.linuxbrew/opt/docker-compose/bin/docker-compose'
       dest: '/home/{{ dev_user }}/.config/docker/cli-plugins/docker-compose'
