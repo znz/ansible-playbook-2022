@@ -1,9 +1,10 @@
 ---
-- hosts: remote-dev-env
+- hosts: remote_dev_hosts
   become: yes
   gather_facts: no
   vars:
     ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+    dev_user: 'ubuntu'
   tasks:
   - name: 'sshd: StreamLocalBindUnlink yes'
     ansible.builtin.copy:
@@ -19,15 +20,85 @@
     ansible.builtin.apt:
       name: 'docker.io'
 
-  - name: 'adduser ubuntu docker'
+  - name: 'User {{ dev_user }} add groups docker,systemd-journal'
     ansible.builtin.user:
-      name: 'ubuntu'
+      name: '{{ dev_user }}'
       append: yes
-      groups: 'docker'
+      groups:
+      - docker
+      - systemd-journal
+
+  - name: 'Install build-essential'
+    ansible.builtin.apt:
+      name: 'build-essential'
+
+  - name: 'Install linuxbrew'
+    ansible.builtin.shell:
+      cmd: 'env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+      creates: '/home/linuxbrew/.linuxbrew/bin/brew'
+    become_user: '{{ dev_user }}'
+
+  - name: 'Install using linuxbrew'
+    community.general.homebrew:
+      name: '{{ item }}'
+      state: present
+    become_user: '{{ dev_user }}'
+    loop:
+    - 'docker-compose'
+    - 'aws-vault'
 
   - name: 'Install pass'
     ansible.builtin.apt:
       name: 'pass'
+
+  - name: 'Update .bashrc'
+    ansible.builtin.lineinfile:
+      path: '/home/{{ dev_user }}/.bashrc'
+      line: '{{ item }}'
+    loop:
+    - 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+    - 'export EDITOR=vi'
+    - ': ${XDG_CONFIG_HOME:=~/.config}; export XDG_CONFIG_HOME'
+    - ': ${XDG_CACHE_HOME:=~/.cache}; export XDG_CACHE_HOME'
+    - ': ${XDG_DATA_HOME:=~/.local/share}; export XDG_DATA_HOME'
+    - ': ${XDG_STATE_HOME:=~/.local/state}; export XDG_STATE_HOME'
+    - 'export AWS_CONFIG_FILE="$XDG_CONFIG_HOME"/aws/config'
+    - 'export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME"/aws/credentials'
+    - 'export AWS_VAULT_BACKEND=pass'
+    - 'export AWS_VAULT_PASS_PREFIX=aws-vault'
+    - 'export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker'
+    - 'export PASSWORD_STORE_DIR="$XDG_DATA_HOME"/pass'
+
+  - name: 'Create directories'
+    ansible.builtin.file:
+      path: '{{ item }}'
+      state: directory
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
+      mode: '0755'
+    loop:
+    - '/home/{{ dev_user }}/.config' # before run `byobu`
+    - '/home/{{ dev_user }}/.config/git'
+    - '/home/{{ dev_user }}/.config/docker/cli-plugins'
+    - '/home/{{ dev_user }}/.local/share' # before run `less`
+
+  - name: 'Create .config/git/config' # before `git config`
+    ansible.builtin.file:
+      path: '/home/{{ dev_user }}/.config/git/config'
+      state: touch
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
+      mode: '0644'
+      modification_time: preserve
+      access_time: preserve
+
+  - name: 'Create symlink to docker-compose in docker/cli-plugins'
+    ansible.builtin.file:
+      src: '/home/linuxbrew/.linuxbrew/opt/docker-compose/bin/docker-compose'
+      dest: '/home/{{ dev_user }}/.config/docker/cli-plugins/docker-compose'
+      state: link
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
 
   handlers:
     - name: 'Restart sshd'
