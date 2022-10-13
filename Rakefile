@@ -77,6 +77,7 @@ namespace :config do
 end
 
 namespace :lima do
+  lima_all_tasks = []
   lima_ssh_config = File.expand_path('~/.cache/lima.ssh_config')
   lima_hosts = File.expand_path('~/.cache/lima.hosts')
 
@@ -100,8 +101,11 @@ namespace :lima do
     task task_name => :ssh_config do |t|
       Rake::Task["#{namespace}:#{task_name}"].invoke lima_hosts
     end
-    all_tasks.push "lima:#{task_name}"
+    lima_all_tasks.push "lima:#{task_name}"
   end
+
+  desc "Run #{lima_all_tasks.join(' ')}"
+  task all: lima_all_tasks
 end
 
 # Prepare:
@@ -109,6 +113,8 @@ end
 #  machinectl shell $NAME /usr/bin/install -m 700 -d /root/.ssh
 #  machinectl copy-to $NAME ~/.ssh/authorized_keys /root/.ssh/authorized_keys
 namespace :nspawn do
+  nspawn_all_tasks = []
+
   task :ssh_config, [:machine_manager] do |_t, args|
     machine_manager = args.fetch(:machine_manager) { ENV.fetch('MACHINE_MANAGER') }
     nspawn_json = File.expand_path("~/.cache/machinectl_list.#{machine_manager}.json")
@@ -168,8 +174,11 @@ namespace :nspawn do
       nspawn_hosts = File.expand_path("~/.cache/nspawn.#{machine_manager}.hosts")
       Rake::Task["#{namespace}:#{task_name}"].invoke nspawn_hosts
     end
-    all_tasks.push "nspawn:#{task_name}"
+    nspawn_all_tasks.push "nspawn:#{task_name}"
   end
+
+  desc "Run #{nspawn_all_tasks.join(' ')}"
+  task all: nspawn_all_tasks
 end
 
 namespace :local do
@@ -208,6 +217,8 @@ Dir.glob('inventories/wg*') do |inventory|
         env = { 'OBJC_DISABLE_INITIALIZE_FORK_SAFETY' => 'YES' }
         sh env, "ansible-playbook -i inventories/#{wg}/hosts playbook/#{wg}-coredns.yml"
       end
+
+      all_tasks.push "#{wg}:coredns"
     end
   end
 end
