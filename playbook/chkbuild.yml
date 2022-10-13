@@ -53,6 +53,27 @@
       owner: '{{ chkbuild_owner }}'
       group: 'chkbuild'
 
+  - name: 'Install packages'
+    apt:
+      name:
+      - autoconf
+      - patch
+      - build-essential
+      - rustc
+      - libssl-dev
+      - libyaml-dev
+      - libreadline6-dev
+      - zlib1g-dev
+      - libgmp-dev
+      - libncurses5-dev
+      - libffi-dev
+      - libgdbm6
+      - libgdbm-dev
+      - libdb-dev
+      - uuid-dev
+      - ruby
+      - git
+
   - name: "Clone chkbuild repository"
     git:
       dest: '/home/chkbuild/chkbuild'
@@ -67,23 +88,6 @@
       state: link
       owner: '{{ chkbuild_owner }}'
       group: 'chkbuild'
-
-  - name: 'Install packages'
-    apt:
-      name:
-      - autoconf
-      - bison
-      - build-essential
-      - libssl-dev
-      - libyaml-dev
-      - libreadline-dev
-      - zlib1g-dev
-      - libncurses5-dev
-      - libffi-dev
-      - libgdbm6
-      - libgdbm-dev
-      - libdb-dev
-      - ruby
 
   - name: 'Install aws-sdk-s3 gem'
     gem:
