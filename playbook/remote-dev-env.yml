@@ -56,7 +56,7 @@
       path: '/home/{{ dev_user }}/.bashrc'
       line: '{{ item }}'
     loop:
-    - 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
+    - 'test -x /home/linuxbrew/.linuxbrew/bin/brew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
     - 'export EDITOR=vi'
     - ': ${XDG_CONFIG_HOME:=~/.config}; export XDG_CONFIG_HOME'
     - ': ${XDG_CACHE_HOME:=~/.cache}; export XDG_CACHE_HOME'
