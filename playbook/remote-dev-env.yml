@@ -94,6 +94,19 @@
       group: '{{ dev_user }}'
       mode: '0644'
 
+  - name: 'Mask gpg-agent.service'
+    ansible.builtin.systemd:
+      name: '{{ item }}'
+      scope: user
+      masked: yes
+    become_user: '{{ dev_user }}'
+    loop:
+    - gpg-agent.service
+    - gpg-agent.socket
+    - gpg-agent-ssh.socket
+    - gpg-agent-extra.socket
+    - gpg-agent-browser.socket
+
   - name: 'Create directories'
     ansible.builtin.file:
       path: '{{ item }}'
