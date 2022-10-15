@@ -85,28 +85,6 @@
     become_user: '{{ dev_user }}'
     changed_when: no
 
-  - name: 'Stop autostart gpg-agent'
-    ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.gnupg/gpg.conf'
-      line: 'no-autostart'
-      create: yes
-      owner: '{{ dev_user }}'
-      group: '{{ dev_user }}'
-      mode: '0644'
-
-  - name: 'Mask gpg-agent.service'
-    ansible.builtin.systemd:
-      name: '{{ item }}'
-      scope: user
-      masked: yes
-    become_user: '{{ dev_user }}'
-    loop:
-    - gpg-agent.service
-    - gpg-agent.socket
-    - gpg-agent-ssh.socket
-    - gpg-agent-extra.socket
-    - gpg-agent-browser.socket
-
   - name: 'Create directories'
     ansible.builtin.file:
       path: '{{ item }}'
@@ -119,6 +97,16 @@
     - '/home/{{ dev_user }}/.config/git'
     - '/home/{{ dev_user }}/.config/docker/cli-plugins'
     - '/home/{{ dev_user }}/.local/share' # before run `less`
+    - '/home/{{ dev_user }}/.gnupg' # before create gpg.conf
+
+  - name: 'Stop autostart gpg-agent'
+    ansible.builtin.lineinfile:
+      path: '/home/{{ dev_user }}/.gnupg/gpg.conf'
+      line: 'no-autostart'
+      create: yes
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
+      mode: '0644'
 
   - name: 'Create .config/git/config' # before `git config`
     ansible.builtin.file:
@@ -137,6 +125,38 @@
       state: link
       owner: '{{ dev_user }}'
       group: '{{ dev_user }}'
+
+  - name: 'Check linger'
+    ansible.builtin.stat:
+      path: '/var/lib/systemd/linger/{{ dev_user }}'
+    register: result
+
+  - name: 'Always restore linger'
+    block:
+    - name: 'Enable linger'
+      ansible.builtin.command:
+        cmd: 'loginctl enable-linger {{ dev_user }}'
+        creates: '/var/lib/systemd/linger/{{ dev_user }}'
+      when: 'not result.stat.exists'
+
+    - name: 'Mask gpg-agent.service'
+      ansible.builtin.systemd:
+        name: '{{ item }}'
+        scope: user
+        masked: yes
+      become_user: '{{ dev_user }}'
+      loop:
+      - gpg-agent.service
+      - gpg-agent.socket
+      - gpg-agent-ssh.socket
+      - gpg-agent-extra.socket
+      - gpg-agent-browser.socket
+    always:
+    - name: 'Disable linger'
+      ansible.builtin.command:
+        cmd: 'loginctl disable-linger {{ dev_user }}'
+        removes: '/var/lib/systemd/linger/{{ dev_user }}'
+      when: 'not result.stat.exists'
 
   handlers:
     - name: 'Restart sshd'
