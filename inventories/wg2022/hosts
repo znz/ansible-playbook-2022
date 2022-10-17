@@ -52,7 +52,6 @@ all:
         - zabbix-202210xx.iot
         - sid.cac2022d1
         - divine-fawn
-        - outgoing-cat
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
@@ -177,9 +176,6 @@ all:
               <<: *wireguard_conf_in_nat
             divine-fawn:
               wireguard_host_index: 0x1011
-              <<: *wireguard_conf_in_nat
-            outgoing-cat:
-              wireguard_host_index: 0x1012
               <<: *wireguard_conf_in_nat
             zabbix-202210.iot:
               wireguard_host_index: 0x1021

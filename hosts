@@ -18,7 +18,6 @@ ns9 ansible_ssh_user=ansible-runner
 iot ansible_ssh_user=ansible-runner
 [remote_dev_hosts]
 divine-fawn ansible_ssh_user=ansible-runner
-outgoing-cat ansible_ssh_user=ansible-runner
 [lima]
 lima-default ansible_ssh_user=ansible-runner
 [nspawn]
@@ -35,7 +34,7 @@ iot
 conoha-u01
 ns9
 iot
-outgoing-cat
+divine-fawn
 # cac2022d1$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 sid.cac2022d1
 [nadoka:children]
