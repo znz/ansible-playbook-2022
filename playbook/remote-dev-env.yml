@@ -97,6 +97,15 @@
     - '/home/{{ dev_user }}/.config/git'
     - '/home/{{ dev_user }}/.config/docker/cli-plugins'
     - '/home/{{ dev_user }}/.local/share' # before run `less`
+
+  - name: 'Create private directories'
+    ansible.builtin.file:
+      path: '{{ item }}'
+      state: directory
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
+      mode: '0700'
+    loop:
     - '/home/{{ dev_user }}/.gnupg' # before create gpg.conf
 
   - name: 'Stop autostart gpg-agent'
