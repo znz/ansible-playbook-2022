@@ -107,6 +107,7 @@
       mode: '0700'
     loop:
     - '/home/{{ dev_user }}/.gnupg' # before create gpg.conf
+    - '/home/{{ dev_user }}/.ssh'
 
   - name: 'Stop autostart gpg-agent'
     ansible.builtin.lineinfile:
@@ -166,6 +167,39 @@
         cmd: 'loginctl disable-linger {{ dev_user }}'
         removes: '/var/lib/systemd/linger/{{ dev_user }}'
       when: 'not result.stat.exists'
+
+  - name: 'Get api.github.com/meta'
+    get_url:
+      url: 'https://api.github.com/meta'
+      dest: 'tmp/github.meta.txt'
+    delegate_to: localhost
+    become: no
+    run_once: yes
+
+  - name: 'here'
+    debug:
+      msg: here
+
+  - name: 'Add ssh config'
+    ansible.builtin.lineinfile:
+      path: '/home/{{ dev_user }}/.ssh/config'
+      line: '{{ item }}'
+      create: yes
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
+      mode: '0600'
+    loop:
+    - 'HashKnownHosts no'
+
+  - name: 'Add github.com ssh host keys'
+    ansible.builtin.lineinfile:
+      path: '/home/{{ dev_user }}/.ssh/known_hosts'
+      line: 'github.com {{ item }}'
+      create: yes
+      owner: '{{ dev_user }}'
+      group: '{{ dev_user }}'
+      mode: '0600'
+    loop: '{{ lookup("file", "tmp/github.meta.txt") | from_json | community.general.json_query("ssh_keys") }}'
 
   handlers:
     - name: 'Restart sshd'
