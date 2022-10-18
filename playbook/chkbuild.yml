@@ -56,7 +56,9 @@
   - name: 'Install packages'
     apt:
       name:
+      # ruby-build wiki
       - autoconf
+      - bison
       - patch
       - build-essential
       - rustc
@@ -71,6 +73,7 @@
       - libgdbm-dev
       - libdb-dev
       - uuid-dev
+      # misc
       - ruby
       - git
 
