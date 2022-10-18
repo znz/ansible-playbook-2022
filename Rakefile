@@ -6,13 +6,13 @@ namespace :misc do
   desc 'Ping all hosts'
   task :ping, [:inventory] do |_t, args|
     inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -m ping --one-line"
+    sh "ansible all -i #{inventory} -m ping --one-line --forks 20"
   end
 
   desc 'Show uptime'
   task :uptime, [:inventory] do |_t, args|
     inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -a uptime --one-line"
+    sh "ansible all -i #{inventory} -a uptime --one-line --forks 20"
   end
 end
 
@@ -44,7 +44,7 @@ namespace :apt do
   desc 'Apt update'
   task :update, [:inventory] do |_t, args|
     inventory = args.inventory || 'hosts'
-    sh "ansible-playbook -i #{inventory} playbook/update.yml -b"
+    sh "ansible-playbook -i #{inventory} playbook/update.yml -b --forks 20"
   end
 
   desc 'Apt upgrade'
