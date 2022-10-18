@@ -109,6 +109,8 @@
       content: |
         #!/bin/bash
         set -euo pipefail
+        git -C "$(rbenv root)" pull
+        git -C "$(rbenv root)"/plugins/ruby-build pull
         for v in $(rbenv install -l 2>/dev/null | grep -E '^[0-9]' | sort -r); do
           echo rbenv install -s -v $v
           rbenv install -s -v $v
