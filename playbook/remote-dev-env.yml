@@ -20,7 +20,7 @@
     ansible.builtin.apt:
       name: 'docker.io'
 
-  - name: 'User {{ dev_user }} add groups docker,systemd-journal'
+  - name: 'Add user "{{ dev_user }}" to groups "docker,systemd-journal"'
     ansible.builtin.user:
       name: '{{ dev_user }}'
       append: yes

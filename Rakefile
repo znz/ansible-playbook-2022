@@ -231,6 +231,19 @@ namespace :chkbuild do
   all_tasks.push 'chkbuild:all'
 end
 
+namespace :ruby_build do
+  desc 'Play ruby-build'
+  task :all do
+    sh 'ansible-playbook -i inventories/ruby-build/hosts playbook/ruby-build.yml'
+  end
+
+  desc 'Play ruby-build for updating scripts'
+  task :scripts do
+    sh 'ansible-playbook -i inventories/ruby-build/hosts playbook/ruby-build.yml --start-at-task "Create rbenv-install-stable-versions"'
+  end
+  all_tasks.push 'ruby_build:all'
+end
+
 desc "Run #{all_tasks.join(' ')}"
 task all: all_tasks
 

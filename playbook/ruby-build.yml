@@ -1,0 +1,156 @@
+---
+- hosts: ruby_build_hosts
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+    #ruby_build_user: 'user'
+  tasks:
+  - name: 'Add user "{{ ruby_build_user }}" to groups "systemd-journal"'
+    ansible.builtin.user:
+      name: '{{ ruby_build_user }}'
+      append: yes
+      groups:
+      - systemd-journal
+
+  - name: 'Install packages'
+    apt:
+      name:
+      # ruby-build wiki
+      - autoconf
+      - bison
+      - patch
+      - build-essential
+      - rustc
+      - libssl-dev
+      - libyaml-dev
+      - libreadline6-dev
+      - zlib1g-dev
+      - libgmp-dev
+      - libncurses5-dev
+      - libffi-dev
+      - libgdbm6
+      - libgdbm-dev
+      - libdb-dev
+      - uuid-dev
+      # ruby-build deb Recommends
+      - libsqlite3-dev
+      - libxml2-dev
+      - libxslt-dev
+      # misc
+      - git
+      - wget
+      - curl
+      - aria2
+      - ruby
+      - ccache
+
+  - name: 'Add lines to .bashrc'
+    ansible.builtin.lineinfile:
+      path: '/home/{{ ruby_build_user }}/.bashrc'
+      line: '{{ item }}'
+    loop:
+    - ': ${XDG_CACHE_HOME:=~/.cache}; export XDG_CACHE_HOME'
+    - ': ${XDG_CONFIG_HOME:=~/.config}; export XDG_CONFIG_HOME'
+    - ': ${XDG_DATA_HOME:=~/.local/share}; export XDG_DATA_HOME'
+    - ': ${XDG_STATE_HOME:=~/.local/state}; export XDG_STATE_HOME'
+    - 'test -x "$HOME/.rbenv/bin/rbenv" && export PATH="$HOME/.rbenv/bin:$PATH" && eval "$(rbenv init -)"'
+    - 'export CC="ccache gcc" CXX="ccache g++" MJIT_CC=gcc'
+
+  - name: 'Create directories'
+    ansible.builtin.file:
+      path: '{{ item }}'
+      state: directory
+      owner: '{{ ruby_build_user }}'
+      group: '{{ ruby_build_user }}'
+      mode: '0755'
+    loop:
+    - '/home/{{ ruby_build_user }}/.config' # before run `byobu`
+    - '/home/{{ ruby_build_user }}/.config/git'
+    - '/home/{{ ruby_build_user }}/.local/share' # before run `less`
+
+  - name: 'Create private directories'
+    ansible.builtin.file:
+      path: '{{ item }}'
+      state: directory
+      owner: '{{ ruby_build_user }}'
+      group: '{{ ruby_build_user }}'
+      mode: '0700'
+    loop:
+    - '/home/{{ ruby_build_user }}/.gnupg' # before create gpg.conf
+    - '/home/{{ ruby_build_user }}/.ssh'
+
+  - name: 'Create .config/git/config' # before `git config`
+    ansible.builtin.file:
+      path: '/home/{{ ruby_build_user }}/.config/git/config'
+      state: touch
+      owner: '{{ ruby_build_user }}'
+      group: '{{ ruby_build_user }}'
+      mode: '0644'
+      modification_time: preserve
+      access_time: preserve
+
+  - name: 'Clone rbenv repository'
+    become_user: '{{ ruby_build_user }}'
+    ansible.builtin.git:
+      dest: '/home/{{ ruby_build_user }}/.rbenv'
+      repo: 'https://github.com/rbenv/rbenv'
+      depth: 1
+
+  - name: 'Clone ruby-build repository'
+    become_user: '{{ ruby_build_user }}'
+    ansible.builtin.git:
+      dest: '/home/{{ ruby_build_user }}/.rbenv/plugins/ruby-build'
+      repo: 'https://github.com/rbenv/ruby-build'
+      depth: 1
+
+  - name: 'Create rbenv-install-stable-versions'
+    ansible.builtin.copy:
+      content: |
+        #!/bin/bash
+        set -euo pipefail
+        for v in $(rbenv install -l 2>/dev/null | grep -E '^[0-9]' | sort -r); do
+          echo rbenv install -s -v $v
+          rbenv install -s -v $v
+        done
+      dest: '/usr/local/bin/rbenv-install-stable-versions'
+      mode: '0555'
+      owner: 'root'
+      group: 'root'
+
+  - name: 'Create init-ruby-build-dev'
+    ansible.builtin.copy:
+      content: |
+        #!/bin/bash
+        set -euxo pipefail
+        if [ ! -d ~/ruby ]; then
+          git clone https://github.com/ruby/ruby ~/ruby --depth=1
+        else
+          cd ~/ruby
+          git pull
+        fi
+        mkdir -p ~/ruby/build
+        cd ~/ruby/build
+        test -f ../configure || ../autogen.sh
+        configure_args=(
+          cppflags='-DUSE_RVARGC -DRUBY_DEBUG -DVM_CHECK_MODE=1 -DTRANSIENT_HEAP_CHECK_MODE -DRGENGC_CHECK_MODE -DENC_DEBUG -DUSE_RUBY_DEBUG_LOG=1'
+          CC='ccache gcc' MJIT_CC=gcc CXX='ccache g++'
+          --prefix="$(rbenv root)"/versions/master
+          --with-baseruby=/usr/bin/ruby
+          --disable-install-doc
+          -C
+        )
+        if command -v rustc >/dev/null 2>&1; then
+          if ruby -e 'exit Gem::Version.new("1.58.1") <= Gem::Version.new(ARGV[1])' -- $(rustc --version); then
+            configure_args=( "${configure_args=[@]}" --enable-yjit=dev_nodebug )
+          fi
+        fi
+        test -f Makefile || ../configure "${configure_args[@]}"
+        make all -j$(nproc)
+        make install -j$(nproc)
+        make install-doc -j$(nproc)
+        make check -j$(nproc)
+      dest: '/usr/local/bin/init-ruby-build-dev'
+      mode: '0555'
+      owner: 'root'
+      group: 'root'
