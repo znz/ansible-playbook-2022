@@ -5,6 +5,8 @@
   vars:
     ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
     chkbuild_owner: 'chkbuild-owner'
+    # chkbuild_timer_state: started
+    # chkbuild_timer_enabled: yes
   tasks:
   - name: 'Create chkbuild group'
     group:
@@ -76,6 +78,7 @@
       # misc
       - ruby
       - git
+      - ccache
 
   - name: "Clone chkbuild repository"
     git:
@@ -100,6 +103,7 @@
       state: latest
     become: yes
     become_user: '{{ chkbuild_owner }}'
+    when: 'chkbuild_rubyci_nickname is defined'
 
   - name: 'Install chkbuild.service'
     copy:
@@ -116,11 +120,6 @@
         Group=chkbuild
         WorkingDirectory=/home/chkbuild/chkbuild
         PrivateTmp=true
-
-        Environment=RUBYCI_NICKNAME={{ chkbuild_rubyci_nickname }}
-        # AWS_ACCESS_KEY_ID
-        # AWS_SECRET_ACCESS_KEY
-        EnvironmentFile=-/etc/systemd/system/chkbuild.env
       dest: '/etc/systemd/system/chkbuild.service'
       mode: '0444'
       owner: 'root'
@@ -144,7 +143,6 @@
       mode: '0444'
       owner: 'root'
       group: 'root'
-    notify: 'Enable chkbuild.timer'
 
   - name: 'Create /etc/systemd/system/chkbuild.service.d'
     file:
@@ -154,13 +152,42 @@
       owner: 'root'
       group: 'root'
 
+  - name: 'Copy chkbuild rubyci.conf'
+    copy:
+      content: |
+        [Service]
+        Environment=RUBYCI_NICKNAME={{ chkbuild_rubyci_nickname }}
+        # AWS_ACCESS_KEY_ID
+        # AWS_SECRET_ACCESS_KEY
+        EnvironmentFile=-/etc/systemd/system/chkbuild.env
+      dest: '/etc/systemd/system/chkbuild.service.d/rubyci.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    when: 'chkbuild_rubyci_nickname is defined'
+    notify: 'systemctl daemon-reload'
+
   - name: 'Copy chkbuild quota.conf'
     copy:
       content: |
         [Service]
         CPUQuota={{ chkbuild_cpuquota }}
       dest: '/etc/systemd/system/chkbuild.service.d/quota.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
     when: 'chkbuild_cpuquota is defined'
+    notify: 'systemctl daemon-reload'
+
+  - name: 'Copy chkbuild ccache.conf'
+    copy:
+      content: |
+        [Service]
+        Environment=CC='ccache gcc' MJIT_CC=gcc CXX='ccache g++'
+      dest: '/etc/systemd/system/chkbuild.service.d/ccache.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
     notify: 'systemctl daemon-reload'
 
   - name: 'Copy chkbuild touch.conf'
@@ -169,6 +196,9 @@
         [Service]
         ExecStartPost=!/usr/bin/touch /run/chkbuild.done
       dest: '/etc/systemd/system/chkbuild.service.d/touch.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
     notify: 'systemctl daemon-reload'
 
   - name: 'Add reboot-if-required'
@@ -184,6 +214,9 @@
         Type=oneshot
         ExecStart=/sbin/reboot
       dest: '/etc/systemd/system/reboot-if-required.service'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
     notify: 'systemctl daemon-reload'
   - name: 'Add trigger reboot-if-required'
     copy:
@@ -198,21 +231,25 @@
         [Install]
         WantedBy=multi-user.target
       dest: '/etc/systemd/system/reboot-after-chkbuild.path'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
     notify: 'Enable reboot-after-chkbuild.path'
 
+  - name: 'Enable chkbuild.timer'
+    systemd:
+      name: 'chkbuild.timer'
+      state: '{{ chkbuild_timer_state | default("started") }}'
+      daemon_reload: yes
+      enabled: '{{ chkbuild_timer_enabled | default(True) }}'
+
   handlers:
-    - name: 'systemctl daemon-reload'
-      systemd:
-        daemon_reload: yes
-    - name: 'Enable chkbuild.timer'
-      systemd:
-        name: 'chkbuild.timer'
-        state: started
-        daemon_reload: yes
-        enabled: yes
-    - name: 'Enable reboot-after-chkbuild.path'
-      systemd:
-        name: 'reboot-after-chkbuild.path'
-        state: started
-        daemon_reload: yes
-        enabled: yes
+  - name: 'systemctl daemon-reload'
+    systemd:
+      daemon_reload: yes
+  - name: 'Enable reboot-after-chkbuild.path'
+    systemd:
+      name: 'reboot-after-chkbuild.path'
+      state: started
+      daemon_reload: yes
+      enabled: yes

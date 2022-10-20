@@ -17,10 +17,12 @@ all:
 #          chkbuild_runner: 'start-build'
 #          chkbuild_cpuquota: '30%'
         amd64-bullseye.cac2022d1:
-          chkbuild_rubyci_nickname: 'amd64-bullseye'
           chkbuild_runner: 'start-build'
           chkbuild_cpuquota: '10%'
+          chkbuild_timer_state: stopped
+          chkbuild_timer_enabled: no
         bullseye.cac2022d1:
-          chkbuild_rubyci_nickname: 'bullseye'
           chkbuild_runner: 'start-build'
           chkbuild_cpuquota: '10%'
+          chkbuild_timer_state: stopped
+          chkbuild_timer_enabled: no
