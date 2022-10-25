@@ -45,6 +45,7 @@ namespace :apt do
   task :update, [:inventory] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible-playbook -i #{inventory} playbook/update.yml -b --forks 20"
+    sh "ansible all -i #{inventory} -a 'apt-get full-upgrade --download-only -y' -b --forks 20"
   end
 
   desc 'Apt upgrade'
