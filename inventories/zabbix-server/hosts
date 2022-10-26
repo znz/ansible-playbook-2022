@@ -1,0 +1,14 @@
+# -*- yaml -*-
+---
+all:
+  children:
+    zabbix_server:
+      hosts:
+        zabbix-202210.iot:
+          zabbix_login_user: "{{ lookup('ansible.builtin.env', 'ZABBIX_USERNAME', default='Admin') }}"
+          zabbix_login_password: "{{ lookup('ansible.builtin.env', 'ZABBIX_PASSWORD', default='zabbix') }}"
+          zabbix_server_url: "{{ lookup('ansible.builtin.env', 'ZABBIX_SERVER', default='http://localhost:8080/') }}"
+        zabbix-202210xx.iot:
+          zabbix_login_user: "{{ lookup('ansible.builtin.env', 'ZABBIX_USERNAME', default='Admin') }}"
+          zabbix_login_password: "{{ lookup('ansible.builtin.env', 'ZABBIX_PASSWORD', default='zabbix') }}"
+          zabbix_server_url: "{{ lookup('ansible.builtin.env', 'ZABBIX_SERVER', default='http://localhost:8080/') }}"

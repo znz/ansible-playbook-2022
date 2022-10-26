@@ -245,6 +245,15 @@ namespace :ruby_build do
   all_tasks.push 'ruby_build:all'
 end
 
+namespace :zabbix do
+  desc 'Play zabbix-server'
+  task :server do
+    sh 'ansible-playbook -i inventories/zabbix-server/hosts playbook/zabbix-server.yml'
+  end
+
+  all_tasks.push 'zabbix:server'
+end
+
 desc "Run #{all_tasks.join(' ')}"
 task all: all_tasks
 

@@ -1,0 +1,23 @@
+---
+- hosts: zabbix_server
+  gather_facts: no
+  tasks:
+  - name: 'Install python3-pip'
+    ansible.builtin.apt:
+      name: python3-pip
+  - name: 'pip zabbix-api'
+    ansible.builtin.pip:
+      name: zabbix-api
+
+  - name: 'Create host groups'
+    community.zabbix.zabbix_group:
+      host_groups:
+      - 'macOS hosts'
+      # 既存のホスト:
+      #- 'Linux servers'
+      #- 'Virtual machines'
+      #- 'Zabbix servers'
+      state: present
+      login_user: '{{ zabbix_login_user }}'
+      login_password: '{{ zabbix_login_password }}'
+      server_url: '{{ zabbix_server_url }}'
