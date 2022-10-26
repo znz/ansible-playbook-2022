@@ -13,7 +13,8 @@
     community.zabbix.zabbix_group:
       host_groups:
       - 'macOS hosts'
-      # 既存のホスト:
+      - 'Other'
+      # 既存のホストグループ:
       #- 'Linux servers'
       #- 'Virtual machines'
       #- 'Zabbix servers'
