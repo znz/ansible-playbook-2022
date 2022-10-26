@@ -100,6 +100,8 @@ all:
               wireguard_extra_conf: |
                 PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22 comment "WireGuard {{ wireguard_group_name }} routed SSH"
+                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 10050
+                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 10050 comment "WireGuard {{ wireguard_group_name }} routed zabbix-agent"
                 {{ _wireguard_peer_mbp }}
               wireguard_coredns: yes
               coredns_corefile:
