@@ -232,6 +232,19 @@ namespace :chkbuild do
   all_tasks.push 'chkbuild:all'
 end
 
+namespace :remote_dev do
+  desc 'Play remote-dev-env'
+  task :all do
+    sh 'ansible-playbook -i inventories/remote-dev/hosts playbook/remote-dev-env.yml'
+  end
+
+  desc 'Play ruby-build from here'
+  task :here do
+    sh 'ansible-playbook -i inventories/remote-dev/hosts playbook/remote-dev-env.yml --start-at-task "here"'
+  end
+  all_tasks.push 'ruby_build:all'
+end
+
 namespace :ruby_build do
   desc 'Play ruby-build'
   task :all do
@@ -262,7 +275,6 @@ namespace :play do
     cac
     ufw
     nadoka
-    remote-dev-env
   ].each do |name|
     desc "Play #{name}"
     task name do
@@ -271,8 +283,6 @@ namespace :play do
     all_tasks.push "play:#{name}"
   end
 end
-
-
 
 directory 'group_vars'
 directory 'playbook/tmp'

@@ -16,41 +16,51 @@
       group: 'root'
     notify: 'Restart sshd'
 
-  - name: 'Install docker.io'
-    ansible.builtin.apt:
-      name: 'docker.io'
+  - name: 'When docker is defined'
+    block:
+    - name: 'Install docker.io'
+      ansible.builtin.apt:
+        name: 'docker.io'
+    - name: 'Add user "{{ dev_user }}" to groups "docker"'
+      ansible.builtin.user:
+        name: '{{ dev_user }}'
+        append: yes
+        groups:
+        - docker
+    when: 'docker is defined'
 
-  - name: 'Add user "{{ dev_user }}" to groups "docker,systemd-journal"'
+  - name: 'Add user "{{ dev_user }}" to groups "systemd-journal"'
     ansible.builtin.user:
       name: '{{ dev_user }}'
       append: yes
       groups:
-      - docker
       - systemd-journal
 
   - name: 'Install build-essential' # before linuxbrew (stop to install gcc by brew)
     ansible.builtin.apt:
       name: 'build-essential'
+    when: 'linuxbrew is defined'
 
   - name: 'Install linuxbrew'
     ansible.builtin.shell:
       cmd: 'env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
       creates: '/home/linuxbrew/.linuxbrew/bin/brew'
     become_user: '{{ dev_user }}'
+    when: 'linuxbrew is defined'
 
   - name: 'Install using linuxbrew'
     community.general.homebrew:
       name: '{{ item }}'
       state: present
     become_user: '{{ dev_user }}'
-    loop:
-    - 'docker-compose'
-    - 'aws-vault'
-    - 'awscli' # aws-vault exec $profile -- aws s3 ls
+    loop: '{{ linuxbrew }}'
+    when: 'linuxbrew is defined'
 
-  - name: 'Install pass'
+  - name: 'Install packages using apt'
     ansible.builtin.apt:
-      name: 'pass'
+      name: '{{ item }}'
+    loop: '{{ apt_packages }}'
+    when: 'apt_packages is defined'
 
   - name: 'Add lines to .bashrc'
     ansible.builtin.lineinfile:
@@ -135,6 +145,7 @@
       state: link
       owner: '{{ dev_user }}'
       group: '{{ dev_user }}'
+    when: 'docker is defined'
 
   - name: 'Check linger'
     ansible.builtin.stat:

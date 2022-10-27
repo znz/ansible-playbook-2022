@@ -16,8 +16,6 @@ ns8 ansible_ssh_user=ansible-runner
 ns9 ansible_ssh_user=ansible-runner
 [misc]
 iot ansible_ssh_user=ansible-runner
-[remote_dev_hosts]
-divine-fawn ansible_ssh_user=ansible-runner
 [lima]
 lima-default ansible_ssh_user=ansible-runner
 [nspawn]
