@@ -19,7 +19,7 @@ all:
           apt_packages:
           - 'ripgrep'
           - 'jq'
-        sid.cac2022d1:
+        sid.iot:
           apt_packages:
           - 'ansible-core'
           - 'apt-listbugs'

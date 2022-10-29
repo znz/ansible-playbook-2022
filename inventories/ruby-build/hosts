@@ -4,9 +4,7 @@ all:
   children:
     ruby_build_hosts:
       hosts:
-        amd64-bullseye.cac2022d1:
-          ruby_build_user: 'user'
-        sid.cac2022d1:
+        sid.iot:
           ruby_build_user: 'user'
         amd64-bullseye.iot:
           ruby_build_user: 'user'

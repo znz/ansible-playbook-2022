@@ -1,7 +1,7 @@
 [cac]
 cac2020d2 ansible_ssh_user=ansible-runner
 cac2021k[1:4] ansible_ssh_user=ansible-runner
-cac2022d1 ansible_ssh_user=ansible-runner
+#cac2022d1 ansible_ssh_user=ansible-runner
 [conoha]
 conoha-d01 ansible_ssh_user=ansible-runner
 conoha-u01 ansible_ssh_user=ansible-runner
@@ -18,14 +18,11 @@ ns9 ansible_ssh_user=ansible-runner
 iot ansible_ssh_user=ansible-runner
 [lima]
 lima-default ansible_ssh_user=ansible-runner
-[nspawn]
-sid.cac2022d1 ansible_python_interpreter=auto_silent
 
 [ufw]
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
 conoha-u01
 lima-default
-cac2022d1
 iot
 
 [nadoka]
@@ -33,10 +30,9 @@ conoha-u01
 ns9
 iot
 divine-fawn
-# cac2022d1$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
-sid.cac2022d1
+# nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 [nadoka:children]
-cac
+#cac
 raspi
 
 [all:vars]

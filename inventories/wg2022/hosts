@@ -50,7 +50,6 @@ all:
         - iot
         - zabbix-202210.iot
         - zabbix-202210xx.iot
-        - sid.cac2022d1
         - divine-fawn
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
@@ -135,8 +134,8 @@ all:
               wireguard_host_index: 4
             cac2020d2:
               wireguard_host_index: 0x20d2
-            cac2022d1:
-              wireguard_host_index: 0x22d1
+            #cac2022d1:
+            #  wireguard_host_index: 0x22d1
 
         raspi:
           vars:
@@ -169,10 +168,10 @@ all:
           vars:
             wireguard_host_v6_offset: 0xe1_0000
           hosts:
-            sid.cac2022d1:
-              ansible_python_interpreter: auto_silent
-              wireguard_host_index: 0x2051
-              <<: *wireguard_conf_in_nat
+            #sid.cac2022d1:
+            #  ansible_python_interpreter: auto_silent
+            #  wireguard_host_index: 0x2051
+            #  <<: *wireguard_conf_in_nat
             iot:
               wireguard_host_index: 0x1000
               <<: *wireguard_conf_in_nat
