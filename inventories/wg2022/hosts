@@ -48,6 +48,7 @@ all:
         - raspi4b2
         - lima-default
         - iot
+        - sid.iot
         - zabbix-202210.iot
         - zabbix-202210xx.iot
         - divine-fawn
@@ -183,6 +184,9 @@ all:
               <<: *wireguard_conf_in_nat
             zabbix-202210xx.iot:
               wireguard_host_index: 0x1022
+              <<: *wireguard_conf_in_nat
+            sid.iot:
+              wireguard_host_index: 0x1023
               <<: *wireguard_conf_in_nat
 
         lima:
