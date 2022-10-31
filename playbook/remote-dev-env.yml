@@ -4,7 +4,6 @@
   gather_facts: no
   vars:
     ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
-    dev_user: 'ubuntu'
   tasks:
   - name: 'sshd: StreamLocalBindUnlink yes'
     ansible.builtin.copy:
@@ -21,7 +20,7 @@
     - name: 'Install docker.io'
       ansible.builtin.apt:
         name: 'docker.io'
-    - name: 'Add user "{{ dev_user }}" to groups "docker"'
+    - name: 'Add $dev_user to groups "docker"'
       ansible.builtin.user:
         name: '{{ dev_user }}'
         append: yes
@@ -29,7 +28,7 @@
         - docker
     when: 'docker is defined'
 
-  - name: 'Add user "{{ dev_user }}" to groups "systemd-journal"'
+  - name: 'Add $dev_user to groups "systemd-journal"'
     ansible.builtin.user:
       name: '{{ dev_user }}'
       append: yes

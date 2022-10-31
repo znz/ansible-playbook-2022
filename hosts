@@ -29,7 +29,6 @@ iot
 conoha-u01
 ns9
 iot
-divine-fawn
 # nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 [nadoka:children]
 #cac
