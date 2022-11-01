@@ -30,6 +30,7 @@ all:
           - 'aria2'
           - 'autoconf'
           - 'bash-completion'
+          - 'bind9-dnsutils'
           - 'binfmt-support'
           - 'bison'
           - 'btop'
