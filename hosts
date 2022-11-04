@@ -34,5 +34,9 @@ iot
 #cac
 raspi
 
+[lxd]
+conoha-u01
+iot
+
 [all:vars]
 ansible_ssh_pipelining=yes

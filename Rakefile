@@ -275,6 +275,7 @@ namespace :play do
     cac
     ufw
     nadoka
+    lxd
   ].each do |name|
     desc "Play #{name}"
     task name do

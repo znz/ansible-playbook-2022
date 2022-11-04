@@ -1,0 +1,75 @@
+---
+- hosts: lxd
+  become: yes
+  gather_facts: yes
+  vars:
+    ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+  tasks:
+  - name: 'Allow DNS from lxd'
+    community.general.ufw:
+      rule: allow
+      port: '53'
+      interface_in: 'lxdbr0'
+      comment: 'DNS from lxd'
+
+  - name: 'Allow DHCPv4 to lxd'
+    community.general.ufw:
+      rule: allow
+      from_port: '68'
+      to_ip: '0.0.0.0/0'
+      port: '67'
+      proto: 'udp'
+      interface_in: 'lxdbr0'
+      comment: 'DHCPv4 to lxd'
+  - name: 'Allow DHCPv4 from lxd'
+    community.general.ufw:
+      rule: allow
+      from_ip: '{{ ansible_lxdbr0.ipv4.address }}'
+      from_port: '67'
+      port: '68'
+      proto: 'udp'
+      interface_out: 'lxdbr0'
+      comment: 'DHCPv4 from lxd'
+
+  - name: 'Allow DHCPv6 to lxd'
+    community.general.ufw:
+      rule: allow
+      from_port: '546'
+      to_ip: '::/0'
+      port: '547'
+      proto: 'udp'
+      interface_in: 'lxdbr0'
+      comment: 'DHCPv6 to lxd'
+  - name: 'Allow DHCPv6 from lxd'
+    community.general.ufw:
+      rule: allow
+      from_ip: '::/0'
+      from_port: '547'
+      port: '546'
+      proto: 'udp'
+      interface_out: 'lxdbr0'
+      comment: 'DHCPv6 from lxd'
+
+  - name: 'Install apt-cacher-ng'
+    ansible.builtin.apt:
+      name: 'apt-cacher-ng'
+
+  - name: 'Allow to apt-cacher-ng from lxd (IPv4)'
+    # ufw delete allow in on lxdbr0 to x.y.z.w port 3142 proto tcp
+    community.general.ufw:
+      rule: allow
+      to_ip: '{{ ansible_lxdbr0.ipv4.address }}'
+      port: '3142'
+      proto: 'tcp'
+      interface_in: 'lxdbr0'
+      comment: 'to apt-cacher-ng from lxd'
+
+  - name: 'Allow to apt-cacher-ng from lxd (IPv6)'
+    # ufw delete allow in on lxdbr0 to x.y.z.w port 3142 proto tcp
+    community.general.ufw:
+      rule: allow
+      to_ip: '{{ ansible_lxdbr0.ipv6.0.address }}'
+      port: '3142'
+      proto: 'tcp'
+      interface_in: 'lxdbr0'
+      comment: 'to apt-cacher-ng from lxd'
