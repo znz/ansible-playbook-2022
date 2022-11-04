@@ -13,6 +13,7 @@
       comment: 'DNS from lxd'
 
   - name: 'Allow DHCPv4 to lxd'
+    # ufw delete allow in on lxdbr0 from any port 68 to 0.0.0.0/0 port 67 proto udp
     community.general.ufw:
       rule: allow
       from_port: '68'
@@ -22,6 +23,7 @@
       interface_in: 'lxdbr0'
       comment: 'DHCPv4 to lxd'
   - name: 'Allow DHCPv4 from lxd'
+    # ufw delete allow out on lxdbr0 from 10.y.z.1 port 67 to any port 68 proto udp
     community.general.ufw:
       rule: allow
       from_ip: '{{ ansible_lxdbr0.ipv4.address }}'
@@ -32,6 +34,7 @@
       comment: 'DHCPv4 from lxd'
 
   - name: 'Allow DHCPv6 to lxd'
+    # ufw delete allow in on lxdbr0 from ::/0 port 546 to any port 547 proto udp
     community.general.ufw:
       rule: allow
       from_port: '546'
@@ -41,6 +44,7 @@
       interface_in: 'lxdbr0'
       comment: 'DHCPv6 to lxd'
   - name: 'Allow DHCPv6 from lxd'
+    # ufw delete allow out on lxdbr0 from ::/0 port 547 to any port 546 proto udp
     community.general.ufw:
       rule: allow
       from_ip: '::/0'

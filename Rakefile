@@ -113,6 +113,9 @@ end
 #  machinectl shell $NAME /usr/bin/apt install openssh-server python3 sudo -y
 #  machinectl shell $NAME /usr/bin/install -m 700 -d /root/.ssh
 #  machinectl copy-to $NAME ~/.ssh/authorized_keys /root/.ssh/authorized_keys
+# Firewall:
+#  ufw allow in on ve-+ from any port 68 to 0.0.0.0/0 port 67 proto udp comment 'DHCPv4 from nspawn'
+#  ufw allow out on ve-+ from 0.0.0.0/0 port 67 to any port 68 proto udp comment 'DHCPv4 to nspawn'
 namespace :nspawn do
   nspawn_all_tasks = []
 
