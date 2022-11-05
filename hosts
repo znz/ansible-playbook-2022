@@ -5,6 +5,9 @@ cac2021k[1:4] ansible_ssh_user=ansible-runner
 [conoha]
 conoha-d01 ansible_ssh_user=ansible-runner
 conoha-u01 ansible_ssh_user=ansible-runner
+[conoha_u01_lxd_instance]
+alive-insect ansible_ssh_user=ansible-runner
+stunning-minnow ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
 raspi3bp ansible_ssh_user=ansible-runner
@@ -24,6 +27,8 @@ lima-default ansible_ssh_user=ansible-runner
 conoha-u01
 lima-default
 iot
+[ufw:children]
+conoha_u01_lxd_instance
 
 [nadoka]
 conoha-u01
@@ -33,6 +38,7 @@ iot
 [nadoka:children]
 #cac
 raspi
+conoha_u01_lxd_instance
 
 [lxd]
 conoha-u01

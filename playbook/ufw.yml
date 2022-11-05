@@ -3,3 +3,13 @@
   become: yes
   roles:
   - znz.ufw
+- hosts: conoha_u01_lxd_instance
+  become: yes
+  tasks:
+  - name: 'Allow out to apt-cacher-ng'
+    community.general.ufw:
+      rule: allow
+      port: '3142'
+      proto: 'tcp'
+      direction: 'out'
+      comment: 'apt-cacher-ng'
