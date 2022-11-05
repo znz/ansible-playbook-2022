@@ -108,6 +108,15 @@ all:
                 wg2022: |
                   {{ lookup('file', '../inventories/wg2022/Corefile') }}
 
+        conoha_u01_lxd_instance:
+          vars:
+            wireguard_host_v6_offset: 0xc001_0000
+          hosts:
+            alive-insect:
+              wireguard_host_index: 0xa1
+            stunning-minnow:
+              wireguard_host_index: 0x53
+
         sakura:
           vars:
             wireguard_host_v6_offset: 0x5a_0000
