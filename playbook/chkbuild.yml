@@ -183,7 +183,8 @@
     copy:
       content: |
         [Service]
-        Environment=CC='ccache gcc' MJIT_CC=gcc CXX='ccache g++'
+        Environment=CC='ccache gcc' MJIT_CC=gcc CXX='ccache g++' XDG_CACHE_HOME=/home/chkbuild/.cache
+        ExecStartPre=!/usr/bin/install -o chkbuild-owner -g chkbuild -m 2775 -d /home/chkbuild/.cache
       dest: '/etc/systemd/system/chkbuild.service.d/ccache.conf'
       mode: '0444'
       owner: 'root'
