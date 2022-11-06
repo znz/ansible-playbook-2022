@@ -140,8 +140,8 @@ all:
               wireguard_host_index: 2
             cac2021k3:
               wireguard_host_index: 3
-            cac2021k4:
-              wireguard_host_index: 4
+            #cac2021k4:
+            #  wireguard_host_index: 4
             cac2020d2:
               wireguard_host_index: 0x20d2
             #cac2022d1:
