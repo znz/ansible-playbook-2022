@@ -1,6 +1,8 @@
 # -*- yaml -*-
 ---
 all:
+  vars:
+    ansible_ssh_pipelining: yes
   children:
     zabbix_server:
       hosts:
@@ -12,3 +14,11 @@ all:
           zabbix_login_user: "{{ lookup('ansible.builtin.env', 'ZABBIX_USERNAME', default='Admin') }}"
           zabbix_login_password: "{{ lookup('ansible.builtin.env', 'ZABBIX_PASSWORD', default='zabbix') }}"
           zabbix_server_url: "{{ lookup('ansible.builtin.env', 'ZABBIX_SERVER', default='http://localhost:8080/') }}"
+        alive-insect:
+          zabbix_login_user: "{{ lookup('ansible.builtin.env', 'ZABBIX_USERNAME', default='Admin') }}"
+          zabbix_login_password: "{{ lookup('ansible.builtin.env', 'ZABBIX_PASSWORD', default='zabbix') }}"
+          zabbix_server_url: "{{ lookup('ansible.builtin.env', 'ZABBIX_SERVER', default='http://ip6-localhost:8080/') }}"
+        stunning-minnow:
+          zabbix_login_user: "{{ lookup('ansible.builtin.env', 'ZABBIX_USERNAME', default='Admin') }}"
+          zabbix_login_password: "{{ lookup('ansible.builtin.env', 'ZABBIX_PASSWORD', default='zabbix') }}"
+          zabbix_server_url: "{{ lookup('ansible.builtin.env', 'ZABBIX_SERVER', default='http://ip6-localhost:8080/') }}"

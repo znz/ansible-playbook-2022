@@ -22,3 +22,20 @@
       login_user: '{{ zabbix_login_user }}'
       login_password: '{{ zabbix_login_password }}'
       server_url: '{{ zabbix_server_url }}'
+
+  - name: 'Allow out to zabbix-agent'
+    community.general.ufw:
+      rule: allow
+      port: '10050'
+      proto: 'tcp'
+      direction: 'out'
+      comment: 'zabbix-agent'
+
+  # $ grep listen /etc/nginx/conf.d/zabbix.conf
+  #        listen          [::]:8080;
+  - name: 'Allow to zabbix-frontend'
+    community.general.ufw:
+      rule: allow
+      port: '8080'
+      proto: 'tcp'
+      comment: 'zabbix-frontend'
