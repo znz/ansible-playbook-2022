@@ -23,6 +23,13 @@ all:
           - 'ccache'
           - 'ripgrep'
           - 'jq'
+        saving-stinkbug:
+          dev_user: 'ubuntu'
+          apt_packages:
+          - 'byobu'
+          - 'ccache'
+          - 'ripgrep'
+          - 'jq'
         sid.iot:
           dev_user: 'user'
           apt_packages:

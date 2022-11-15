@@ -114,6 +114,8 @@ all:
           hosts:
             alive-insect:
               wireguard_host_index: 0xa1
+            saving-stinkbug:
+              wireguard_host_index: 0x55
             stunning-minnow:
               wireguard_host_index: 0x53
 
