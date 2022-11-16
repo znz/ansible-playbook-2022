@@ -4,6 +4,7 @@
   gather_facts: no
   vars:
     ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+    ansible_ssh_user: ansible-runner
   tasks:
   - name: 'sshd: StreamLocalBindUnlink yes'
     ansible.builtin.copy:
