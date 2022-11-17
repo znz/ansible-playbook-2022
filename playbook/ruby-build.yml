@@ -145,7 +145,7 @@
         )
         if command -v rustc >/dev/null 2>&1; then
           if ruby -e 'exit Gem::Version.new("1.58.1") <= Gem::Version.new(ARGV[1])' -- $(rustc --version); then
-            configure_args=( "${configure_args=[@]}" --enable-yjit=dev_nodebug )
+            configure_args=( "${configure_args[@]}" --enable-yjit=dev_nodebug )
           fi
         fi
         test -f Makefile || ../configure "${configure_args[@]}"
