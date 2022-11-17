@@ -21,6 +21,7 @@ all:
           - 'ccache'
           - 'ripgrep'
           - 'jq'
+          linuxbrew: []
         saving-stinkbug:
           dev_user: 'ubuntu'
           apt_packages:
