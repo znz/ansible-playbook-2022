@@ -19,8 +19,12 @@ all:
           apt_packages:
           - 'byobu'
           - 'ccache'
-          - 'ripgrep'
+          - 'firefox-esr-l10n-ja'
+          - 'fonts-noto'
           - 'jq'
+          - 'jwm'
+          - 'ripgrep'
+          - 'xrdp'
           linuxbrew: []
         saving-stinkbug:
           dev_user: 'ubuntu'
