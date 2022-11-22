@@ -1,8 +1,6 @@
 # -*- yaml -*-
 ---
 all:
-  vars:
-    ansible_ssh_pipelining: yes
   children:
     zabbix_server:
       hosts:

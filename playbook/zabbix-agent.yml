@@ -1,0 +1,71 @@
+---
+- hosts: zabbix_agent
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  - name: 'Install zabbix-agent'
+    ansible.builtin.apt:
+      name: zabbix-agent
+
+  - name: 'Allow to zabbix-agent'
+    community.general.ufw:
+      rule: allow
+      port: '10050'
+      proto: 'tcp'
+      interface_in: 'wg+'
+      comment: 'zabbix-agent'
+
+  - name: 'Create /etc/zabbix/zabbix_agentd.conf.d/hostname.conf'
+    copy:
+      content: |
+        Hostname={{ inventory_hostname }}
+      dest: '/etc/zabbix/zabbix_agentd.conf.d/hostname.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent'
+
+  - name: 'Create PSK'
+    ansible.builtin.shell: |
+      openssl rand -hex 32 | install -m 440 -o root -g zabbix /dev/stdin /etc/zabbix/zabbix_agentd.psk
+    args:
+      creates: '/etc/zabbix/zabbix_agentd.psk'
+
+  - name: 'Fetch PSK'
+    ansible.builtin.fetch:
+      src: '/etc/zabbix/zabbix_agentd.psk'
+      dest: "tmp/zabbix-agent/{{ inventory_hostname }}.psk"
+      flat: yes
+
+  - name: 'Create /etc/zabbix/zabbix_agentd.conf.d/psk.conf'
+    copy:
+      content: |
+        TLSAccept=psk
+        TLSConnect=psk
+        TLSPSKFile=/etc/zabbix/zabbix_agentd.psk
+        TLSPSKIdentity=PSK {{ inventory_hostname }}
+      dest: '/etc/zabbix/zabbix_agentd.conf.d/psk.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent'
+
+  - name: 'Create /etc/zabbix/zabbix_agentd.conf.d/server.conf'
+    copy:
+      content: |
+        Server=127.0.0.1,fdcb:a987:6543:2022::/64
+      dest: '/etc/zabbix/zabbix_agentd.conf.d/server.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent'
+
+  handlers:
+  - name: 'Restart zabbix-agent'
+    systemd:
+      name: 'zabbix-agent.service'
+      state: restarted
+      daemon_reload: yes
+      enabled: yes

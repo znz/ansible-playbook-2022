@@ -279,6 +279,7 @@ namespace :play do
     ufw
     nadoka
     lxd
+    zabbix-agent
   ].each do |name|
     desc "Play #{name}"
     task name do

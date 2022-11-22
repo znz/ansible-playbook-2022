@@ -1,6 +1,8 @@
 ---
 - hosts: zabbix_server
   gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
   tasks:
   - name: 'Install python3-pip'
     ansible.builtin.apt:
@@ -39,3 +41,27 @@
       port: '8080'
       proto: 'tcp'
       comment: 'zabbix-frontend'
+
+  - name: 'Create hosts'
+    community.zabbix.zabbix_host:
+      host_name: divine-fawn
+      host_groups:
+      - 'Linux servers'
+      link_templates:
+      - 'Linux by Zabbix agent'
+      interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: 'fdcb:a987:6543:2022::e1:1011'
+        dns: ''
+        port: '10050'
+      tls_accept: 2
+      tls_connect: 2
+      tls_psk: '{{ lookup("file", "tmp/zabbix-agent/divine-fawn.psk") }}'
+      tls_psk_identity: 'PSK divine-fawn'
+
+      state: present
+      login_user: '{{ zabbix_login_user }}'
+      login_password: '{{ zabbix_login_password }}'
+      server_url: '{{ zabbix_server_url }}'
