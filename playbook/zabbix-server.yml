@@ -74,3 +74,39 @@
       ip: 'fdcb:a987:6543:2022::e1:1000'
     - name: 'lima-default'
       ip: 'fdcb:a987:6543:2022::11:1'
+
+
+  - name: 'Create macOS hosts'
+    community.zabbix.zabbix_host:
+      host_name: '{{ item.name }}'
+      visible_name: '{{ item.visible_name | default("") }}'
+      description: '{{ item.description | default("") }}'
+      host_groups:
+      - 'macOS hosts'
+      link_templates:
+      - 'macOS'
+      interfaces:
+      - type: 1
+        main: 1
+        useip: 1
+        ip: '{{ item.ip }}'
+        dns: ''
+        port: '10050'
+      tls_accept: 2
+      tls_connect: 2
+      tls_psk: '{{ lookup("file", "tmp/zabbix-agent/" + item.name + ".psk") }}'
+      tls_psk_identity: '{{ item.psk_identity }}'
+
+      state: present
+      login_user: '{{ zabbix_login_user }}'
+      login_password: '{{ zabbix_login_password }}'
+      server_url: '{{ zabbix_server_url }}'
+    loop:
+    - name: 'knmbp21'
+      ip: 'fdcb:a987:6543:2022::30:21'
+      psk_identity: 'knmbp21'
+    - name: 'PCM0022'
+      visible_name: '(macOS) MacBook Pro (15-inch, 2016)'
+      description: 'macbookpro13-3'
+      ip: 'fdcb:a987:6543:2022::30:16'
+      psk_identity: 'PSK 001'
