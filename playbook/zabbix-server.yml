@@ -42,9 +42,9 @@
       proto: 'tcp'
       comment: 'zabbix-frontend'
 
-  - name: 'Create hosts'
+  - name: 'Create Linux hosts'
     community.zabbix.zabbix_host:
-      host_name: divine-fawn
+      host_name: '{{ item.name }}'
       host_groups:
       - 'Linux servers'
       link_templates:
@@ -53,15 +53,24 @@
       - type: 1
         main: 1
         useip: 1
-        ip: 'fdcb:a987:6543:2022::e1:1011'
+        ip: '{{ item.ip }}'
         dns: ''
         port: '10050'
       tls_accept: 2
       tls_connect: 2
-      tls_psk: '{{ lookup("file", "tmp/zabbix-agent/divine-fawn.psk") }}'
-      tls_psk_identity: 'PSK divine-fawn'
+      tls_psk: '{{ lookup("file", "tmp/zabbix-agent/" + item.name + ".psk") }}'
+      tls_psk_identity: 'PSK {{ item.name }}'
 
       state: present
       login_user: '{{ zabbix_login_user }}'
       login_password: '{{ zabbix_login_password }}'
       server_url: '{{ zabbix_server_url }}'
+    loop:
+    - name: 'conoha-u01'
+      ip: 'fdcb:a987:6543:2022::c0:1'
+    - name: 'divine-fawn'
+      ip: 'fdcb:a987:6543:2022::e1:1011'
+    - name: 'iot'
+      ip: 'fdcb:a987:6543:2022::e1:1000'
+    - name: 'lima-default'
+      ip: 'fdcb:a987:6543:2022::11:1'

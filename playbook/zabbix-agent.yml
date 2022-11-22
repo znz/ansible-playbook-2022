@@ -12,9 +12,10 @@
   - name: 'Allow to zabbix-agent'
     community.general.ufw:
       rule: allow
+      to_ip: '::/0'
       port: '10050'
       proto: 'tcp'
-      interface_in: 'wg+'
+      interface_in: 'wg2022'
       comment: 'zabbix-agent'
 
   - name: 'Create /etc/zabbix/zabbix_agentd.conf.d/hostname.conf'

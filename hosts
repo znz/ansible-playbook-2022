@@ -46,7 +46,10 @@ conoha-u01
 iot
 
 [zabbix_agent]
+conoha-u01
 divine-fawn
+iot
+lima-default
 
 [all:vars]
 ansible_ssh_pipelining=yes
