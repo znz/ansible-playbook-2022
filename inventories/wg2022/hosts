@@ -90,8 +90,8 @@ all:
           vars:
             wireguard_host_v6_offset: 0xc0_0000
           hosts:
-#            conoha-d01:
-#              wireguard_host_index: 0xd1
+            conoha-d02:
+              wireguard_host_index: 0xd2
             conoha-u01:
               wireguard_host_index: 1
               wireguard_ipv6_netmask: '64'
