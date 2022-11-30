@@ -23,7 +23,7 @@ PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{
 {% endif %}{# IPv4 #}
 {% if wireguard_ipv6 %}{# IPv6 #}
 Address = {{ wireguard_ipv6 | ansible.utils.nthhost(wireguard_host_index + wireguard_host_v6_offset) }}/{{ wireguard_ipv6_netmask }}
-{%   if wireguard_ipv6_netmask != 128 %}
+{%   if wireguard_ipv6_netmask != '128' %}
 {%     set forward.ipv6 = forward.ipv6 + 1 %}
 {%   endif %}
 {%   if wireguard_nat_outside_interface %}
