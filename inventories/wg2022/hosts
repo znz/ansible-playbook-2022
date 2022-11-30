@@ -52,6 +52,9 @@ all:
         - zabbix-202210.iot
         - zabbix-202210xx.iot
         - divine-fawn
+        - alive-insect
+        - saving-stinkbug
+        - stunning-minnow
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
@@ -114,10 +117,13 @@ all:
           hosts:
             alive-insect:
               wireguard_host_index: 0xa1
+              <<: *wireguard_conf_in_nat
             saving-stinkbug:
               wireguard_host_index: 0x55
+              <<: *wireguard_conf_in_nat
             stunning-minnow:
               wireguard_host_index: 0x53
+              <<: *wireguard_conf_in_nat
 
         sakura:
           vars:
