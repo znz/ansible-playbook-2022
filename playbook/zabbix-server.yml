@@ -66,6 +66,8 @@
       login_password: '{{ zabbix_login_password }}'
       server_url: '{{ zabbix_server_url }}'
     loop:
+    - name: 'conoha-d02'
+      ip: 'fdcb:a987:6543:2022::c0:d2'
     - name: 'conoha-u01'
       ip: 'fdcb:a987:6543:2022::c0:1'
     - name: 'divine-fawn'
