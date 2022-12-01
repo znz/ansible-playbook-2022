@@ -50,18 +50,18 @@
       link_templates:
       - 'Linux by Zabbix agent'
       interfaces:
-      - type: 1
+      - type: agent
         main: 1
         useip: 1
         ip: '{{ item.ip }}'
-        dns: ''
         port: '10050'
       tls_accept: 2
       tls_connect: 2
       tls_psk: '{{ lookup("file", "tmp/zabbix-agent/" + item.name + ".psk") }}'
       tls_psk_identity: 'PSK {{ item.name }}'
 
-      state: present
+      state: '{{ item.state | default("present") }}'
+      status: '{{ item.status | default("enabled") }}'
       login_user: '{{ zabbix_login_user }}'
       login_password: '{{ zabbix_login_password }}'
       server_url: '{{ zabbix_server_url }}'
@@ -88,18 +88,18 @@
       link_templates:
       - 'macOS'
       interfaces:
-      - type: 1
+      - type: agent
         main: 1
         useip: 1
         ip: '{{ item.ip }}'
-        dns: ''
         port: '10050'
       tls_accept: 2
       tls_connect: 2
       tls_psk: '{{ lookup("file", "tmp/zabbix-agent/" + item.name + ".psk") }}'
       tls_psk_identity: '{{ item.psk_identity }}'
 
-      state: present
+      state: '{{ item.state | default("present") }}'
+      status: '{{ item.status | default("enabled") }}'
       login_user: '{{ zabbix_login_user }}'
       login_password: '{{ zabbix_login_password }}'
       server_url: '{{ zabbix_server_url }}'
