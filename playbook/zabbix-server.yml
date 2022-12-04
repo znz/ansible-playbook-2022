@@ -76,7 +76,8 @@
       ip: 'fdcb:a987:6543:2022::e1:1000'
     - name: 'lima-default'
       ip: 'fdcb:a987:6543:2022::11:1'
-
+    - name: 'saving-stinkbug'
+      ip: 'fdcb:a987:6543:2022::c001:55'
 
   - name: 'Create macOS hosts'
     community.zabbix.zabbix_host:
