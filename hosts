@@ -53,6 +53,11 @@ conoha-u01
 divine-fawn
 iot
 lima-default
+saving-stinkbug
+
+#[zabbix_agent2]
+#alive-insect
+#stunning-minnow
 
 [all:vars]
 ansible_ssh_pipelining=yes
