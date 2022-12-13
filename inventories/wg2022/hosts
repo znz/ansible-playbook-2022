@@ -138,23 +138,6 @@ all:
               wireguard_host_index: 9
               wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
 
-        cloudatcost:
-          vars:
-            wireguard_host_v6_offset: 0xc1_0000
-          hosts:
-            cac2021k1:
-              wireguard_host_index: 1
-            cac2021k2:
-              wireguard_host_index: 2
-            cac2021k3:
-              wireguard_host_index: 3
-            #cac2021k4:
-            #  wireguard_host_index: 4
-            cac2020d2:
-              wireguard_host_index: 0x20d2
-            #cac2022d1:
-            #  wireguard_host_index: 0x22d1
-
         raspi:
           vars:
             wireguard_host_v6_offset: 0xaa_0000

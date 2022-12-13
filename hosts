@@ -1,7 +1,3 @@
-[cac]
-cac2020d2 ansible_ssh_user=ansible-runner
-cac2021k[1:3] ansible_ssh_user=ansible-runner
-#cac2022d1 ansible_ssh_user=ansible-runner
 [conoha]
 conoha-d02 ansible_ssh_user=ansible-runner
 conoha-u01 ansible_ssh_user=ansible-runner
@@ -39,7 +35,6 @@ ns9
 iot
 # nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 [nadoka:children]
-#cac
 raspi
 conoha_u01_lxd_instance
 
