@@ -1,5 +1,5 @@
 ---
-- hosts: wg2
+- hosts: wg3
   become: yes
   roles:
   - wireguard
