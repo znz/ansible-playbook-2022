@@ -3,6 +3,8 @@
 all:
   children:
     chkbuild:
+      vars:
+        ansible_ssh_pipelining: yes
       hosts:
 #        raspi3b:
 #          chkbuild_rubyci_nickname: 'ubuntu2204-raspi-armv7l'
@@ -12,17 +14,8 @@ all:
           chkbuild_rubyci_nickname: 'debian11-aarch64'
           chkbuild_runner: 'start-rubyci'
           chkbuild_cpuquota: '75%'
-#        cac2020d2:
-#          chkbuild_rubyci_nickname: 'debian64-bullseye'
-#          chkbuild_runner: 'start-build'
-#          chkbuild_cpuquota: '30%'
-#        amd64-bullseye.cac2022d1:
-#          chkbuild_runner: 'start-build'
-#          chkbuild_cpuquota: '10%'
-#          chkbuild_timer_state: stopped
-#          chkbuild_timer_enabled: no
-#        bullseye.cac2022d1:
-#          chkbuild_runner: 'start-build'
-#          chkbuild_cpuquota: '10%'
-#          chkbuild_timer_state: stopped
-#          chkbuild_timer_enabled: no
+        amd64-bullseye.iot:
+          chkbuild_runner: 'start-build'
+          chkbuild_cpuquota: '10%'
+          chkbuild_timer_state: stopped
+          chkbuild_timer_enabled: no
