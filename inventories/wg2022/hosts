@@ -10,7 +10,6 @@ all:
 # IP アドレス範囲の計画
 # fdcb:a987:6543:2022::c0:XXXX : conoha (Co から)
 # fdcb:a987:6543:2022::5a:XXXX : sakura (Sa から)
-# fdcb:a987:6543:2022::c1:XXXX : cloudatcost (Cl から)
 # fdcb:a987:6543:2022::aa:XXXX : raspi (R の 8セグが A と同じになりそうだから)
 # fdcb:a987:6543:2022::1a:XXXX : # 家 (イエ から)
 # fdcb:a987:6543:2022::30:XXXX : サーバー以外 (mobile の m を横にして 3)
@@ -169,10 +168,6 @@ all:
           vars:
             wireguard_host_v6_offset: 0xe1_0000
           hosts:
-            #sid.cac2022d1:
-            #  ansible_python_interpreter: auto_silent
-            #  wireguard_host_index: 0x2051
-            #  <<: *wireguard_conf_in_nat
             iot:
               wireguard_host_index: 0x1000
               <<: *wireguard_conf_in_nat
