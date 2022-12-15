@@ -186,6 +186,7 @@ all:
               wireguard_host_index: 0x1022
               <<: *wireguard_conf_in_nat
             sid.iot:
+              ansible_python_interpreter: auto_silent
               wireguard_host_index: 0x1023
               <<: *wireguard_conf_in_nat
 
