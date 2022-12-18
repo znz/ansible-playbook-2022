@@ -275,7 +275,6 @@ task all: all_tasks
 
 namespace :play do
   %i[
-    cac
     ufw
     nadoka
     lxd
