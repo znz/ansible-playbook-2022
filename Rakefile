@@ -16,6 +16,14 @@ namespace :misc do
   end
 end
 
+namespace :nadoka do
+  desc 'Restart nadoka'
+  task :restart, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible nadoka -i #{inventory} -m ansible.builtin.systemd -a 'name=nadoka@fprog state=restarted' --one-line -b"
+  end
+end
+
 namespace :ansible do
   env = { 'UPDATE_SSH_KEYS' => '1' }
 
