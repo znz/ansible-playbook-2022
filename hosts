@@ -7,7 +7,7 @@ saving-stinkbug ansible_ssh_user=ansible-runner
 stunning-minnow ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
-raspi3bp ansible_ssh_user=ansible-runner
+#raspi3bp ansible_ssh_user=ansible-runner
 raspi4b1 ansible_ssh_user=ansible-runner
 raspi4b2 ansible_ssh_user=ansible-runner
 [sakura]
@@ -16,6 +16,7 @@ ns8 ansible_ssh_user=ansible-runner
 ns9 ansible_ssh_user=ansible-runner
 [misc]
 iot ansible_ssh_user=ansible-runner
+divine-fawn ansible_ssh_user=ansible-runner
 [lima]
 lima-default ansible_ssh_user=ansible-runner
 
@@ -53,6 +54,17 @@ saving-stinkbug
 #[zabbix_agent2]
 #alive-insect
 #stunning-minnow
+
+[apt_update:children]
+sakura
+apt_upgrade
+
+[apt_upgrade:children]
+conoha
+conoha_u01_lxd_instance
+raspi
+misc
+lima
 
 [all:vars]
 ansible_ssh_pipelining=yes

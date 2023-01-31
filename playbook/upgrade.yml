@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: apt_upgrade
   gather_facts: no
   tasks:
   - name: 'Apt upgrade'
