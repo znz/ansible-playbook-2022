@@ -93,8 +93,18 @@ namespace :lima do
   task :ssh_config do
     # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
     sh %(grep 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
-    sh %(limactl list -f '{{if eq .Status "Running"}}{{.Name}}{{end}}' | xargs -n1 limactl show-ssh --format=config > #{lima_ssh_config})
-    sh %(limactl list -f '{{if eq .Status "Running"}}lima-{{.Name}}{{end}}' > #{lima_hosts})
+    cond = 'and (ne (slice .Name 0 6) "colima") (eq .Status "Running")'
+    sh %(limactl list -f '{{if #{cond}}}{{.Name}}{{end}}' | xargs -n1 limactl show-ssh --format=config > #{lima_ssh_config})
+    sh %(echo '[lima]' > #{lima_hosts})
+    sh %(limactl list -f '{{if #{cond}}}lima-{{.Name}}{{end}}' >> #{lima_hosts})
+    File.open(lima_hosts, 'a') do |f|
+      f.puts <<~HOSTS
+        [apt_update:children]
+        lima
+        [apt_upgrade:children]
+        lima
+      HOSTS
+    end
   end
 
   [
