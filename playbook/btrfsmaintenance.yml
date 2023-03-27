@@ -1,0 +1,22 @@
+---
+- hosts: btrfsmaintenance
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+    ansible_ssh_user: ansible-runner
+  tasks:
+  - name: 'Install packages'
+    ansible.builtin.apt:
+      name:
+      - btrfsmaintenance
+  - name: 'Enable btrfs maintenance'
+    ansible.builtin.systemd:
+      name: '{{ item }}'
+      state: started
+      enabled: yes
+    loop:
+    - btrfs-balance.timer
+    - btrfs-defrag.timer
+    - btrfs-scrub.timer
+    - btrfs-trim.timer

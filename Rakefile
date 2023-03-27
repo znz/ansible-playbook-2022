@@ -297,6 +297,7 @@ namespace :play do
     nadoka
     lxd
     zabbix-agent
+    btrfsmaintenance
   ].each do |name|
     desc "Play #{name}"
     task name do
