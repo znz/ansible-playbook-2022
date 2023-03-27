@@ -10,6 +10,7 @@ stunning-minnow ansible_ssh_user=ansible-runner
 #raspi3bp ansible_ssh_user=ansible-runner
 raspi4b1 ansible_ssh_user=ansible-runner
 raspi4b2 ansible_ssh_user=ansible-runner
+raspi4b3 ansible_ssh_user=ansible-runner
 [sakura]
 ns6 ansible_ssh_user=ansible-runner
 ns8 ansible_ssh_user=ansible-runner
@@ -65,6 +66,9 @@ conoha_u01_lxd_instance
 raspi
 misc
 lima
+
+[btrfsmaintenance]
+raspi4b3
 
 [all:vars]
 ansible_ssh_pipelining=yes
