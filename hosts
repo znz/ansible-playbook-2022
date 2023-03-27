@@ -27,6 +27,7 @@ conoha-d02
 conoha-u01
 lima-default
 iot
+raspi4b3
 [ufw:children]
 conoha_u01_lxd_instance
 

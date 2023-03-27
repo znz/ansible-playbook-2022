@@ -45,6 +45,7 @@ all:
         - raspi3bp
         - raspi4b1
         - raspi4b2
+        - raspi4b3
         - lima-default
         - iot
         - sid.iot
@@ -152,6 +153,9 @@ all:
               <<: *wireguard_conf_in_nat
             raspi4b2:
               wireguard_host_index: 0x42
+              <<: *wireguard_conf_in_nat
+            raspi4b3:
+              wireguard_host_index: 0x43
               <<: *wireguard_conf_in_nat
 
         home:
