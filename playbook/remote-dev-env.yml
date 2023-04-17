@@ -204,6 +204,14 @@
     loop:
     - 'HashKnownHosts no'
 
+  - name: 'Remove replaced github.com ssh host keys' # https://github.blog/2023-03-23-we-updated-our-rsa-ssh-host-key/
+    ansible.builtin.lineinfile:
+      path: '/home/{{ dev_user }}/.ssh/known_hosts'
+      state: absent
+      regexp: '{{ item | regex_escape() }}'
+    loop:
+    - 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
+
   - name: 'Add github.com ssh host keys'
     ansible.builtin.lineinfile:
       path: '/home/{{ dev_user }}/.ssh/known_hosts'
