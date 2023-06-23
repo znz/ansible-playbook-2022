@@ -87,6 +87,10 @@ all:
             # MacBook Pro (15-inch, 2016)
             PublicKey = YDvWZJl0P8MVIbXdpf1gQCLOhsRclkT6ASXc+XolkCE=
             AllowedIPs = fdcb:a987:6543:2022::30:16/128
+            [Peer]
+            # MacBook Pro (13-inch, M2, 2022)
+            PublicKey = szQCQMJ7dEIqp+UtEHQq0zkErSJgK/xpuZUIYFjvSF4=
+            AllowedIPs = fdcb:a987:6543:2022::30:22/128
 
       children:
         conoha:
