@@ -42,7 +42,7 @@ all:
         # これらの Peer からは接続を待ち受けるだけ (未指定のホストへはハブになるホスト経由で接続)
         _wireguard_peer_without_endpoint: &wireguard_peer_without_endpoint
         #- raspi3b
-        - raspi3bp
+        #- raspi3bp
         - raspi4b1
         - raspi4b2
         - raspi4b3
@@ -145,9 +145,9 @@ all:
 #            raspi3b:
 #              wireguard_host_index: 0x31
 #              <<: *wireguard_conf_in_nat
-            raspi3bp:
-              wireguard_host_index: 0x32
-              <<: *wireguard_conf_in_nat
+#            raspi3bp:
+#              wireguard_host_index: 0x32
+#              <<: *wireguard_conf_in_nat
             raspi4b1:
               wireguard_host_index: 0x41
               <<: *wireguard_conf_in_nat

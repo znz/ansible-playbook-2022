@@ -10,10 +10,10 @@ all:
 #          chkbuild_rubyci_nickname: 'ubuntu2204-raspi-armv7l'
 #          chkbuild_runner: 'start-rubyci'
 #          chkbuild_cpuquota: '75%'
-        raspi3bp:
-          chkbuild_rubyci_nickname: 'debian11-aarch64'
-          chkbuild_runner: 'start-rubyci'
-          chkbuild_cpuquota: '75%'
+#        raspi3bp:
+#          chkbuild_rubyci_nickname: 'debian11-aarch64'
+#          chkbuild_runner: 'start-rubyci'
+#          chkbuild_cpuquota: '75%'
         amd64-bullseye.iot:
           chkbuild_runner: 'start-build'
           chkbuild_cpuquota: '10%'
