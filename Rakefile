@@ -285,7 +285,7 @@ namespace :zabbix do
     sh 'ansible-playbook -i inventories/zabbix-server/hosts playbook/zabbix-server.yml'
   end
 
-  all_tasks.push 'zabbix:server'
+  #all_tasks.push 'zabbix:server'
 end
 
 desc "Run #{all_tasks.join(' ')}"
