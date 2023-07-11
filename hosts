@@ -7,7 +7,7 @@ saving-stinkbug ansible_ssh_user=ansible-runner
 stunning-minnow ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
-#raspi3bp ansible_ssh_user=ansible-runner
+raspi3bp ansible_ssh_user=ansible-runner
 raspi4b1 ansible_ssh_user=ansible-runner
 raspi4b2 ansible_ssh_user=ansible-runner
 raspi4b3 ansible_ssh_user=ansible-runner
