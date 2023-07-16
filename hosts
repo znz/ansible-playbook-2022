@@ -70,6 +70,7 @@ lima
 
 [btrfsmaintenance]
 raspi4b3
+raspi3bp
 
 [all:vars]
 ansible_ssh_pipelining=yes
