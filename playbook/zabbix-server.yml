@@ -111,8 +111,3 @@
       # Mounted filesystem discovery のフィルタに
       # {#FSNAME} 一致しない ^/Volumes/com\.apple\.TimeMachine\.localsnapshots/
       # を設定した。
-    - name: 'PCM0022'
-      visible_name: '(macOS) MacBook Pro (15-inch, 2016)'
-      description: 'macbookpro13-3'
-      ip: 'fdcb:a987:6543:2022::30:16'
-      psk_identity: 'PSK 001'
