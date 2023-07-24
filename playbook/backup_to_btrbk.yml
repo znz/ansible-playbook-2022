@@ -1,0 +1,52 @@
+---
+- hosts: backup_to_btrbk
+  gather_facts: yes
+  become: yes
+  vars:
+    user_name: "backup-operator"
+    uid: "30021"
+    gid: "30021"
+
+  tasks:
+  - name: "backup-operator group"
+    ansible.builtin.group:
+      name: "{{ user_name }}"
+      state: present
+      gid: "{{ gid }}"
+  - name: "backup-operator user"
+    ansible.builtin.user:
+      name: "{{ user_name }}"
+      comment: "Backup Operator"
+      uid: "{{ uid }}"
+      group: "{{ user_name }}"
+      shell: "/bin/sh"
+
+  - name: "Allow sudo"
+    copy:
+      content: |
+        {{ user_name }} ALL=(ALL) NOPASSWD:/usr/bin/rsync
+      dest: "/etc/sudoers.d/local-backup-operator"
+      validate: "/usr/sbin/visudo -csf %s"
+      mode: "0440"
+
+  - name: "Update authorized_keys from tmp/btrbk@*.pub"
+    ansible.posix.authorized_key:
+      user: "{{ user_name }}"
+      state: present
+      key: "{{ lookup('file', 'tmp/' + item + '.pub') }}"
+      comment: "{{ item }}"
+      key_options: "restrict"
+    loop:
+    - 'btrbk@raspi4b3'
+
+  - name: "Add AllowUsers to sshd_config"
+    lineinfile:
+      dest: "/etc/ssh/sshd_config"
+      line: "AllowUsers {{ user_name }}"
+    notify: "Restart sshd"
+
+  handlers:
+  - name: "Restart sshd"
+    ansible.builtin.service:
+      name: "ssh"
+      state: reloaded

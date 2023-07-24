@@ -298,6 +298,8 @@ namespace :play do
     lxd
     zabbix-agent
     btrfsmaintenance
+    btrbk
+    backup_to_btrbk
   ].each do |name|
     desc "Play #{name}"
     task name do

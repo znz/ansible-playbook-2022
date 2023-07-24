@@ -1,0 +1,26 @@
+---
+- hosts: btrbk
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes # Fix "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user"
+    ansible_ssh_user: ansible-runner
+  tasks:
+  - name: 'Install packages'
+    ansible.builtin.apt:
+      name:
+      - btrbk
+  - name: 'Generate keypair'
+    community.crypto.openssh_keypair:
+      comment: 'btrbk@{{ inventory_hostname }}'
+      owner: 'root'
+      group: 'root'
+      mode: '0400'
+      path: '/root/.ssh/btrbk'
+      state: 'present'
+      type: 'ed25519'
+  - name: 'Fetch peer conf'
+    ansible.builtin.fetch:
+      src: '/root/.ssh/btrbk.pub'
+      dest: 'tmp/btrbk@{{ inventory_hostname }}.pub'
+      flat: yes

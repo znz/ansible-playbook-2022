@@ -72,5 +72,13 @@ lima
 raspi4b3
 raspi3bp
 
+[backup_to_btrbk]
+ns6
+ns8
+ns9
+
+[btrbk]
+raspi4b3
+
 [all:vars]
 ansible_ssh_pipelining=yes
