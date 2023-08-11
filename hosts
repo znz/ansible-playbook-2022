@@ -16,8 +16,8 @@ ns6 ansible_ssh_user=ansible-runner
 ns8 ansible_ssh_user=ansible-runner
 ns9 ansible_ssh_user=ansible-runner
 [misc]
-iot ansible_ssh_user=ansible-runner
-divine-fawn ansible_ssh_user=ansible-runner
+#iot ansible_ssh_user=ansible-runner
+#divine-fawn ansible_ssh_user=ansible-runner
 [lima]
 lima-default ansible_ssh_user=ansible-runner
 
@@ -26,7 +26,7 @@ lima-default ansible_ssh_user=ansible-runner
 conoha-d02
 conoha-u01
 lima-default
-iot
+#iot
 raspi4b3
 [ufw:children]
 conoha_u01_lxd_instance
@@ -35,7 +35,7 @@ conoha_u01_lxd_instance
 conoha-d02
 conoha-u01
 ns9
-iot
+#iot
 # nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 [nadoka:children]
 raspi
@@ -43,13 +43,13 @@ conoha_u01_lxd_instance
 
 [lxd]
 conoha-u01
-iot
+#iot
 
 [zabbix_agent]
 conoha-d02
 conoha-u01
-divine-fawn
-iot
+#divine-fawn
+#iot
 lima-default
 saving-stinkbug
 
