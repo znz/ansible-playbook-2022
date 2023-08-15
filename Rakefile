@@ -14,6 +14,12 @@ namespace :misc do
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -a uptime --one-line --forks 20"
   end
+
+  desc 'Show removed packages'
+  task :removed, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible all -i #{inventory} -m shell -a 'dpkg -l | grep \"^rc\"' --forks 20"
+  end
 end
 
 namespace :nadoka do
