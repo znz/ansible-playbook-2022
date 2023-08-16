@@ -20,6 +20,23 @@ namespace :misc do
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -m shell -a 'dpkg -l | grep \"^rc\"' --forks 20"
   end
+
+  desc 'Show lsb-release -a'
+  task :lsb_release, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    require 'open3'
+    command = "ansible all -i #{inventory} -a 'lsb_release -a' --one-line --forks 20"
+    puts command
+    out, status = Open3.capture2 command
+    lines = out.lines.map do |line|
+      columns = line.split('|')
+      columns[0] = columns[0].ljust(20)
+      columns
+    end.sort_by { _4 }.map do |columns|
+      columns.join('|')
+    end
+    puts lines
+  end
 end
 
 namespace :nadoka do
