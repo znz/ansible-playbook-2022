@@ -34,9 +34,16 @@ conoha_u01_lxd_instance
 [nadoka]
 conoha-d02
 conoha-u01
+# ns6 と ns8 は別のインストール方法を使っている
 ns9
 #iot
 # nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
+
+lima-default
+lima-u1
+lima-ubuntu-amd64
+lima-ubuntu-btrfs
+
 [nadoka:children]
 raspi
 conoha_u01_lxd_instance
