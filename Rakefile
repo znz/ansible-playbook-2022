@@ -110,14 +110,13 @@ end
 
 namespace :lima do
   lima_all_tasks = []
-  lima_ssh_config = File.expand_path('~/.cache/lima.ssh_config')
+  lima_ssh_config = '~/.lima/*/ssh.config'
   lima_hosts = File.expand_path('~/.cache/lima.hosts')
 
   task :ssh_config do
     # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
-    sh %(grep 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
+    sh %(grep -F 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
     cond = 'and (not (and (le 6 (len .Name)) (eq (slice .Name 0 6) "colima"))) (eq .Status "Running")'
-    sh %(limactl list -f '{{if #{cond}}}{{.Name}}{{end}}' | xargs -n1 limactl show-ssh --format=config > #{lima_ssh_config})
     sh %(echo '[lima]' > #{lima_hosts})
     sh %(limactl list -f '{{if #{cond}}}lima-{{.Name}}{{end}}' >> #{lima_hosts})
     File.open(lima_hosts, 'a') do |f|
