@@ -111,16 +111,26 @@ end
 namespace :lima do
   lima_all_tasks = []
   lima_ssh_config = '~/.lima/*/ssh.config'
-  lima_hosts = File.expand_path('~/.cache/lima.hosts')
+  # group_vars/nadoka.yml のために hosts と同じところに作成
+  lima_hosts = File.expand_path('lima.hosts', __dir__)
 
   task :ssh_config do
     # FIXME: ~/.ssh/config への追加は末尾だとうまく動かないかも
     sh %(grep -F 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
-    cond = 'and (not (and (le 6 (len .Name)) (eq (slice .Name 0 6) "colima"))) (eq .Status "Running")'
+    cond = 'eq .Status "Running"'
     sh %(echo '[lima]' > #{lima_hosts})
-    sh %(limactl list -f '{{if #{cond}}}lima-{{.Name}}{{end}}' >> #{lima_hosts})
+    sh %(limactl list -f '{{if #{cond}}}lima-{{.Name}} ansible_ssh_user=ansible-runner{{end}}' >> #{lima_hosts})
     File.open(lima_hosts, 'a') do |f|
       f.puts <<~HOSTS
+        [ufw]
+        lima-default
+        [zabbix_agent]
+        # lima-default
+        [conoha_u01_lxd_instance]
+        # empty group for playbook/ufw.yml
+
+        [nadoka:children]
+        lima
         [apt_update:children]
         lima
         [apt_upgrade:children]
@@ -137,6 +147,9 @@ namespace :lima do
     %i[apt autoremove],
     %i[config apt_listchanges],
     %i[config needrestart],
+    %i[play ufw],
+    %i[play nadoka],
+    %i[play zabbix-agent],
   ].each do |namespace, task_name|
     desc "#{namespace}:#{task_name} for lima"
     task task_name => :ssh_config do |t|
@@ -324,8 +337,9 @@ namespace :play do
     backup_to_btrbk
   ].each do |name|
     desc "Play #{name}"
-    task name do
-      sh "ansible-playbook -i hosts playbook/#{name}.yml"
+    task name, [:inventory] do |_t, args|
+      inventory = args.inventory || 'hosts'
+      sh "ansible-playbook -i #{inventory} playbook/#{name}.yml"
     end
     all_tasks.push "play:#{name}"
   end

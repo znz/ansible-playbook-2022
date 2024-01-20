@@ -13,3 +13,15 @@
       proto: 'tcp'
       direction: 'out'
       comment: 'apt-cacher-ng'
+- hosts: lima
+  become: yes
+  tasks:
+  - name: 'Allow out to host address'
+    community.general.ufw:
+      rule: allow
+      direction: 'out'
+      from_ip: '192.168.5.15'
+      interface: 'eth0'
+      proto: 'udp'
+      to_ip: '192.168.5.2'
+      comment: 'Allow out to host address'
