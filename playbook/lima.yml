@@ -1,0 +1,10 @@
+---
+- hosts: lima-default
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: 'Install qemu-user-static'
+    apt:
+      name:
+      - qemu-user-static
+      - qemu-system

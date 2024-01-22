@@ -158,6 +158,11 @@ namespace :lima do
     lima_all_tasks.push "lima:#{task_name}"
   end
 
+  desc 'Play lima cookbook'
+  task play: :ssh_config do
+    sh "ansible-playbook -i #{lima_hosts} playbook/lima.yml -b"
+  end
+
   desc "Run #{lima_all_tasks.join(' ')}"
   task all: lima_all_tasks
 end
