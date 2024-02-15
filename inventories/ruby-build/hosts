@@ -4,9 +4,5 @@ all:
   children:
     ruby_build_hosts:
       hosts:
-        sid.iot:
-          ruby_build_user: 'user'
-        amd64-bullseye.iot:
-          ruby_build_user: 'user'
         saving-stinkbug:
           ruby_build_user: 'ubuntu'

@@ -47,11 +47,6 @@ all:
         - raspi4b2
         - raspi4b3
         - lima-default
-        - iot
-        - sid.iot
-        - zabbix-202210.iot
-        - zabbix-202210xx.iot
-        - divine-fawn
         - alive-insect
         - saving-stinkbug
         - stunning-minnow
@@ -177,22 +172,6 @@ all:
           vars:
             wireguard_host_v6_offset: 0xe1_0000
           hosts:
-            iot:
-              wireguard_host_index: 0x1000
-              <<: *wireguard_conf_in_nat
-            divine-fawn:
-              wireguard_host_index: 0x1011
-              <<: *wireguard_conf_in_nat
-            zabbix-202210.iot:
-              wireguard_host_index: 0x1021
-              <<: *wireguard_conf_in_nat
-            zabbix-202210xx.iot:
-              wireguard_host_index: 0x1022
-              <<: *wireguard_conf_in_nat
-            sid.iot:
-              ansible_python_interpreter: auto_silent
-              wireguard_host_index: 0x1023
-              <<: *wireguard_conf_in_nat
 
         lima:
           vars:

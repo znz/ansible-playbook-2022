@@ -16,14 +16,11 @@ ns6 ansible_ssh_user=ansible-runner
 ns8 ansible_ssh_user=ansible-runner
 ns9 ansible_ssh_user=ansible-runner
 [misc]
-#iot ansible_ssh_user=ansible-runner
-#divine-fawn ansible_ssh_user=ansible-runner
 
 [ufw]
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
 conoha-d02
 conoha-u01
-#iot
 raspi4b3
 [ufw:children]
 conoha_u01_lxd_instance
@@ -33,7 +30,6 @@ conoha-d02
 conoha-u01
 # ns6 と ns8 は別のインストール方法を使っている
 ns9
-#iot
 # nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
 
 [nadoka:children]
@@ -50,8 +46,6 @@ conoha-u01
 [zabbix_agent]
 conoha-d02
 conoha-u01
-#divine-fawn
-#iot
 saving-stinkbug
 
 #[zabbix_agent2]
