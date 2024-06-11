@@ -75,4 +75,5 @@ ns9
 raspi4b3
 
 [all:vars]
+ansible_python_interpreter=/usr/bin/python3
 ansible_ssh_pipelining=yes
