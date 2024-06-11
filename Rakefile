@@ -135,6 +135,10 @@ namespace :lima do
         lima
         [apt_upgrade:children]
         lima
+
+        [all:vars]
+        ansible_python_interpreter=/usr/bin/python3
+        ansible_ssh_pipelining=yes
       HOSTS
     end
   end
