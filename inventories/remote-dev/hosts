@@ -3,6 +3,8 @@
 all:
   children:
     remote_dev_hosts:
+      vars:
+        ansible_python_interpreter: '/usr/bin/python3'
       hosts:
         lima-default: # Ubuntu 22.04 jammy
           dev_user: 'user'

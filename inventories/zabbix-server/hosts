@@ -3,6 +3,8 @@
 all:
   children:
     zabbix_server:
+      vars:
+        ansible_python_interpreter: '/usr/bin/python3'
       hosts:
         alive-insect:
           zabbix_login_user: "{{ lookup('ansible.builtin.env', 'ZABBIX_USERNAME', default='Admin') }}"

@@ -4,6 +4,7 @@ all:
   children:
     wg3:
       vars:
+        ansible_python_interpreter: '/usr/bin/python3'
         ansible_ssh_pipelining: yes
         ansible_ssh_user: 'ansible-runner'
 
