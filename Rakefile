@@ -135,6 +135,8 @@ namespace :lima do
         lima
         [apt_upgrade:children]
         lima
+        [mdns:children]
+        lima
 
         [all:vars]
         ansible_python_interpreter=/usr/bin/python3
@@ -154,6 +156,7 @@ namespace :lima do
     %i[play ufw],
     %i[play nadoka],
     %i[play zabbix-agent],
+    %i[play mdns],
   ].each do |namespace, task_name|
     desc "#{namespace}:#{task_name} for lima"
     task task_name => :ssh_config do |t|
@@ -344,6 +347,7 @@ namespace :play do
     btrfsmaintenance
     btrbk
     backup_to_btrbk
+    mdns
   ].each do |name|
     desc "Play #{name}"
     task name, [:inventory] do |_t, args|

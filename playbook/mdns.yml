@@ -1,0 +1,41 @@
+---
+- hosts: mdns
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: "Enable global mdns"
+    lineinfile:
+      dest: "/etc/systemd/resolved.conf"
+      regexp: "^#?MulticastDNS="
+      line: "MulticastDNS=yes"
+    notify: "Restart systemd-resolved.service"
+
+  - name: "Create drop-in directory"
+    ansible.builtin.file:
+      path: "/etc/systemd/network/10-netplan-eth0.network.d"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+
+  - name: "Add mdns.conf"
+    ansible.builtin.copy:
+      content: |
+        [Network]
+        MulticastDNS=yes
+      dest: "/etc/systemd/network/10-netplan-eth0.network.d/mdns.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Reload systemd-networkd.service"
+
+  handlers:
+  - name: "Restart systemd-resolved.service"
+    ansible.builtin.service:
+      name: "systemd-resolved.service"
+      state: restarted
+  - name: "Reload systemd-networkd.service"
+    ansible.builtin.service:
+      name: "systemd-networkd.service"
+      state: reloaded
