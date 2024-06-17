@@ -16,6 +16,9 @@
 - hosts: lima
   become: yes
   tasks:
+  - name: 'Gather the package facts'
+    ansible.builtin.package_facts:
+      manager: auto
   - name: 'Allow out to host address'
     community.general.ufw:
       rule: allow
@@ -25,3 +28,4 @@
       proto: 'udp'
       to_ip: '192.168.5.2'
       comment: 'Allow out to host address'
+    when: '"ufw" in ansible_facts.packages'
