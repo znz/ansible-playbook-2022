@@ -6,11 +6,11 @@ all:
       vars:
         ansible_python_interpreter: '/usr/bin/python3'
       hosts:
-        lima-default: # Ubuntu 22.04 jammy
+        lima-default: # Ubuntu 24.04 noble
           dev_user: 'user'
           apt_packages:
           - 'ansible-core'
-          #- 'apt-listbugs'
+          #- 'apt-listbugs' # not in ubuntu
           - 'apt-listchanges'
           - 'aria2'
           - 'autoconf'
@@ -25,9 +25,9 @@ all:
           - 'busybox'
           - 'byobu'
           - 'ccache'
-          # use chromium snap
-          #- 'chromium'
-          #- 'chromium-driver'
+#          # use chromium snap
+#          #- 'chromium'
+#          #- 'chromium-driver'
           - 'command-not-found'
           - 'curl'
           - 'dbus-x11'
@@ -41,8 +41,6 @@ all:
           - 'fonts-noto'
           - 'golang'
           - 'jq'
-          # unavailable in jammy
-          #- 'jruby'
           - 'lcov'
           - 'libdb-dev'
           - 'libffi-dev'
@@ -69,12 +67,10 @@ all:
           - 'rust-all'
           - 'screenfetch'
           - 'shellcheck'
-          - 'silversearcher-ag'
           - 'strace'
           - 'subversion'
-          # unavailable in jammy
-          #- 'systemd-homed'
-          #- 'systemd-userdbd'
+          - 'systemd-homed'
+          - 'systemd-userdbd'
           - 'tmate'
           - 'tmate-ssh-server'
           - 'ubuntu-cloud-keyring'
@@ -83,18 +79,16 @@ all:
           - 'unattended-upgrades'
           - 'uuid-dev'
           - 'vim'
+          - 'wamerican'
           - 'wget'
           - 'wireguard'
           - 'x11-apps'
-          - 'xfce4'
           - 'xrdp'
           - 'yubikey-manager'
-          - 'zabbix-agent'
-          # unavailable in jammy
-          #- 'zabbix-agent2'
+          #- 'zabbix-agent2' # not in Ubuntu 24.04
           - 'zlib1g-dev'
           - 'zsh'
-        lima-d1:
+        lima-d1: # Debian GNU/Linux 12 (bookworm)
           dev_user: 'user'
           apt_packages:
           - 'ansible-core'
@@ -128,7 +122,6 @@ all:
           - 'fonts-noto'
           - 'golang'
           - 'jq'
-          #- 'jruby'
           - 'lcov'
           - 'libdb-dev'
           - 'libffi-dev'
@@ -155,7 +148,6 @@ all:
           - 'rust-all'
           - 'screenfetch'
           - 'shellcheck'
-          - 'silversearcher-ag'
           - 'strace'
           - 'subversion'
           - 'systemd-homed'
@@ -168,11 +160,11 @@ all:
           - 'unattended-upgrades'
           - 'uuid-dev'
           - 'vim'
+          - 'wamerican'
           - 'wget'
           - 'wireguard'
           - 'x11-apps'
-          #- 'xfce4'
-          #- 'xrdp'
+          - 'xrdp'
           - 'yubikey-manager'
           - 'zabbix-agent2'
           - 'zlib1g-dev'
