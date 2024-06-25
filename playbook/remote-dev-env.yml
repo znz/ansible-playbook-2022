@@ -64,7 +64,7 @@
 
   - name: 'Add lines to .bashrc'
     ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.bashrc'
+      path: '{{ dev_home }}/.bashrc'
       line: '{{ item }}'
     loop:
     - 'test -x /home/linuxbrew/.linuxbrew/bin/brew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"'
@@ -84,7 +84,7 @@
 
   - name: 'Remove lines from .bashrc'
     ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.bashrc'
+      path: '{{ dev_home }}/.bashrc'
       line: '{{ item }}'
       state: absent
     loop:
@@ -105,10 +105,10 @@
       group: '{{ dev_user }}'
       mode: '0755'
     loop:
-    - '/home/{{ dev_user }}/.config' # before run `byobu`
-    - '/home/{{ dev_user }}/.config/git'
-    - '/home/{{ dev_user }}/.config/docker/cli-plugins'
-    - '/home/{{ dev_user }}/.local/share' # before run `less`
+    - '{{ dev_home }}/.config' # before run `byobu`
+    - '{{ dev_home }}/.config/git'
+    - '{{ dev_home }}/.config/docker/cli-plugins'
+    - '{{ dev_home }}/.local/share' # before run `less`
 
   - name: 'Create private directories'
     ansible.builtin.file:
@@ -118,12 +118,12 @@
       group: '{{ dev_user }}'
       mode: '0700'
     loop:
-    - '/home/{{ dev_user }}/.gnupg' # before create gpg.conf
-    - '/home/{{ dev_user }}/.ssh'
+    - '{{ dev_home }}/.gnupg' # before create gpg.conf
+    - '{{ dev_home }}/.ssh'
 
   - name: 'Stop autostart gpg-agent'
     ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.gnupg/gpg.conf'
+      path: '{{ dev_home }}/.gnupg/gpg.conf'
       line: 'no-autostart'
       create: yes
       owner: '{{ dev_user }}'
@@ -132,7 +132,7 @@
 
   - name: 'Create .config/git/config' # before `git config`
     ansible.builtin.file:
-      path: '/home/{{ dev_user }}/.config/git/config'
+      path: '{{ dev_home }}/.config/git/config'
       state: touch
       owner: '{{ dev_user }}'
       group: '{{ dev_user }}'
@@ -143,7 +143,7 @@
   - name: 'Enable `docker compose`'
     ansible.builtin.file:
       src: '/home/linuxbrew/.linuxbrew/opt/docker-compose/bin/docker-compose'
-      dest: '/home/{{ dev_user }}/.config/docker/cli-plugins/docker-compose'
+      dest: '{{ dev_home }}/.config/docker/cli-plugins/docker-compose'
       state: link
       owner: '{{ dev_user }}'
       group: '{{ dev_user }}'
@@ -195,7 +195,7 @@
 
   - name: 'Add ssh config'
     ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.ssh/config'
+      path: '{{ dev_home }}/.ssh/config'
       line: '{{ item }}'
       create: yes
       owner: '{{ dev_user }}'
@@ -215,7 +215,7 @@
 
   - name: 'Remove replaced github.com ssh host keys' # https://github.blog/2023-03-23-we-updated-our-rsa-ssh-host-key/
     ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.ssh/known_hosts'
+      path: '{{ dev_home }}/.ssh/known_hosts'
       state: absent
       regexp: '{{ item | regex_escape() }}'
     loop:
@@ -223,7 +223,7 @@
 
   - name: 'Add github.com ssh host keys'
     ansible.builtin.lineinfile:
-      path: '/home/{{ dev_user }}/.ssh/known_hosts'
+      path: '{{ dev_home }}/.ssh/known_hosts'
       line: 'github.com {{ item }}'
       create: yes
       owner: '{{ dev_user }}'

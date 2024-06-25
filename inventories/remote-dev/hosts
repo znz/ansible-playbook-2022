@@ -5,9 +5,11 @@ all:
     remote_dev_hosts:
       vars:
         ansible_python_interpreter: '/usr/bin/python3'
+        gh_account: 'znz'
       hosts:
         lima-default: # Ubuntu 24.04 noble
-          dev_user: 'user'
+          dev_user: 'kazu'
+          dev_home: '/home/kazu.linux'
           apt_packages:
           - 'ansible-core'
           #- 'apt-listbugs' # not in ubuntu
@@ -89,7 +91,8 @@ all:
           - 'zlib1g-dev'
           - 'zsh'
         lima-d1: # Debian GNU/Linux 12 (bookworm)
-          dev_user: 'user'
+          dev_user: 'kazu'
+          dev_home: '/home/kazu.linux'
           apt_packages:
           - 'ansible-core'
           - 'apt-listbugs'
