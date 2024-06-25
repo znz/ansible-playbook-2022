@@ -204,6 +204,15 @@
     loop:
     - 'HashKnownHosts no'
 
+  - name: "Update authorized_keys from gh"
+    ansible.posix.authorized_key:
+      user: "{{ dev_user }}"
+      state: present
+      key: "https://github.com/{{ gh_account }}.keys"
+      comment: "github.com/{{ gh_account }}"
+      #key_options: "restrict"
+    when: "lookup('env', 'UPDATE_SSH_KEYS')"
+
   - name: 'Remove replaced github.com ssh host keys' # https://github.blog/2023-03-23-we-updated-our-rsa-ssh-host-key/
     ansible.builtin.lineinfile:
       path: '/home/{{ dev_user }}/.ssh/known_hosts'
