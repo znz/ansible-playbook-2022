@@ -26,6 +26,7 @@ all:
           - 'build-essential'
           - 'busybox'
           - 'byobu'
+          - 'cargo'
           - 'ccache'
 #          # use chromium snap
 #          #- 'chromium'
