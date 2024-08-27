@@ -4,25 +4,25 @@ all_tasks = []
 
 namespace :misc do
   desc 'Ping all hosts'
-  task :ping, [:inventory] do |_t, args|
+  task :ping, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -m ping --one-line --forks 20"
   end
 
   desc 'Show uptime'
-  task :uptime, [:inventory] do |_t, args|
+  task :uptime, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -a uptime --one-line --forks 20"
   end
 
   desc 'Show removed packages'
-  task :removed, [:inventory] do |_t, args|
+  task :removed, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -m shell -a 'dpkg -l | grep \"^rc\"' --forks 20"
   end
 
   desc 'Show lsb-release -a'
-  task :lsb_release, [:inventory] do |_t, args|
+  task :lsb_release, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     require 'open3'
     command = "ansible all -i #{inventory} -a 'lsb_release -a' --one-line --forks 20"
@@ -41,7 +41,7 @@ end
 
 namespace :nadoka do
   desc 'Restart nadoka'
-  task :restart, [:inventory] do |_t, args|
+  task :restart, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible nadoka -i #{inventory} -m ansible.builtin.systemd -a 'name=nadoka@fprog state=restarted' --one-line -b"
   end
@@ -73,26 +73,26 @@ end
 
 namespace :apt do
   desc 'Apt update'
-  task :update, [:inventory] do |_t, args|
+  task :update, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible-playbook -i #{inventory} playbook/update.yml -b --forks 20"
     sh "ansible all -i #{inventory} -a 'apt-get full-upgrade --download-only -y' -b --forks 20"
   end
 
   desc 'Apt upgrade'
-  task :upgrade, [:inventory] do |_t, args|
+  task :upgrade, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible-playbook -i #{inventory} playbook/upgrade.yml -b"
   end
 
   desc 'Apt autoremove --purge'
-  task :autoremove, [:inventory] do |_t, args|
+  task :autoremove, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -a 'apt-get autoremove --purge -y' -b"
   end
 
   desc 'Apt autoclean'
-  task :autoclean, [:inventory] do |_t, args|
+  task :autoclean, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -a 'apt-get autoclean' -b"
   end
@@ -100,14 +100,14 @@ end
 
 namespace :config do
   desc 'Debconf of apt-listchanges'
-  task :apt_listchanges, [:inventory] do |_t, args|
+  task :apt_listchanges, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible-playbook -i #{inventory} playbook/apt-listchanges.yml -b"
   end
   all_tasks.push 'config:apt_listchanges'
 
   desc 'Create /etc/needrestart/conf.d/50local.conf'
-  task :needrestart, [:inventory] do |_t, args|
+  task :needrestart, [:hosts] do |_t, args|
     inventory = args.inventory || 'hosts'
     sh "ansible-playbook -i #{inventory} playbook/needrestart.yml -b"
   end
@@ -357,7 +357,7 @@ namespace :play do
     mdns
   ].each do |name|
     desc "Play #{name}"
-    task name, [:inventory] do |_t, args|
+    task name, [:hosts] do |_t, args|
       inventory = args.inventory || 'hosts'
       sh "ansible-playbook -i #{inventory} playbook/#{name}.yml"
     end
