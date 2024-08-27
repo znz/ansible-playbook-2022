@@ -48,9 +48,7 @@ all:
         - raspi4b2
         - raspi4b3
         - lima-default
-        - alive-insect
         - saving-stinkbug
-        - stunning-minnow
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
@@ -116,14 +114,8 @@ all:
           vars:
             wireguard_host_v6_offset: 0xc001_0000
           hosts:
-            alive-insect:
-              wireguard_host_index: 0xa1
-              <<: *wireguard_conf_in_nat
             saving-stinkbug:
               wireguard_host_index: 0x55
-              <<: *wireguard_conf_in_nat
-            stunning-minnow:
-              wireguard_host_index: 0x53
               <<: *wireguard_conf_in_nat
 
         sakura:

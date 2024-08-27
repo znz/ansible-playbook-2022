@@ -2,9 +2,7 @@
 conoha-d02 ansible_ssh_user=ansible-runner
 conoha-u01 ansible_ssh_user=ansible-runner
 [conoha_u01_lxd_instance]
-alive-insect ansible_ssh_user=ansible-runner
 saving-stinkbug ansible_ssh_user=ansible-runner
-stunning-minnow ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
 #raspi3bp ansible_ssh_user=ansible-runner
@@ -49,8 +47,6 @@ conoha-u01
 saving-stinkbug
 
 #[zabbix_agent2]
-#alive-insect
-#stunning-minnow
 
 [apt_update:children]
 sakura
