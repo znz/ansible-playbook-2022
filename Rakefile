@@ -90,6 +90,12 @@ namespace :apt do
     inventory = args.inventory || 'hosts'
     sh "ansible all -i #{inventory} -a 'apt-get autoremove --purge -y' -b"
   end
+
+  desc 'Apt autoclean'
+  task :autoclean, [:inventory] do |_t, args|
+    inventory = args.inventory || 'hosts'
+    sh "ansible all -i #{inventory} -a 'apt-get autoclean' -b"
+  end
 end
 
 namespace :config do
@@ -151,6 +157,7 @@ namespace :lima do
     %i[apt update],
     %i[apt upgrade],
     %i[apt autoremove],
+    %i[apt autoclean],
     %i[config apt_listchanges],
     %i[config needrestart],
     %i[play ufw],
