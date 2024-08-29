@@ -138,9 +138,9 @@ all:
 #            raspi3b:
 #              wireguard_host_index: 0x31
 #              <<: *wireguard_conf_in_nat
-            raspi3bp:
-              wireguard_host_index: 0x32
-              <<: *wireguard_conf_in_nat
+#            raspi3bp:
+#              wireguard_host_index: 0x32
+#              <<: *wireguard_conf_in_nat
             raspi4b1:
               wireguard_host_index: 0x41
               <<: *wireguard_conf_in_nat
