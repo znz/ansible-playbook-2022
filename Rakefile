@@ -5,27 +5,27 @@ all_tasks = []
 namespace :misc do
   desc 'Ping all hosts'
   task :ping, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -m ping --one-line --forks 20"
+    hosts = args.hosts || 'hosts'
+    sh "ansible all -i #{hosts} -m ping --one-line --forks 20"
   end
 
   desc 'Show uptime'
   task :uptime, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -a uptime --one-line --forks 20"
+    hosts = args.hosts || 'hosts'
+    sh "ansible all -i #{hosts} -a uptime --one-line --forks 20"
   end
 
   desc 'Show removed packages'
   task :removed, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -m shell -a 'dpkg -l | grep \"^rc\"' --forks 20"
+    hosts = args.hosts || 'hosts'
+    sh "ansible all -i #{hosts} -m shell -a 'dpkg -l | grep \"^rc\"' --forks 20"
   end
 
   desc 'Show lsb-release -a'
   task :lsb_release, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
+    hosts = args.hosts || 'hosts'
     require 'open3'
-    command = "ansible all -i #{inventory} -a 'lsb_release -a' --one-line --forks 20"
+    command = "ansible all -i #{hosts} -a 'lsb_release -a' --one-line --forks 20"
     puts command
     out, status = Open3.capture2 command
     lines = out.lines.map do |line|
@@ -42,8 +42,8 @@ end
 namespace :nadoka do
   desc 'Restart nadoka'
   task :restart, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible nadoka -i #{inventory} -m ansible.builtin.systemd -a 'name=nadoka@fprog state=restarted' --one-line -b"
+    hosts = args.hosts || 'hosts'
+    sh "ansible nadoka -i #{hosts} -m ansible.builtin.systemd -a 'name=nadoka@fprog state=restarted' --one-line -b"
   end
 end
 
@@ -74,42 +74,42 @@ end
 namespace :apt do
   desc 'Apt update'
   task :update, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible-playbook -i #{inventory} playbook/update.yml -b --forks 20"
-    sh "ansible all -i #{inventory} -a 'apt-get full-upgrade --download-only -y' -b --forks 20"
+    hosts = args.hosts || 'hosts'
+    sh "ansible-playbook -i #{hosts} playbook/update.yml -b --forks 20"
+    sh "ansible all -i #{hosts} -a 'apt-get full-upgrade --download-only -y' -b --forks 20"
   end
 
   desc 'Apt upgrade'
   task :upgrade, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible-playbook -i #{inventory} playbook/upgrade.yml -b"
+    hosts = args.hosts || 'hosts'
+    sh "ansible-playbook -i #{hosts} playbook/upgrade.yml -b"
   end
 
   desc 'Apt autoremove --purge'
   task :autoremove, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -a 'apt-get autoremove --purge -y' -b"
+    hosts = args.hosts || 'hosts'
+    sh "ansible all -i #{hosts} -a 'apt-get autoremove --purge -y' -b"
   end
 
   desc 'Apt autoclean'
   task :autoclean, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible all -i #{inventory} -a 'apt-get autoclean' -b"
+    hosts = args.hosts || 'hosts'
+    sh "ansible all -i #{hosts} -a 'apt-get autoclean' -b"
   end
 end
 
 namespace :config do
   desc 'Debconf of apt-listchanges'
   task :apt_listchanges, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible-playbook -i #{inventory} playbook/apt-listchanges.yml -b"
+    hosts = args.hosts || 'hosts'
+    sh "ansible-playbook -i #{hosts} playbook/apt-listchanges.yml -b"
   end
   all_tasks.push 'config:apt_listchanges'
 
   desc 'Create /etc/needrestart/conf.d/50local.conf'
   task :needrestart, [:hosts] do |_t, args|
-    inventory = args.inventory || 'hosts'
-    sh "ansible-playbook -i #{inventory} playbook/needrestart.yml -b"
+    hosts = args.hosts || 'hosts'
+    sh "ansible-playbook -i #{hosts} playbook/needrestart.yml -b"
   end
   all_tasks.push 'config:needrestart'
 end
@@ -358,8 +358,8 @@ namespace :play do
   ].each do |name|
     desc "Play #{name}"
     task name, [:hosts] do |_t, args|
-      inventory = args.inventory || 'hosts'
-      sh "ansible-playbook -i #{inventory} playbook/#{name}.yml"
+      hosts = args.hosts || 'hosts'
+      sh "ansible-playbook -i #{hosts} playbook/#{name}.yml"
     end
     all_tasks.push "play:#{name}"
   end
