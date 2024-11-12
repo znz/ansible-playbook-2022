@@ -147,6 +147,7 @@ namespace :lima do
         [all:vars]
         ansible_python_interpreter=/usr/bin/python3
         ansible_ssh_pipelining=yes
+        ansible_ssh_private_key_file=~/.ssh/id_ed25519
       HOSTS
     end
   end
