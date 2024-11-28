@@ -6,6 +6,7 @@ all:
       vars:
         ansible_python_interpreter: '/usr/bin/python3'
         ansible_ssh_pipelining: yes
+        ansible_ssh_private_key_file: '~/.ssh/id_ed25519'
         ansible_ssh_user: 'ansible-runner'
 
 # IP アドレス範囲の計画
@@ -43,9 +44,9 @@ all:
         # これらの Peer からは接続を待ち受けるだけ (未指定のホストへはハブになるホスト経由で接続)
         _wireguard_peer_without_endpoint: &wireguard_peer_without_endpoint
         #- raspi3b
-        - raspi3bp
-        - raspi4b1
-        - raspi4b2
+        #- raspi3bp
+        #- raspi4b1
+        #- raspi4b2
         - raspi4b3
         - lima-default
         - saving-stinkbug
@@ -141,12 +142,12 @@ all:
 #            raspi3bp:
 #              wireguard_host_index: 0x32
 #              <<: *wireguard_conf_in_nat
-            raspi4b1:
-              wireguard_host_index: 0x41
-              <<: *wireguard_conf_in_nat
-            raspi4b2:
-              wireguard_host_index: 0x42
-              <<: *wireguard_conf_in_nat
+#            raspi4b1:
+#              wireguard_host_index: 0x41
+#              <<: *wireguard_conf_in_nat
+#            raspi4b2:
+#              wireguard_host_index: 0x42
+#              <<: *wireguard_conf_in_nat
             raspi4b3:
               wireguard_host_index: 0x43
               <<: *wireguard_conf_in_nat
