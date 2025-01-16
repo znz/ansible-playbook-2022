@@ -131,6 +131,16 @@ all:
             ns9:
               wireguard_host_index: 9
               wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
+              wireguard_extra_conf: |
+                {{ _wireguard_peer_mbp }}
+                [Peer]
+                # raspi4b1
+                PublicKey = X6asZ/o516osQloiVk6PgkImmKGhRA4UwtAW8z6afiM=
+                AllowedIPs = fdcb:a987:6543:2022::aa:41/128
+                [Peer]
+                # raspi4b2
+                PublicKey = 5Tlq/iwTlw3Tph0REJ/jcfY6bBj+rzg/R6q16pHUNXc=
+                AllowedIPs = fdcb:a987:6543:2022::aa:42/128
 
         raspi:
           vars:
