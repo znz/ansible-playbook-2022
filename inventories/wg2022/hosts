@@ -96,14 +96,22 @@ all:
               wireguard_nat_outside_interface: 'e+'
               wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
               wireguard_extra_conf: |
-                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22
+                #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22 comment "WireGuard {{ wireguard_group_name }} routed SSH"
-                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 10050
+                #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 10050
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 10050 comment "WireGuard {{ wireguard_group_name }} routed zabbix-agent"
-                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22000
+                #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22000
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 22000 comment "WireGuard {{ wireguard_group_name }} routed Syncthing (sync protocol traffic)"
-                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto udp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 21027
+                #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto udp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 21027
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto udp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 21027 comment "WireGuard {{ wireguard_group_name }} routed Syncthing (for discovery)"
+
+                ## Run on conoha-d02
+                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 3000
+                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 3000 comment "WireGuard {{ wireguard_group_name }} routed webtop in docker"
+                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2022::c0:d2 port 3000 comment "WireGuard {{ wireguard_group_name }} routed webtop in docker"
+                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 2080
+                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }}
+                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2022::c0:d2 port 2080 comment "WireGuard {{ wireguard_group_name }} routed zabbix-docker"
 
                 {{ _wireguard_peer_mbp }}
               wireguard_coredns: yes
