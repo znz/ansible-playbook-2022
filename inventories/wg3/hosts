@@ -41,9 +41,9 @@ all:
           #- raspi4b2
           - raspi4b3
           wireguard_extra_conf: |
-            PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv4 }} to {{ wireguard_ipv4 }} port 22
+            #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv4 }} to {{ wireguard_ipv4 }} port 22
             PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv4 }} to {{ wireguard_ipv4 }} port 22 comment "WireGuard {{ wireguard_group_name }} routed SSH"
-            PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv4 }} to {{ wireguard_ipv4 }} port 22
+            #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv4 }} to {{ wireguard_ipv4 }} port 22
             PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv4 }} to {{ wireguard_ipv4 }} port 22 comment "WireGuard {{ wireguard_group_name }} routed SSH"
         ns6:
           wireguard_host_index: 6
