@@ -42,12 +42,12 @@ conoha-u01
 #iot
 
 [zabbix_agent]
-conoha-d02
 conoha-u01
 saving-stinkbug
 raspi4b3
 
 #[zabbix_agent2]
+#conoha-d02
 
 [apt_update:children]
 sakura
