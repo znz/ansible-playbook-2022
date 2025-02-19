@@ -82,6 +82,15 @@ all:
             # MacBook Pro (13-inch, M2, 2022)
             PublicKey = szQCQMJ7dEIqp+UtEHQq0zkErSJgK/xpuZUIYFjvSF4=
             AllowedIPs = fdcb:a987:6543:2022::30:22/128
+        _wireguard_peer_raspi: &wireguard_peer_raspi |
+            [Peer]
+            # raspi4b1
+            PublicKey = X6asZ/o516osQloiVk6PgkImmKGhRA4UwtAW8z6afiM=
+            AllowedIPs = fdcb:a987:6543:2022::aa:41/128
+            [Peer]
+            # raspi4b2
+            PublicKey = 5Tlq/iwTlw3Tph0REJ/jcfY6bBj+rzg/R6q16pHUNXc=
+            AllowedIPs = fdcb:a987:6543:2022::aa:42/128
 
       children:
         conoha:
@@ -112,6 +121,7 @@ all:
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2022::c0:d2 port 2080 comment "WireGuard {{ wireguard_group_name }} routed zabbix-docker"
 
                 {{ _wireguard_peer_mbp }}
+                {{ _wireguard_peer_raspi }}
               wireguard_coredns: yes
               coredns_corefile:
                 wg2022: |
