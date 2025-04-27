@@ -7,7 +7,7 @@ saving-stinkbug ansible_ssh_user=ansible-runner
 #raspi3b ansible_ssh_user=ansible-runner
 #raspi3bp ansible_ssh_user=ansible-runner
 #raspi4b1 ansible_ssh_user=ansible-runner
-#raspi4b2 ansible_ssh_user=ansible-runner
+raspi4b2 ansible_ssh_user=ansible-runner
 raspi4b3 ansible_ssh_user=ansible-runner
 [sakura]
 ns6 ansible_ssh_user=ansible-runner
@@ -19,6 +19,7 @@ ns9 ansible_ssh_user=ansible-runner
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
 conoha-d02
 conoha-u01
+raspi4b2
 raspi4b3
 [ufw:children]
 conoha_u01_lxd_instance
