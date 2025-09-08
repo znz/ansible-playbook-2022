@@ -1,6 +1,7 @@
 [conoha]
 conoha-d02 ansible_ssh_user=ansible-runner
 conoha-u01 ansible_ssh_user=ansible-runner
+conoha-u02 ansible_ssh_user=ansible-runner
 [conoha_u01_lxd_instance]
 saving-stinkbug ansible_ssh_user=ansible-runner
 [raspi]
@@ -19,6 +20,7 @@ ns9 ansible_ssh_user=ansible-runner
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
 conoha-d02
 conoha-u01
+conoha-u02
 raspi4b2
 raspi4b3
 [ufw:children]
@@ -27,6 +29,7 @@ conoha_u01_lxd_instance
 [nadoka]
 conoha-d02
 conoha-u01
+conoha-u02
 # ns6 と ns8 は別のインストール方法を使っている
 ns9
 # nspawn-host$ sudo ufw route allow to $IRC_HOST port $IRC_PORT proto tcp
