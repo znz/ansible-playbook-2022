@@ -67,13 +67,13 @@
       server_url: '{{ zabbix_server_url }}'
     loop:
     - name: 'conoha-d02'
-      ip: 'fdcb:a987:6543:2022::c0:d2'
+      ip: 'fdcb:a987:6543:2025::c0:d2'
     - name: 'conoha-u01'
-      ip: 'fdcb:a987:6543:2022::c0:1'
+      ip: 'fdcb:a987:6543:2025::c0:1'
     - name: 'lima-default'
-      ip: 'fdcb:a987:6543:2022::11:1'
-    - name: 'saving-stinkbug'
-      ip: 'fdcb:a987:6543:2022::c001:55'
+      ip: 'fdcb:a987:6543:2025::11:1'
+    #- name: 'saving-stinkbug'
+    #  ip: 'fdcb:a987:6543:2022::c001:55'
 
   - name: 'Create macOS hosts'
     community.zabbix.zabbix_host:
@@ -102,7 +102,7 @@
       server_url: '{{ zabbix_server_url }}'
     loop:
     - name: 'knmbp21'
-      ip: 'fdcb:a987:6543:2022::30:21'
+      ip: 'fdcb:a987:6543:2025::30:21'
       psk_identity: 'knmbp21'
       # Mounted filesystem discovery のフィルタに
       # {#FSNAME} 一致しない ^/Volumes/com\.apple\.TimeMachine\.localsnapshots/

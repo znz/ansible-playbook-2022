@@ -49,7 +49,7 @@ all:
         #- raspi4b2
         - raspi4b3
         - lima-default
-        - saving-stinkbug
+        #- saving-stinkbug
 
         # NAT の中などで Endpoint の設定が出来ないホストの設定
         _wireguard_conf_in_nat: &wireguard_conf_in_nat
@@ -123,13 +123,13 @@ all:
                 wg2022: |
                   {{ lookup('file', '../inventories/wg2022/Corefile') }}
 
-        conoha_u01_lxd_instance:
-          vars:
-            wireguard_host_v6_offset: 0xc001_0000
-          hosts:
-            saving-stinkbug:
-              wireguard_host_index: 0x55
-              <<: *wireguard_conf_in_nat
+        # conoha_u01_lxd_instance:
+        #   vars:
+        #     wireguard_host_v6_offset: 0xc001_0000
+        #   hosts:
+        #     saving-stinkbug:
+        #       wireguard_host_index: 0x55
+        #       <<: *wireguard_conf_in_nat
 
         sakura:
           vars:

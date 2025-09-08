@@ -2,8 +2,6 @@
 conoha-d02 ansible_ssh_user=ansible-runner
 conoha-u01 ansible_ssh_user=ansible-runner
 conoha-u02 ansible_ssh_user=ansible-runner
-[conoha_u01_lxd_instance]
-saving-stinkbug ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
 #raspi3bp ansible_ssh_user=ansible-runner
@@ -24,7 +22,6 @@ conoha-u02
 raspi4b2
 raspi4b3
 [ufw:children]
-conoha_u01_lxd_instance
 
 [nadoka]
 conoha-d02
@@ -36,7 +33,6 @@ ns9
 
 [nadoka:children]
 raspi
-conoha_u01_lxd_instance
 
 [lima]
 # empty group for playbook/ufw.yml
@@ -47,7 +43,6 @@ conoha-u01
 
 [zabbix_agent]
 conoha-u01
-saving-stinkbug
 raspi4b3
 
 #[zabbix_agent2]
@@ -59,7 +54,6 @@ apt_upgrade
 
 [apt_upgrade:children]
 conoha
-conoha_u01_lxd_instance
 raspi
 misc
 

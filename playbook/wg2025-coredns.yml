@@ -1,0 +1,13 @@
+- hosts: conoha-u02
+  become: yes
+  vars:
+  tasks:
+  - name: 'Copy hosts'
+    copy:
+      src: 'tmp/wireguard/wg2025/hosts'
+      dest: '/etc/coredns/wg2025/hosts'
+      owner: 'root'
+      group: 'root'
+      mode: '0444'
+  roles:
+  - coredns
