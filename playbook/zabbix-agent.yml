@@ -19,7 +19,7 @@
       to_ip: '::/0'
       port: '10050'
       proto: 'tcp'
-      interface_in: 'wg2022'
+      interface_in: 'wg2025'
       comment: 'zabbix-agent'
     when: '"ufw" in ansible_facts.packages'
 
@@ -61,7 +61,7 @@
   - name: 'Create /etc/zabbix/zabbix_agentd.conf.d/server.conf'
     copy:
       content: |
-        Server=127.0.0.1,fdcb:a987:6543:2022::/64,172.16.238.0/24,fd2d:8d5e:e805:1::/64
+        Server=127.0.0.1,fdcb:a987:6543:2025::/64,172.16.238.0/24,fd2d:8d5e:e805:1::/64
       dest: '/etc/zabbix/zabbix_agentd.conf.d/server.conf'
       mode: '0444'
       owner: 'root'
