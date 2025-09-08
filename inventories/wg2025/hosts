@@ -74,14 +74,14 @@ all:
         # PersistentKeepAlive = 25
         # を 追加して設定
         _wireguard_peer_mbp: &wireguard_peer_mbp |
-            # [Peer]
-            # # knmbp21
-            # PublicKey = zTNNG4SP94q9QOKlwmStYSNoSOcVGtWibJOg/ojQ0Vo=
-            # AllowedIPs = fdcb:a987:6543:2025::30:21/128
-            # [Peer]
-            # # MacBook Pro (13-inch, M2, 2025)
-            # PublicKey = szQCQMJ7dEIqp+UtEHQq0zkErSJgK/xpuZUIYFjvSF4=
-            # AllowedIPs = fdcb:a987:6543:2025::30:22/128
+            [Peer]
+            # knmbp21
+            PublicKey = KBJkM8hUMvAOmRJ9iZbhc8i0eY7UYoQSbdoWEYnPl2E=
+            AllowedIPs = fdcb:a987:6543:2025::30:21/128
+            [Peer]
+            # MacBook Pro (13-inch, M2, 2025)
+            PublicKey = QMYESbbJgkR61RrxRoyZFiTCBd4hivJkKViY1ZVN2BM=
+            AllowedIPs = fdcb:a987:6543:2025::30:22/128
 
       children:
         conoha:
