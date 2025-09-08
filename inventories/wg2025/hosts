@@ -105,8 +105,9 @@ all:
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto udp from {{ wireguard_ipv6 }} to {{ wireguard_ipv6 }} port 21027 comment "WireGuard {{ wireguard_group_name }} routed Syncthing (for discovery)"
 
                 ## Run on conoha-d02
-                #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 3000
-                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 3000 comment "WireGuard {{ wireguard_group_name }} routed webtop in docker"
+                PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 3000
+                #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 3001
+                PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 3001 comment "WireGuard {{ wireguard_group_name }} routed webtop in docker"
                 #PostDown = ufw route delete allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 2080
                 PostUp   = ufw route        allow in on {{ wireguard_interface_name }} out on {{ wireguard_interface_name }} proto tcp from {{ wireguard_ipv6 }} to fdcb:a987:6543:2025::c0:d2 port 2080 comment "WireGuard {{ wireguard_group_name }} routed zabbix-docker"
 
