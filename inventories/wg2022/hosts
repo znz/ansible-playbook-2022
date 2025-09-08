@@ -78,10 +78,6 @@ all:
             # knmbp21
             PublicKey = zTNNG4SP94q9QOKlwmStYSNoSOcVGtWibJOg/ojQ0Vo=
             AllowedIPs = fdcb:a987:6543:2022::30:21/128
-            [Peer]
-            # MacBook Pro (13-inch, M2, 2022)
-            PublicKey = szQCQMJ7dEIqp+UtEHQq0zkErSJgK/xpuZUIYFjvSF4=
-            AllowedIPs = fdcb:a987:6543:2022::30:22/128
         _wireguard_peer_raspi: &wireguard_peer_raspi |
             [Peer]
             # raspi4b1
@@ -149,14 +145,7 @@ all:
               wireguard_peer_without_endpoint: *wireguard_peer_without_endpoint
               wireguard_extra_conf: |
                 {{ _wireguard_peer_mbp }}
-                [Peer]
-                # raspi4b1
-                PublicKey = X6asZ/o516osQloiVk6PgkImmKGhRA4UwtAW8z6afiM=
-                AllowedIPs = fdcb:a987:6543:2022::aa:41/128
-                [Peer]
-                # raspi4b2
-                PublicKey = 5Tlq/iwTlw3Tph0REJ/jcfY6bBj+rzg/R6q16pHUNXc=
-                AllowedIPs = fdcb:a987:6543:2022::aa:42/128
+                {{ _wireguard_peer_raspi }}
 
         raspi:
           vars:
