@@ -25,9 +25,9 @@ all:
         - "sshd: 10.3.0.0/64"
         - "sshd: [fdcb:a987:6543:3::]/64"
       hosts:
-        conoha-u01:
-          wireguard_host_index: 1
-          wireguard_endpoint_host: 'default_ipv4'
+#        conoha-u01:
+#          wireguard_host_index: 1
+#          wireguard_endpoint_host: 'default_ipv4'
         conoha-d02:
           wireguard_host_index: 2
           wireguard_ipv4_netmask: '24'

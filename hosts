@@ -1,6 +1,5 @@
 [conoha]
 conoha-d02 ansible_ssh_user=ansible-runner
-conoha-u01 ansible_ssh_user=ansible-runner
 conoha-u02 ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
@@ -17,7 +16,6 @@ ns9 ansible_ssh_user=ansible-runner
 [ufw]
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
 conoha-d02
-conoha-u01
 conoha-u02
 raspi4b2
 raspi4b3
@@ -25,7 +23,6 @@ raspi4b3
 
 [nadoka]
 conoha-d02
-conoha-u01
 conoha-u02
 # ns6 と ns8 は別のインストール方法を使っている
 ns9
@@ -38,11 +35,9 @@ raspi
 # empty group for playbook/ufw.yml
 
 [lxd]
-conoha-u01
 #iot
 
 [zabbix_agent]
-conoha-u01
 raspi4b3
 
 #[zabbix_agent2]
