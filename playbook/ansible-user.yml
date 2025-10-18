@@ -37,7 +37,7 @@
       key: "https://github.com/{{ gh_account }}.keys"
       comment: "github.com/{{ gh_account }}"
       key_options: "restrict"
-    when: "lookup('env', 'UPDATE_SSH_KEYS')"
+    when: "lookup('env', 'UPDATE_SSH_KEYS', default='') != ''"
 
   - name: "Add AllowUsers to sshd_config"
     lineinfile:

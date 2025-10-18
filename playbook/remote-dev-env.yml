@@ -211,7 +211,7 @@
       key: "https://github.com/{{ gh_account }}.keys"
       comment: "github.com/{{ gh_account }}"
       #key_options: "restrict"
-    when: "lookup('env', 'UPDATE_SSH_KEYS')"
+    when: "lookup('env', 'UPDATE_SSH_KEYS', default='') != ''"
 
   - name: 'Remove replaced github.com ssh host keys' # https://github.blog/2023-03-23-we-updated-our-rsa-ssh-host-key/
     ansible.builtin.lineinfile:
