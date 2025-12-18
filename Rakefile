@@ -6,13 +6,13 @@ namespace :misc do
   desc 'Ping all hosts'
   task :ping, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
-    sh "ansible all -i #{hosts} -m ping --one-line --forks 20"
+    sh "ansible all -i #{hosts} -m ping --forks 20"
   end
 
   desc 'Show uptime'
   task :uptime, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
-    sh "ansible all -i #{hosts} -a uptime --one-line --forks 20"
+    sh "ansible all -i #{hosts} -a uptime --forks 20"
   end
 
   desc 'Show removed packages'
@@ -25,7 +25,7 @@ namespace :misc do
   task :lsb_release, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
     require 'open3'
-    command = "ansible all -i #{hosts} -a 'lsb_release -a' --one-line --forks 20"
+    command = "ansible all -i #{hosts} -a 'lsb_release -a' --forks 20"
     puts command
     out, status = Open3.capture2 command
     lines = out.lines.map do |line|
@@ -43,7 +43,7 @@ namespace :nadoka do
   desc 'Restart nadoka'
   task :restart, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
-    sh "ansible nadoka -i #{hosts} -m ansible.builtin.systemd -a 'name=nadoka@fprog state=restarted' --one-line -b"
+    sh "ansible nadoka -i #{hosts} -m ansible.builtin.systemd -a 'name=nadoka@fprog state=restarted' -b"
   end
 end
 
