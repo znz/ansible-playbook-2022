@@ -1,5 +1,6 @@
 [conoha]
 conoha-d02 ansible_ssh_user=ansible-runner
+conoha-d03 ansible_ssh_user=ansible-runner
 conoha-u02 ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
