@@ -48,8 +48,8 @@
   - name: "Add AllowUsers SUDO_USER to sshd_config"
     lineinfile:
       dest: "/etc/ssh/sshd_config"
-      line: "AllowUsers {{ ansible_env.SUDO_USER }}"
-    when: "'SUDO_USER' in ansible_env"
+      line: "AllowUsers {{ lookup('env', 'SUDO_USER') }}"
+    when: "lookup('env', 'SUDO_USER', default='') != ''"
     notify: "Restart sshd"
 
   handlers:
