@@ -40,14 +40,15 @@
     when: "lookup('env', 'UPDATE_SSH_KEYS', default='') != ''"
 
   - name: "Add AllowUsers to sshd_config"
-    lineinfile:
-      dest: "/etc/ssh/sshd_config"
+    ansible.builtin.lineinfile:
+      dest: "/etc/ssh/sshd_config.d/AllowUsers.conf"
       line: "AllowUsers {{ user_name }}"
+      create: true
     notify: "Restart sshd"
 
   - name: "Add AllowUsers SUDO_USER to sshd_config"
-    lineinfile:
-      dest: "/etc/ssh/sshd_config"
+    ansible.builtin.lineinfile:
+      dest: "/etc/ssh/sshd_config.d/AllowUsers.conf"
       line: "AllowUsers {{ lookup('env', 'SUDO_USER') }}"
     when: "lookup('env', 'SUDO_USER', default='') != ''"
     notify: "Restart sshd"
