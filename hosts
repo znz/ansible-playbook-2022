@@ -17,6 +17,7 @@ ns9 ansible_ssh_user=ansible-runner
 [ufw]
 # Gathering Facts での codename の取得に lsb-release パッケージが必要
 conoha-d02
+conoha-d03
 conoha-u02
 raspi4b2
 raspi4b3
