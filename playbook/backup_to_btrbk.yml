@@ -41,7 +41,7 @@
 
   - name: "Add AllowUsers to sshd_config"
     lineinfile:
-      dest: "/etc/ssh/sshd_config"
+      dest: "/etc/ssh/sshd_config.d/AllowUsers.conf"
       line: "AllowUsers {{ user_name }}"
     notify: "Restart sshd"
 
