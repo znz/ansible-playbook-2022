@@ -46,7 +46,8 @@ raspi
 [zabbix_agent]
 raspi4b3
 
-#[zabbix_agent2]
+[zabbix_agent2]
+raspi4b2
 #conoha-d02
 
 [apt_update:children]

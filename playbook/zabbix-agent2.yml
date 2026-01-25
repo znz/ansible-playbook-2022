@@ -1,0 +1,82 @@
+---
+- hosts: zabbix_agent2
+  become: yes
+  gather_facts: yes
+  vars:
+    ansible_ssh_pipelining: yes
+    zabbix_version: "7.4"
+  tasks:
+  - name: 'Gather the package facts'
+    ansible.builtin.package_facts:
+      manager: auto
+
+  # https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian12_all.deb
+  # https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian13_all.deb
+  # https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu24.04_all.deb
+  # https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu22.04_all.deb
+  - name: 'Install zabbix-agent'
+    ansible.builtin.apt:
+      deb: "https://repo.zabbix.com/zabbix/{{ zabbix_version }}/release/{{ ansible_facts['lsb']['id'] | lower }}/pool/main/z/zabbix-release/zabbix-release_latest_{{ zabbix_version }}+{{ ansible_facts['lsb']['id'] | lower }}{{ ansible_facts['lsb']['release'] }}_all.deb"
+    when: '"zabbix-release" not in ansible_facts.packages'
+    register: result
+
+  - name: 'apt update'
+    ansible.builtin.apt:
+      update_cache: yes
+
+  - name: 'Install zabbix-agent2'
+    ansible.builtin.apt:
+      name: 'zabbix-agent2'
+
+  - name: 'Create /etc/zabbix/zabbix_agent2.d/hostname.conf'
+    copy:
+      content: |
+        Hostname={{ inventory_hostname }}
+      dest: '/etc/zabbix/zabbix_agent2.d/hostname.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent2'
+
+  - name: 'Create PSK'
+    ansible.builtin.shell: |
+      openssl rand -hex 32 | install -m 440 -o root -g zabbix /dev/stdin /etc/zabbix/zabbix_agentd.psk
+    args:
+      creates: '/etc/zabbix/zabbix_agentd.psk'
+
+  - name: 'Fetch PSK'
+    ansible.builtin.fetch:
+      src: '/etc/zabbix/zabbix_agentd.psk'
+      dest: "tmp/zabbix-agent/{{ inventory_hostname }}.psk"
+      flat: yes
+
+  - name: 'Create /etc/zabbix/zabbix_agent2.d/psk.conf'
+    copy:
+      content: |
+        TLSAccept=psk
+        TLSConnect=psk
+        TLSPSKFile=/etc/zabbix/zabbix_agentd.psk
+        TLSPSKIdentity=PSK {{ inventory_hostname }}
+      dest: '/etc/zabbix/zabbix_agent2.d/psk.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent2'
+
+  - name: 'Create /etc/zabbix/zabbix_agent2.d/server.conf'
+    copy:
+      content: |
+        Server=127.0.0.1,100.64.0.0/10,fd7a:115c:a1e0::/48
+      dest: '/etc/zabbix/zabbix_agent2.d/server.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent2'
+
+  handlers:
+  - name: 'Restart zabbix-agent2'
+    systemd:
+      name: 'zabbix-agent2.service'
+      state: restarted
+      daemon_reload: yes
+      enabled: yes

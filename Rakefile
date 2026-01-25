@@ -164,6 +164,7 @@ namespace :lima do
     %i[play ufw],
     %i[play nadoka],
     %i[play zabbix-agent],
+    %i[play zabbix-agent2],
     %i[play mdns],
   ].each do |namespace, task_name|
     desc "#{namespace}:#{task_name} for lima"
@@ -352,6 +353,7 @@ namespace :play do
     nadoka
     lxd
     zabbix-agent
+    zabbix-agent2
     btrfsmaintenance
     btrbk
     backup_to_btrbk
