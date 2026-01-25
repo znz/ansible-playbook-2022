@@ -23,6 +23,7 @@
   - name: 'apt update'
     ansible.builtin.apt:
       update_cache: yes
+    when: 'result.changed'
 
   - name: 'Install zabbix-agent2'
     ansible.builtin.apt:
@@ -66,7 +67,7 @@
   - name: 'Create /etc/zabbix/zabbix_agent2.d/server.conf'
     copy:
       content: |
-        Server=127.0.0.1,100.64.0.0/10,fd7a:115c:a1e0::/48
+        Server=127.0.0.1,100.64.0.0/10,fd7a:115c:a1e0::/48{{ zabbix_additional_servers | default('') }}
       dest: '/etc/zabbix/zabbix_agent2.d/server.conf'
       mode: '0444'
       owner: 'root'

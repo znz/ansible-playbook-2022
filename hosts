@@ -47,8 +47,10 @@ raspi
 raspi4b3
 
 [zabbix_agent2]
+conoha-d03
 raspi4b2
-#conoha-d02
+# allow from docker containers
+conoha-d02 zabbix_additional_servers=,172.16.238.0/24
 
 [apt_update:children]
 sakura
