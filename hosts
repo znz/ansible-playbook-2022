@@ -47,7 +47,11 @@ raspi
 raspi4b3
 
 [zabbix_agent2]
+ns6
+ns8
+ns9
 conoha-d03
+conoha-u02
 raspi4b2
 # allow from docker containers
 conoha-d02 zabbix_additional_servers=,172.16.238.0/24
