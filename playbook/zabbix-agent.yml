@@ -61,7 +61,7 @@
   - name: 'Create /etc/zabbix/zabbix_agentd.conf.d/server.conf'
     copy:
       content: |
-        Server=127.0.0.1,fdcb:a987:6543:2025::/64,172.16.238.0/24,fd2d:8d5e:e805:1::/64
+        Server=127.0.0.1,fdcb:a987:6543:2025::/64,172.16.238.0/24,fd2d:8d5e:e805:1::/64,100.64.0.0/10,fd7a:115c:a1e0::/48
       dest: '/etc/zabbix/zabbix_agentd.conf.d/server.conf'
       mode: '0444'
       owner: 'root'
