@@ -352,6 +352,7 @@ namespace :play do
     ufw
     nadoka
     lxd
+    tailscale
     zabbix-agent
     zabbix-agent2
     btrfsmaintenance

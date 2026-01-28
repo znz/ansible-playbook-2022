@@ -25,6 +25,17 @@ raspi4b3
 x0
 [ufw:children]
 
+[tailscale]
+conoha-d02
+conoha-d03
+conoha-u02
+ns6
+ns8
+ns9
+raspi4b2
+raspi4b3
+x0
+
 [nadoka]
 conoha-d02
 conoha-d03

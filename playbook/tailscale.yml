@@ -1,0 +1,15 @@
+---
+- hosts: tailscale
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  - name: "TCP wrappers: Add lines to /etc/hosts.allow"
+    lineinfile:
+      dest: "/etc/hosts.allow"
+      line: "{{ item }}"
+      insertbefore: "^sshd: \\.jp"
+    loop:
+      - "sshd: 100.64.0.0/10"
+      - "sshd: [fd7a:115c:a1e0::]/48"
