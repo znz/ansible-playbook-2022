@@ -4,10 +4,10 @@ conoha-d03 ansible_ssh_user=ansible-runner
 conoha-u02 ansible_ssh_user=ansible-runner
 [raspi]
 #raspi3b ansible_ssh_user=ansible-runner
-#raspi3bp ansible_ssh_user=ansible-runner
+raspi3bp ansible_ssh_user=ansible-runner
 #raspi4b1 ansible_ssh_user=ansible-runner
 raspi4b2 ansible_ssh_user=ansible-runner
-raspi4b3 ansible_ssh_user=ansible-runner
+#raspi4b3 ansible_ssh_user=ansible-runner
 [sakura]
 ns6 ansible_ssh_user=ansible-runner
 ns8 ansible_ssh_user=ansible-runner
@@ -20,8 +20,9 @@ x0
 conoha-d02
 conoha-d03
 conoha-u02
+raspi3bp
 raspi4b2
-raspi4b3
+#raspi4b3
 x0
 [ufw:children]
 
@@ -32,8 +33,9 @@ conoha-u02
 ns6
 ns8
 ns9
+raspi3bp
 raspi4b2
-raspi4b3
+#raspi4b3
 x0
 
 [nadoka]
@@ -55,7 +57,7 @@ raspi
 #iot
 
 [zabbix_agent]
-raspi4b3
+#raspi4b3
 
 [zabbix_agent2]
 ns6
@@ -63,6 +65,7 @@ ns8
 ns9
 conoha-d03
 conoha-u02
+raspi3bp
 raspi4b2
 x0
 # allow from docker containers
@@ -78,7 +81,7 @@ raspi
 misc
 
 [btrfsmaintenance]
-raspi4b3
+#raspi4b3
 #raspi3bp
 
 [backup_to_btrbk]
@@ -87,7 +90,7 @@ ns8
 ns9
 
 [btrbk]
-raspi4b3
+#raspi4b3
 
 [mdns]
 
