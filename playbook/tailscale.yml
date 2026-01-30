@@ -13,3 +13,42 @@
     loop:
       - "sshd: 100.64.0.0/10"
       - "sshd: [fd7a:115c:a1e0::]/48"
+
+  # PORT="41641" in /etc/default/tailscaled
+  - name: "Allow in to tailscale"
+    community.general.ufw:
+      rule: allow
+      port: "41641"
+      proto: "udp"
+      direction: "in"
+      comment: "tailscale"
+  - name: "Allow out from tailscale"
+    community.general.ufw:
+      rule: allow
+      from_port: "41641"
+      proto: "udp"
+      direction: "out"
+      comment: "tailscale"
+
+- hosts: tailscale_subnet_router
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  - name: "Allow forwarding"
+    ansible.builtin.copy:
+      content: |
+        net.ipv4.ip_forward = 1
+        net.ipv6.conf.all.forwarding = 1
+      dest: "/etc/sysctl.d/99-tailscale.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart systemd-sysctl.service"
+
+  handlers:
+  - name: "Restart systemd-sysctl.service"
+    systemd:
+      name: "systemd-sysctl.service"
+      state: restarted
