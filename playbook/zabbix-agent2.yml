@@ -74,6 +74,16 @@
       group: 'root'
     notify: 'Restart zabbix-agent2'
 
+  - name: 'Create /etc/zabbix/zabbix_agent2.d/log.conf'
+    copy:
+      content: |
+        LogType=console
+      dest: '/etc/zabbix/zabbix_agent2.d/log.conf'
+      mode: '0444'
+      owner: 'root'
+      group: 'root'
+    notify: 'Restart zabbix-agent2'
+
   handlers:
   - name: 'Restart zabbix-agent2'
     systemd:
