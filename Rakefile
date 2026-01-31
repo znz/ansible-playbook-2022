@@ -360,6 +360,7 @@ namespace :play do
     btrbk
     backup_to_btrbk
     mdns
+    ramlog
   ].each do |name|
     desc "Play #{name}"
     task name, [:hosts] do |_t, args|

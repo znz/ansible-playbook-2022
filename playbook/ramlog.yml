@@ -1,0 +1,44 @@
+- hosts: ramlog
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  # systemd-analyze cat-config systemd/journald.conf
+  - name: "Create drop-in directory for journald.conf"
+    ansible.builtin.file:
+      path: "/etc/systemd/journald.conf.d"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+
+  # journalctl --disk-usage
+  # sudo rm -r /var/log/journal
+  - name: "Set Storage=volatile"
+    ansible.builtin.copy:
+      content: |
+        [Journal]
+        Storage=volatile
+      dest: "/etc/systemd/journald.conf.d/storage.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart systemd-journald.service"
+
+  - name: "Set ForwardToSyslog=no"
+    ansible.builtin.copy:
+      content: |
+        [Journal]
+        ForwardToSyslog=no
+      dest: "/etc/systemd/journald.conf.d/syslog.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart systemd-journald.service"
+
+  handlers:
+  - name: "Restart systemd-journald.service"
+    ansible.builtin.service:
+      name: "systemd-journald.service"
+      state: restarted
