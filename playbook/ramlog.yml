@@ -37,6 +37,11 @@
       group: "root"
     notify: "Restart systemd-journald.service"
 
+  - name: "Remove rsyslog"
+    ansible.builtin.apt:
+      name: rsyslog
+      state: absent
+
   handlers:
   - name: "Restart systemd-journald.service"
     ansible.builtin.service:
