@@ -351,6 +351,7 @@ namespace :play do
   %i[
     ufw
     nadoka
+    raspi
     lxd
     tailscale
     zabbix-agent

@@ -1,0 +1,118 @@
+---
+- hosts: raspi
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+    lan_subnet: "192.168.253.0/24"
+    gateway_router: "192.168.253.1"
+  tasks:
+  - name: "Ignore SSDP"
+    community.general.ufw:
+      rule: deny
+      from: "{{ lan_subnet }}"
+      from_port: "1900"
+      proto: "udp"
+      direction: "in"
+      comment: "Ignore SSDP"
+
+  - name: "Allow ECHONET-Lite"
+    community.general.ufw:
+      rule: allow
+      from_port: "3610"
+      to: "ff02::1"
+      port: "3610"
+      proto: "udp"
+      direction: "in"
+      comment: "ECHONET-Lite"
+
+  - name: "Allow out NAT-PMP"
+    community.general.ufw:
+      rule: allow
+      to: "{{ gateway_router }}"
+      port: "5351"
+      proto: "udp"
+      direction: "out"
+      comment: "NAT-PMP"
+
+  - name: "Allow out SSDP"
+    community.general.ufw:
+      rule: allow
+      to: "{{ gateway_router }}"
+      port: "1900"
+      proto: "udp"
+      direction: "out"
+      comment: "SSDP"
+
+  - name: "Allow out TCP to the gateway router"
+    community.general.ufw:
+      rule: allow
+      to: "{{ gateway_router }}"
+      port: "30000:50000" # random port?
+      proto: "tcp"
+      direction: "out"
+      comment: "TCP to gateway"
+
+  - name: "Ignore UDP from nasne, chromecast"
+    community.general.ufw:
+      rule: deny
+      from: "{{ lan_subnet }}"
+      from_port: "32000:61000" # random port?
+      port: "32000:61000" # random port?
+      proto: "udp"
+      direction: "in"
+      comment: "Ignore UDP"
+
+  - name: "Enable global mdns"
+    ansible.builtin.lineinfile:
+      dest: "/etc/ufw/after6.rules"
+      line: "{{ item }}"
+      insertbefore: "^# don't log noisy services by default$"
+    loop:
+      - "-A ufw6-after-input -p icmpv6 --icmpv6-type 131 -d ff02::1:ff00:0 -j ACCEPT"
+      - "-A ufw6-after-input -p icmpv6 --icmpv6-type 135 -m hl --hl-eq 254 -j ACCEPT"
+
+- hosts: raspi3bp
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  # systemd-analyze cat-config systemd/journald.conf
+  - name: "Create drop-in directory for journald.conf"
+    ansible.builtin.file:
+      path: "/etc/systemd/journald.conf.d"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+
+  # journalctl --disk-usage
+  # sudo rm -r /var/log/journal
+  - name: "Set Storage=volatile"
+    ansible.builtin.copy:
+      content: |
+        [Journal]
+        Storage=volatile
+      dest: "/etc/systemd/journald.conf.d/storage.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart systemd-journald.service"
+
+  - name: "Set ForwardToSyslog=no"
+    ansible.builtin.copy:
+      content: |
+        [Journal]
+        ForwardToSyslog=no
+      dest: "/etc/systemd/journald.conf.d/syslog.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart systemd-journald.service"
+
+  handlers:
+  - name: "Restart systemd-journald.service"
+    ansible.builtin.service:
+      name: "systemd-journald.service"
+      state: restarted
