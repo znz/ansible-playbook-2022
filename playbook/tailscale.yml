@@ -46,6 +46,14 @@
       owner: "root"
       group: "root"
     notify: "Restart systemd-sysctl.service"
+  - name: "Allow out to nasne"
+    community.general.ufw:
+      rule: allow
+      to: "192.168.253.0/24"
+      port: "64210,64220"
+      proto: "tcp"
+      direction: "out"
+      comment: "nasne"
 
   handlers:
   - name: "Restart systemd-sysctl.service"
