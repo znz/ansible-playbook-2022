@@ -42,6 +42,14 @@
       name: rsyslog
       state: absent
 
+  - name: "Mount tmpfs on /tmp"
+    ansible.posix.mount:
+      src: tmpfs
+      path: /tmp
+      fstype: tmpfs
+      opts: "defaults,noatime,size=32m"
+      state: mounted
+
   handlers:
   - name: "Restart systemd-journald.service"
     ansible.builtin.service:
