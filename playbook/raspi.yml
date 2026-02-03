@@ -63,6 +63,15 @@
       direction: "in"
       comment: "Ignore UDP"
 
+  # sudo ufw deny in to 224.0.0.251 proto igmp comment "Ignore IGMP"
+  - name: "Ignore IGMP (mDNS/Bonjour)"
+    community.general.ufw:
+      rule: deny
+      to: "224.0.0.251"
+      proto: "igmp"
+      direction: "in"
+      comment: "Ignore IGMP"
+
   - name: "Enable global mdns"
     ansible.builtin.lineinfile:
       dest: "/etc/ufw/after6.rules"
