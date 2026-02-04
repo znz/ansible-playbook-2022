@@ -46,6 +46,19 @@
       owner: "root"
       group: "root"
     notify: "Restart systemd-sysctl.service"
+
+  handlers:
+  - name: "Restart systemd-sysctl.service"
+    systemd:
+      name: "systemd-sysctl.service"
+      state: restarted
+
+- hosts: tailscale_home_router
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
   - name: "Allow out to nasne"
     community.general.ufw:
       rule: allow
@@ -54,9 +67,3 @@
       proto: "tcp"
       direction: "out"
       comment: "nasne"
-
-  handlers:
-  - name: "Restart systemd-sysctl.service"
-    systemd:
-      name: "systemd-sysctl.service"
-      state: restarted

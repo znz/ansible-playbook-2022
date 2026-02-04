@@ -39,6 +39,12 @@ x0
 tailscale_subnet_router
 
 [tailscale_subnet_router]
+conoha-u02
+raspi3bp
+raspi4b2
+#raspi4b3
+
+[tailscale_home_router]
 raspi3bp
 raspi4b2
 #raspi4b3
