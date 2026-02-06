@@ -47,7 +47,7 @@
       src: tmpfs
       path: /tmp
       fstype: tmpfs
-      opts: "defaults,noatime,size=32m"
+      opts: "defaults,noatime,size=128m"
       state: mounted
 
   handlers:
