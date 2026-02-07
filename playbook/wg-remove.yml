@@ -1,0 +1,39 @@
+- hosts: all
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  - name: "TCP wrappers: Remove lines from /etc/hosts.allow"
+    lineinfile:
+      dest: "/etc/hosts.allow"
+      line: "{{ item }}"
+      state: absent
+    loop: "{{ wireguard_hosts_allow }}"
+  - name: "Disable wg-quick@"
+    ansible.builtin.systemd:
+      name: "wg-quick@{{ wireguard_interface_name }}"
+      state: stopped
+      enabled: no
+  - name: "Remove /etc/wireguard/*.conf"
+    ansible.builtin.file:
+      path: "/etc/wireguard/{{ wireguard_interface_name}}.{{ item }}"
+      state: absent
+    loop:
+      - "conf"
+      - "peer-conf"
+      - "privatekey"
+      - "publickey"
+  - name: "ufw delete allow out"
+    community.general.ufw:
+      delete: yes
+      rule: allow
+      direction: out
+      port: "{{ wireguard_listen_port }}"
+      proto: udp
+  - name: "ufw delete allow"
+    community.general.ufw:
+      delete: yes
+      rule: allow
+      port: "{{ wireguard_listen_port }}"
+      proto: udp

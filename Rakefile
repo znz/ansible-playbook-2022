@@ -270,6 +270,11 @@ Dir.glob('inventories/wg*') do |inventory|
   wg = File.basename(inventory)
 
   namespace wg do
+    desc "Remove wireguard for #{wg}"
+    task :remove do
+      sh "ansible-playbook -i inventories/#{wg}/hosts playbook/wg-remove.yml"
+    end
+
     if File.exist?("playbook/#{wg}.yml")
       desc "Play wireguard for #{wg}"
       task :all do
