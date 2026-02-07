@@ -1,5 +1,0 @@
----
-- hosts: wg3
-  become: yes
-  roles:
-  - wireguard
