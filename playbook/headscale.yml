@@ -1,0 +1,45 @@
+---
+- hosts: headscale
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+
+  # https://github.com/dblanque/headscale-zabbix
+  - name: "Allow zabbix user to use basic read-only Headscale commands"
+    ansible.builtin.copy:
+      content: |
+        # Based on https://github.com/dblanque/headscale-zabbix/blob/main/sudoers.d/zabbix_headscale
+
+        # Cmnd alias specification
+        Cmnd_Alias C_HEADSCALE = \
+                /usr/bin/headscale users list -o json, \
+                /usr/bin/headscale nodes list -o json, \
+                /usr/bin/headscale version
+
+        ### allow zabbix user to use basic read-only Headscale commands
+        zabbix ALL = (root) NOPASSWD: C_HEADSCALE
+      dest: "/etc/sudoers.d/zabbix_headscale"
+      validate: "/usr/sbin/visudo -csf %s"
+      mode: "0440"
+      owner: "root"
+      group: "root"
+  - name: "Allow zabbix user to use basic read-only Headscale commands"
+    ansible.builtin.copy:
+      content: |
+        # Based on https://github.com/dblanque/headscale-zabbix/blob/main/zabbix_agent2.d/headscale.conf
+        UserParameter=headscale.nodes.json,sudo /usr/bin/headscale nodes list -o json | jq -r "map(del(.machine_key,.node_key,.disco_key,.pre_auth_key))"
+        UserParameter=headscale.users.json,sudo /usr/bin/headscale users list -o json
+        UserParameter=headscale.version,sudo /usr/bin/headscale version | head -n1 | grep -o "[0-9.]\+"
+      dest: "/etc/zabbix/zabbix_agent2.d/headscale.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart zabbix-agent2.service"
+
+  handlers:
+  - name: "Restart zabbix-agent2.service"
+    ansible.builtin.service:
+      name: "zabbix-agent2.service"
+      state: restarted

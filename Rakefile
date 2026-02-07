@@ -353,6 +353,7 @@ namespace :play do
     nadoka
     raspi
     lxd
+    headscale
     tailscale
     zabbix-agent
     zabbix-agent2

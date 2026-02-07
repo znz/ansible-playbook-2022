@@ -26,6 +26,9 @@ raspi4b2
 x0
 [ufw:children]
 
+[headscale]
+conoha-d03
+
 [tailscale]
 conoha-d02
 conoha-d03
