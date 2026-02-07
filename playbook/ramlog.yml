@@ -50,8 +50,43 @@
       opts: "defaults,noatime,size=128m"
       state: mounted
 
+  - name: "Remove snapd"
+    ansible.builtin.apt:
+      name: snapd
+      state: absent
+
+  # systemd-analyze cat-config systemd/timesyncd.conf --tldr
+  - name: "Create drop-in directory for timesyncd.conf"
+    ansible.builtin.file:
+      path: "/etc/systemd/timesyncd.conf.d"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+
+  - name: "Set SaveIntervalSec=infinity"
+    ansible.builtin.copy:
+      content: |
+        [Time]
+        SaveIntervalSec=infinity
+      dest: "/etc/systemd/timesyncd.conf.d/SaveIntervalSec.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    notify: "Restart systemd-timesyncd.service"
+
+  # - name: "Remove /var/lib/systemd/timesync/clock"
+  #   ansible.builtin.file:
+  #     path: "/var/lib/systemd/timesync/clock"
+  #     state: absent
+
   handlers:
   - name: "Restart systemd-journald.service"
     ansible.builtin.service:
       name: "systemd-journald.service"
+      state: restarted
+
+  - name: "Restart systemd-timesyncd.service"
+    ansible.builtin.service:
+      name: "systemd-timesyncd.service"
       state: restarted
