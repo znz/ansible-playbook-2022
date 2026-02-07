@@ -1,5 +1,0 @@
----
-- hosts: wg2025
-  become: yes
-  roles:
-  - wireguard
