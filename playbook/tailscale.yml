@@ -67,3 +67,26 @@
       proto: "tcp"
       direction: "out"
       comment: "nasne"
+
+  - name: "Allow out NAT-PMP"
+    community.general.ufw:
+      rule: allow
+      to: "{{ gateway_router }}"
+      port: "5351"
+      proto: "udp"
+      direction: "out"
+      comment: "NAT-PMP"
+
+- hosts: tailscale_vps_node
+  become: yes
+  gather_facts: no
+  vars:
+    ansible_ssh_pipelining: yes
+  tasks:
+  - name: "Ignore out NAT-PMP"
+    community.general.ufw:
+      rule: deny
+      port: "5351"
+      proto: "udp"
+      direction: "out"
+      comment: "NAT-PMP"

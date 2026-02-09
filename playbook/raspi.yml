@@ -4,8 +4,8 @@
   gather_facts: no
   vars:
     ansible_ssh_pipelining: yes
-    lan_subnet: "192.168.253.0/24"
-    gateway_router: "192.168.253.1"
+    #lan_subnet: "192.168.253.0/24"
+    #gateway_router: "192.168.253.1"
   tasks:
   - name: "Ignore SSDP"
     community.general.ufw:
@@ -25,15 +25,6 @@
       proto: "udp"
       direction: "in"
       comment: "ECHONET-Lite"
-
-  - name: "Allow out NAT-PMP"
-    community.general.ufw:
-      rule: allow
-      to: "{{ gateway_router }}"
-      port: "5351"
-      proto: "udp"
-      direction: "out"
-      comment: "NAT-PMP"
 
   - name: "Allow out SSDP"
     community.general.ufw:
