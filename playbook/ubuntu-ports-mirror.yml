@@ -1,0 +1,29 @@
+---
+- hosts: ubuntu_ports_mirror
+  gather_facts: yes
+  become: yes
+  tasks:
+  - name: "Create /etc/apt/mirrors"
+    ansible.builtin.file:
+      path: "/etc/apt/mirrors"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+  - name: "Create /etc/apt/mirrors/ubuntu-ports.list"
+    ansible.builtin.copy:
+      content: |
+        # https://launchpad.net/ubuntu/+archivemirrors
+        https://mirror.hashy0917.net/ubuntu-ports priority:1
+        http://ports.ubuntu.com/ubuntu-ports
+      dest: "/etc/apt/mirrors/ubuntu-ports.list"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    when: "ansible_facts.architecture == 'aarch64' and ansible_facts.lsb.id == 'Ubuntu'"
+  - name: "Use ubuntu-ports"
+    ansible.builtin.lineinfile:
+      path: "/etc/apt/sources.list.d/ubuntu.sources"
+      regexp: '^URIs: https?://ports\.ubuntu\.com/ubuntu-ports'
+      line: 'URIs: mirror+file:///etc/apt/mirrors/ubuntu-ports.list'
+    when: "ansible_facts.architecture == 'aarch64' and ansible_facts.lsb.id == 'Ubuntu'"

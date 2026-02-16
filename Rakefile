@@ -106,6 +106,13 @@ namespace :config do
   end
   all_tasks.push 'config:apt_listchanges'
 
+  desc 'Use ubuntu-ports mirror'
+  task :ubuntu_ports_mirror, [:hosts] do |_t, args|
+    hosts = args.hosts || 'hosts'
+    sh "ansible-playbook -i #{hosts} playbook/ubuntu-ports-mirror.yml -b"
+  end
+  all_tasks.push 'config:ubuntu_ports_mirror'
+
   desc 'Create /etc/needrestart/conf.d/50local.conf'
   task :needrestart, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
