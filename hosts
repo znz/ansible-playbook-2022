@@ -33,11 +33,18 @@ conoha-d03
 tailscale_home_router
 tailscale_vps_node
 
-[tailscale_subnet_router]
-raspi3bp
-raspi4b2
-#raspi4b3
+[tailscale_router]
+# subnet router and/or exit node
+conoha-d03
 x0
+
+# How to add an exit node:
+#  sudo tailscale set --advertise-exit-node
+#  sudo headscale nodes list-routes
+#  sudo headscale nodes approve-routes --identifier $node_id --routes 0.0.0.0/0
+
+[tailscale_router:children]
+tailscale_home_router
 
 [tailscale_home_router]
 raspi3bp

@@ -30,7 +30,7 @@
       direction: "out"
       comment: "tailscale"
 
-- hosts: tailscale_subnet_router
+- hosts: tailscale_router
   become: yes
   gather_facts: no
   vars:
