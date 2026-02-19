@@ -132,7 +132,7 @@ namespace :lima do
     sh %(grep -F 'Include #{lima_ssh_config}' ~/.ssh/config || echo 'Include #{lima_ssh_config}' >> ~/.ssh/config)
     cond = 'eq .Status "Running"'
     sh %(echo '[lima]' > #{lima_hosts})
-    sh %(limactl list -f '{{if #{cond}}}lima-{{.Name}} ansible_ssh_user=ansible-runner{{end}}' >> #{lima_hosts})
+    sh %(limactl list -f '{{if #{cond}}}ssh -n -q ansible-runner@lima-{{.Name}} hostname || :{{end}}' | bash >> #{lima_hosts})
     File.open(lima_hosts, 'a') do |f|
       f.puts <<~HOSTS
         [ufw]
@@ -155,6 +155,7 @@ namespace :lima do
         ansible_python_interpreter=/usr/bin/python3
         ansible_ssh_pipelining=yes
         ansible_ssh_private_key_file=~/.ssh/id_ed25519
+        ansible_ssh_user=ansible-runner
       HOSTS
     end
   end
