@@ -332,7 +332,7 @@ namespace :remote_dev do
   task :here do
     sh 'ansible-playbook -i inventories/remote-dev/hosts playbook/remote-dev-env.yml --start-at-task "here"'
   end
-  all_tasks.push 'ruby_build:all'
+  # all_tasks.push 'remote_dev:all'
 end
 
 namespace :ruby_build do
@@ -345,7 +345,7 @@ namespace :ruby_build do
   task :scripts do
     sh 'ansible-playbook -i inventories/ruby-build/hosts playbook/ruby-build.yml --start-at-task "Create rbenv-install-stable-versions"'
   end
-  all_tasks.push 'ruby_build:all'
+  # all_tasks.push 'ruby_build:all'
 end
 
 namespace :zabbix do
@@ -354,7 +354,7 @@ namespace :zabbix do
     sh 'ansible-playbook -i inventories/zabbix-server/hosts playbook/zabbix-server.yml'
   end
 
-  #all_tasks.push 'zabbix:server'
+  # all_tasks.push 'zabbix:server'
 end
 
 desc "Run #{all_tasks.join(' ')}"
