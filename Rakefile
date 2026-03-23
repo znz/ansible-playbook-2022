@@ -75,7 +75,7 @@ namespace :apt do
   desc 'Apt update'
   task :update, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
-    sh "ansible-playbook -i #{hosts} playbook/update.yml -b --forks 20"
+    sh "ansible-playbook -i #{hosts} playbook/update.yml -b --forks 20 --timeout 60"
     sh "ansible all -i #{hosts} -a 'apt-get full-upgrade --download-only -y' -b --forks 20"
   end
 
