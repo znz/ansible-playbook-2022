@@ -37,7 +37,16 @@
       key: "https://github.com/{{ gh_account }}.keys"
       comment: "github.com/{{ gh_account }}"
       key_options: "restrict"
-    when: "lookup('env', 'UPDATE_SSH_KEYS', default='') != ''"
+    when: "lookup('env', 'UPDATE_SSH_KEYS', default='') == 'gh'"
+
+  - name: "Update authorized_keys for lima"
+    ansible.posix.authorized_key:
+      user: "{{ user_name }}"
+      state: present
+      key: "{{ lookup('file', '~/.lima/_config/user.pub') }}"
+      comment: "lima"
+      key_options: "restrict"
+    when: "inventory_hostname is match('^lima-')"
 
   - name: "Add AllowUsers to sshd_config"
     ansible.builtin.lineinfile:

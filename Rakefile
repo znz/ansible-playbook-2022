@@ -64,7 +64,7 @@ namespace :ansible do
     sh env, "ansible-playbook -i #{args.to_a.join(',')}, playbook/ansible-user.yml -b -K"
   end
 
-  # rake ansible:user UPDATE_SSH_KEYS=1
+  # rake ansible:user UPDATE_SSH_KEYS=gh
   task :user do
     sh 'ansible-playbook -i hosts playbook/ansible-user.yml'
   end
