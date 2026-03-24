@@ -48,7 +48,7 @@ namespace :nadoka do
 end
 
 namespace :ansible do
-  env = { 'UPDATE_SSH_KEYS' => '1' }
+  env = { 'UPDATE_SSH_KEYS' => 'gh' }
 
   # example:
   #  rake 'ansible:runner[ns9]'
