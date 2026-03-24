@@ -76,7 +76,13 @@ namespace :apt do
   task :update, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
     sh "ansible-playbook -i #{hosts} playbook/update.yml -b --forks 20 --timeout 60"
+    if File.exist?("#{Dir.home}/.lima/weechat/ha.pid")
+      sh %q[echo 'irc.fprog.#servers *uptime' | limactl shell weechat bash -c 'tee /run/user/$UID/weechat/weechat_fifo_*']
+    end
     sh "ansible all -i #{hosts} -a 'apt-get full-upgrade --download-only -y' -b --forks 20"
+    if File.exist?("#{Dir.home}/.lima/weechat/ha.pid")
+      sh %q[echo 'irc.fprog.#servers *upgradable' | limactl shell weechat bash -c 'tee /run/user/$UID/weechat/weechat_fifo_*']
+    end
   end
 
   desc 'Apt upgrade'
