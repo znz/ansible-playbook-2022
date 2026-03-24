@@ -135,14 +135,11 @@ namespace :lima do
     sh %(limactl list -f '{{if #{cond}}}ssh -S none -n -q ansible-runner@lima-{{.Name}} hostname || :{{end}}' | bash >> #{lima_hosts})
     File.open(lima_hosts, 'a') do |f|
       f.puts <<~HOSTS
-        [ufw]
-        lima-default
-        [zabbix_agent]
-        # lima-default
-        [conoha_u01_lxd_instance]
-        # empty group for playbook/ufw.yml
-
+        [ufw:children]
+        lima
         [nadoka:children]
+        lima
+        [zabbix_agent2:children]
         lima
         [apt_update:children]
         lima
