@@ -18,7 +18,7 @@
       owner: "root"
       group: "root"
       mode: "0755"
-    loop: "{{ mdns_interfaces }}"
+    loop: "{{ mdns_interfaces.split(',') }}"
 
   - name: "Add mdns.conf"
     ansible.builtin.copy:
@@ -29,7 +29,7 @@
       mode: "0444"
       owner: "root"
       group: "root"
-    loop: "{{ mdns_interfaces }}"
+    loop: "{{ mdns_interfaces.split(',') }}"
     notify: "Reload systemd-networkd.service"
 
   handlers:

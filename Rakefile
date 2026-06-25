@@ -162,6 +162,7 @@ namespace :lima do
         ansible_ssh_pipelining=yes
         ansible_ssh_private_key_file=~/.lima/_config/user
         ansible_ssh_user=ansible-runner
+        mdns_interfaces=eth0
       HOSTS
     end
   end

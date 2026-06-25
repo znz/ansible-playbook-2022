@@ -129,7 +129,11 @@ ns9
 [mdns:children]
 raspi
 
-[use_tempaddr:children]
+[tempaddr:children]
+raspi
+
+[raspi:vars]
+mdns_interfaces=eth0,wlan0
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
