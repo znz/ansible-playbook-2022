@@ -89,6 +89,9 @@ namespace :apt do
   task :upgrade, [:hosts] do |_t, args|
     hosts = args.hosts || 'hosts'
     sh "ansible-playbook -i #{hosts} playbook/upgrade.yml -b"
+    if File.exist?("#{Dir.home}/.lima/weechat/ha.pid")
+      sh %q[echo 'irc.fprog.#servers *upgradable' | limactl shell weechat bash -c 'tee /run/user/$UID/weechat/weechat_fifo_*']
+    end
   end
 
   desc 'Apt autoremove --purge'
