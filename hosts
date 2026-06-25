@@ -126,7 +126,10 @@ ns9
 [btrbk]
 #raspi4b3
 
-[mdns]
+[mdns:children]
+raspi
+
+[use_tempaddr:children]
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

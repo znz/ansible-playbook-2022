@@ -13,21 +13,23 @@
 
   - name: "Create drop-in directory"
     ansible.builtin.file:
-      path: "/etc/systemd/network/10-netplan-eth0.network.d"
+      path: "/etc/systemd/network/10-netplan-{{ item }}.network.d"
       state: directory
       owner: "root"
       group: "root"
       mode: "0755"
+    loop: "{{ mdns_interfaces }}"
 
   - name: "Add mdns.conf"
     ansible.builtin.copy:
       content: |
         [Network]
         MulticastDNS=yes
-      dest: "/etc/systemd/network/10-netplan-eth0.network.d/mdns.conf"
+      dest: "/etc/systemd/network/10-netplan-{{ item }}.network.d/mdns.conf"
       mode: "0444"
       owner: "root"
       group: "root"
+    loop: "{{ mdns_interfaces }}"
     notify: "Reload systemd-networkd.service"
 
   handlers:
