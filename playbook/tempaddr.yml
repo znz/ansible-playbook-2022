@@ -1,0 +1,33 @@
+---
+- hosts: tempaddr
+  gather_facts: no
+  become: yes
+
+  tasks:
+  - name: "Create drop-in directory"
+    ansible.builtin.file:
+      path: "/etc/systemd/network/10-netplan-{{ item }}.network.d"
+      state: directory
+      owner: "root"
+      group: "root"
+      mode: "0755"
+    loop: "{{ tempaddr_interfaces.split(',') }}"
+
+  - name: "Add privacy.conf"
+    ansible.builtin.copy:
+      # IPv6PrivacyExtensions=true で net.ipv6.conf.{{ item }}.use_tempaddr = 2 になる
+      content: |
+        [Network]
+        IPv6PrivacyExtensions=true
+      dest: "/etc/systemd/network/10-netplan-{{ item }}.network.d/privacy.conf"
+      mode: "0444"
+      owner: "root"
+      group: "root"
+    loop: "{{ tempaddr_interfaces.split(',') }}"
+    notify: "Reload systemd-networkd.service"
+
+  handlers:
+  - name: "Reload systemd-networkd.service"
+    ansible.builtin.service:
+      name: "systemd-networkd.service"
+      state: reloaded

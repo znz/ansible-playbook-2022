@@ -134,6 +134,7 @@ raspi
 
 [raspi:vars]
 mdns_interfaces=eth0,wlan0
+tempaddr_interfaces=eth0,wlan0
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

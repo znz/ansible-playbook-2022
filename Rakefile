@@ -181,6 +181,7 @@ namespace :lima do
     %i[play zabbix-agent],
     %i[play zabbix-agent2],
     %i[play mdns],
+    %i[play tempaddr],
   ].each do |namespace, task_name|
     desc "#{namespace}:#{task_name} for lima"
     task task_name => :ssh_config do |t|
@@ -381,6 +382,7 @@ namespace :play do
     btrbk
     backup_to_btrbk
     mdns
+    tempaddr
     ramlog
   ].each do |name|
     desc "Play #{name}"
